@@ -186,6 +186,26 @@ class Curso(models.Model):
     motivo_denegacion = models.TextField(
         blank=True, null=True, verbose_name="Motivo de la denegación"
     )
+    profesores = models.ManyToManyField("accounts.CustomUser",related_name='profesores', through="ProfesorCurso")
 
     class Meta:
         db_table = "curso"
+
+class ProfesorCurso(models.Model):
+
+    id = models.IntegerField(primary_key=True)
+    curso_id = models.ForeignKey(
+        "Curso", models.DO_NOTHING
+    )
+    profesor_id = models.ForeignKey(
+        "accounts.CustomUser", models.DO_NOTHING
+    )
+    fecha_alta = models.DateTimeField(
+        blank=True, null=True, verbose_name="Fecha de alta"
+    )
+    fecha_baja = models.DateTimeField(
+        blank=True, null=True, verbose_name="Fecha de baja"
+    )
+
+    class Meta:
+        db_table = "profesor_curso"
