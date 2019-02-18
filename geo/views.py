@@ -8,7 +8,7 @@ from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin, SingleTableView
 from django_tables2 import RequestConfig
 from .models import AsignaturaSigma, Curso, Pod
-from .tables import PodTable
+from .tables import PodTable, CursoTable
 
 
 class HomePageView(TemplateView):
@@ -63,3 +63,13 @@ class MisAsignaturasView(LoginRequiredMixin, SingleTableView):
     template_name = "pod/mis-asignaturas.html"
 
     # filterset_class = PodFilter
+
+class MisCursosView(LoginRequiredMixin, SingleTableView):
+
+    def get_queryset(self):
+        fecha = date.today()
+        anyo_academico = fecha.year - 1 if fecha.month < 10 else fecha.year
+        return Curso.objects.filter(autorizador=self.request.user.id, anyo_academico=2018)
+
+    table_class = CursoTable
+    template_name = "pod/mis-asignaturas.html"

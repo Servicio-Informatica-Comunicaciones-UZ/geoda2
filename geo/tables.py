@@ -1,7 +1,7 @@
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 import django_tables2 as tables
-from .models import Pod
+from .models import Pod, Curso
 
 
 class PodTable(tables.Table):
@@ -55,3 +55,17 @@ class PodTable(tables.Table):
             "enlace",
         )
         template_name = "django_tables2/bootstrap4.html"
+
+class CursoTable(tables.Table):
+
+    class Meta:
+        attrs = {"class": "table table-striped table-hover cabecera-azul"}
+        model = Curso
+        fields = (
+            "nombre",
+            "anyo_academico",
+            "fecha_solicitud",
+            "fecha_autorizacion",
+            "estado"
+        )
+        template_name = "django_tables2/bootstrap4.html"    

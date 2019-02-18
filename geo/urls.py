@@ -1,7 +1,7 @@
 from django.urls import path
 
 # from . import views
-from .views import HomePageView, ASCrearCursoView, CursoDetailView, MisAsignaturasView
+from .views import HomePageView, ASCrearCursoView, CursoDetailView, MisAsignaturasView, MisCursosView
 
 urlpatterns = [
     path("", HomePageView.as_view(), name="home"),
@@ -12,4 +12,5 @@ urlpatterns = [
         name="as-crear-curso",
     ),
     path("pod/mis-asignaturas", MisAsignaturasView.as_view(), name="mis-asignaturas"),
+    path("curso/mis-cursos", MisCursosView.as_view(), name="mis-cursos"),
 ]

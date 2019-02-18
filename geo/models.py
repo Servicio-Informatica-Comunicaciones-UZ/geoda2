@@ -209,3 +209,4 @@ class ProfesorCurso(models.Model):
 
     class Meta:
         db_table = "profesor_curso"
+     
