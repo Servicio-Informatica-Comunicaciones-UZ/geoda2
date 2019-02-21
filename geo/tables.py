@@ -58,6 +58,9 @@ class PodTable(tables.Table):
 
 class CursoTable(tables.Table):
 
+    def render_estado(self, record):
+        return record.estado.nombre
+
     class Meta:
         attrs = {"class": "table table-striped table-hover cabecera-azul"}
         model = Curso

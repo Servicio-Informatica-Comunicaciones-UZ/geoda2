@@ -69,7 +69,7 @@ class MisCursosView(LoginRequiredMixin, SingleTableView):
     def get_queryset(self):
         fecha = date.today()
         anyo_academico = fecha.year - 1 if fecha.month < 10 else fecha.year
-        return Curso.objects.filter(autorizador=self.request.user.id, anyo_academico=2018)
+        return Curso.objects.filter(profesores=self.request.user.id, anyo_academico=2018)
 
     table_class = CursoTable
-    template_name = "pod/mis-asignaturas.html"
+    template_name = "curso/mis-cursos.html"

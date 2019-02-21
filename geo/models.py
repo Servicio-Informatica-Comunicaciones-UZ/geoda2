@@ -194,10 +194,10 @@ class Curso(models.Model):
 class ProfesorCurso(models.Model):
 
     id = models.IntegerField(primary_key=True)
-    curso_id = models.ForeignKey(
+    curso = models.ForeignKey(
         "Curso", models.DO_NOTHING
     )
-    profesor_id = models.ForeignKey(
+    profesor = models.ForeignKey(
         "accounts.CustomUser", models.DO_NOTHING
     )
     fecha_alta = models.DateTimeField(
