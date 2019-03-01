@@ -3,12 +3,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views import View
+from django.views.generic.edit import CreateView
 from django.views.generic import DetailView, ListView, TemplateView
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin, SingleTableView
 from django_tables2 import RequestConfig
 from .models import AsignaturaSigma, Curso, Pod
 from .tables import PodTable, CursoTable
+from .forms import SolicitaForm
 
 
 class HomePageView(TemplateView):
@@ -73,3 +75,9 @@ class MisCursosView(LoginRequiredMixin, SingleTableView):
 
     table_class = CursoTable
     template_name = "curso/mis-cursos.html"
+
+class SolicitarCursoNoRegladoView(LoginRequiredMixin, CreateView):
+
+    model = Curso
+    template_name = "curso/solicitar.html"
+    form_class = SolicitaForm
