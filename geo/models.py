@@ -188,6 +188,9 @@ class Curso(models.Model):
     )
     profesores = models.ManyToManyField("accounts.CustomUser",related_name='profesores', through="ProfesorCurso")
 
+    def get_absolute_url(self):
+        return "/curso/%i/" % self.id
+
     class Meta:
         db_table = "curso"
 

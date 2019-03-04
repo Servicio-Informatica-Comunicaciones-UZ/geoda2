@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block extracss %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.2/css/bootstrap-select.min.css">
+{% endblock extracss %}
+
 {% block title %}Solicitar curso no reglado {% endblock title %}
 
 {% block content %}
@@ -19,7 +23,7 @@
     </div>
     <br>
     
-    <form action="/contact/" method="post">
+    <form action="/curso/solicitar" method="post">
         {% csrf_token %}
         {% for field in form %}
             <div class="form-group">
@@ -28,8 +32,12 @@
                 {{ field }} 
             </div>
         {% endfor %}
-        <input type="submit" value="Solicitar curso" />
+        <input class="btn btn-secondary btn-lg" type="submit" value="Solicitar curso" />
     </form>
 </div>
 
 {% endblock content %}
+
+{% block extrajs %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.2/js/bootstrap-select.min.js"></script>
+{% endblock extrajs %}

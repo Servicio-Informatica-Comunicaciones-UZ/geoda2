@@ -81,3 +81,7 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, CreateView):
     model = Curso
     template_name = "curso/solicitar.html"
     form_class = SolicitaForm
+
+    def form_valid(self, form):
+
+        return super().form_valid(form)
