@@ -33,7 +33,7 @@
   </head>
   <body>
     <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-azul mb-4">
-      <a class="navbar-brand" href="http://www.unizar.es">
+      <a class="navbar-brand" href="/">
         <span class="icon-logoUZ"></span> <span class="screen-reader">Universidad de Zaragoza</span>
       </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
@@ -42,6 +42,19 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+              {% if user.is_authenticated %}
+                <a class="nav-link dropdown-toggle" href="" id="cursoMenu"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="fas fa-graduation-cap"></i>&nbsp; Cursos
+                </a>
+                <div class="dropdown-menu" aria-labelledby="cursoMenu">
+                  <a class="dropdown-item" href="/curso/mis-cursos"><i class="fas fa-list-alt"></i> Mis cursos</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="/curso/solicitar"><i class="fas fa-envelope-open"></i> Solicitar no reglado</a>
+                </div>
+              {% endif %}
+            </li>
             <li class="nav-item"><a class='nav-link' href="/ayuda"><i class="fas fa-question-circle"></i> &nbsp;Ayuda</a></li>
             <li class="nav-item">
               {% if user.is_authenticated %}
