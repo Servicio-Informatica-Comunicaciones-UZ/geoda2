@@ -58,8 +58,18 @@ class PodTable(tables.Table):
 
 class CursoTable(tables.Table):
 
+    enlace = tables.Column(empty_values=(), verbose_name="")
+
     def render_estado(self, record):
         return record.estado.nombre
+
+    def render_enlace(self, record):
+
+        return mark_safe(
+            "<a href={0}>Ver&nbsp;ficha del&nbsp;curso</a>".format(
+                reverse("curso-detail", args=[record.id])
+            )
+        )
 
     class Meta:
         attrs = {"class": "table table-striped table-hover cabecera-azul"}
@@ -69,6 +79,7 @@ class CursoTable(tables.Table):
             "anyo_academico",
             "fecha_solicitud",
             "fecha_autorizacion",
-            "estado"
+            "estado",
+            "enlace"
         )
         template_name = "django_tables2/bootstrap4.html"    

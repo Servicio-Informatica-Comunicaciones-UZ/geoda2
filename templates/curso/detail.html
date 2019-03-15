@@ -21,11 +21,11 @@
         </tr>
         <tr>
             <th>Año académico</th>
-            <td>{{ curso.anyo_academico }}</td>
+            <td>{{ curso.anyo_academico|default_if_none:"—" }}</td>
         </tr>
         <tr>
             <th>Asignatura Sigma</th>
-            <td>{{ curso.asignatura_sigma.id|default:"—" }}</td>
+            <td>{{ curso.asignatura_sigma.id|default_if_none:"—" }}</td>
         </tr>
 
         <tr>
@@ -38,15 +38,15 @@
         </tr>
         <tr>
             <th>Fecha de autorización</th>
-            <td>{{ curso.fecha_autorizacion }}</td>
+            <td>{{ curso.fecha_autorizacion|default_if_none:"—" }}</td>
         </tr>
         <tr>
             <th>Autorizador</th>
-            <td>{{ curso.autorizador }}</td>
+            <td>{{ curso.autorizador|default_if_none:"—" }}</td>
         </tr>
         <tr>
             <th>Fecha de creación</th>
-            <td>{{ curso.fecha_creacion }}</td>
+            <td>{{ curso.fecha_creacion|default_if_none:"—" }}</td>
         </tr>
         <!-- 
         <tr>
@@ -56,15 +56,15 @@
         -->
         <tr>
             <th>Código en plataforma</th>
-            <td>{{ curso.id_nk }}</td>
+            <td>{{ curso.id_nk|default_if_none:"—" }}</td>
         </tr>
         <tr>
             <th>URL</th>
-            <td>{{ curso.url }}</td>
+            <td><a target="_blank" href="{{ curso.url }}">{{ curso.url |default_if_none:"—" }}</a></td>
         </tr>
         <tr>
             <th>Categoría</th>
-            <td>{{ curso.categoria.id }} - {{ curso.categoria.nombre }}</td>
+            <td>{{ curso.categoria.id }} - {{ curso.categoria.nombre |default_if_none:"—" }}</td>
         </tr>
         <tr>
             <th>Motivo solicitud</th>

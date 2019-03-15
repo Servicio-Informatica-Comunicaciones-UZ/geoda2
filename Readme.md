@@ -5,13 +5,13 @@ Gestión de Enseñanza Online en Django 2
 **Python 3**:
 
 ```bash
-    sudo apt-get install python3
+sudo apt-get install python3
 ```
 
 **Pip 3**, instalador de paquetes Python3:
 
 ```bash
-    sudo apt-get install -y python3-pip
+sudo apt-get install -y python3-pip
 ```
 
 **PipEnv** para virtualizar los paquetes Python y facilitar el trabajo:

@@ -1,6 +1,6 @@
 from datetime import date
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect  
 from django.shortcuts import render
 from django.views import View
 from django.views.generic.edit import CreateView
@@ -11,6 +11,7 @@ from django_tables2 import RequestConfig
 from .models import AsignaturaSigma, Curso, Pod
 from .tables import PodTable, CursoTable
 from .forms import SolicitaForm
+from .methods import *
 
 
 class HomePageView(TemplateView):
@@ -68,20 +69,37 @@ class MisAsignaturasView(LoginRequiredMixin, SingleTableView):
 
 class MisCursosView(LoginRequiredMixin, SingleTableView):
 
+    table_class = CursoTable
+    año_academico = devuelveAñoAcademicoActual()
+    curso = "{}/{}".format(año_academico, año_academico + 1)
+    template_name = "curso/mis-cursos.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(MisCursosView, self).get_context_data(**kwargs)
+        context['curso'] = self.curso
+        return context
+
     def get_queryset(self):
         fecha = date.today()
         anyo_academico = fecha.year - 1 if fecha.month < 10 else fecha.year
-        return Curso.objects.filter(profesores=self.request.user.id, anyo_academico=2018)
-
-    table_class = CursoTable
-    template_name = "curso/mis-cursos.html"
+        return Curso.objects.filter(profesores=self.request.user.id, anyo_academico=self.año_academico)
 
 class SolicitarCursoNoRegladoView(LoginRequiredMixin, CreateView):
 
     model = Curso
     template_name = "curso/solicitar.html"
-    form_class = SolicitaForm
+
+    def get(self, request, *args, **kwargs):
+        formulario = SolicitaForm(user=self.request.user)
+        return render(request, self.template_name, {'form': formulario})
+
+    def post(self, request, *args, **kwargs):
+        formulario = SolicitaForm(data=request.POST, user=self.request.user)
+        if formulario.is_valid():
+            formulario.save()
+            return HttpResponseRedirect('/curso/mis-cursos')
+        
+        return render(request, self.template_name, {'form': formulario})
 
     def form_valid(self, form):
-
         return super().form_valid(form)
