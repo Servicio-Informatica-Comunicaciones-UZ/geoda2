@@ -56,6 +56,7 @@ class PodTable(tables.Table):
         )
         template_name = "django_tables2/bootstrap4.html"
 
+
 class CursoTable(tables.Table):
 
     enlace = tables.Column(empty_values=(), verbose_name="")
@@ -80,6 +81,6 @@ class CursoTable(tables.Table):
             "fecha_solicitud",
             "fecha_autorizacion",
             "estado",
-            "enlace"
+            "enlace",
         )
-        template_name = "django_tables2/bootstrap4.html"    
+        template_name = "django_tables2/bootstrap4.html"

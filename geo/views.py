@@ -1,6 +1,6 @@
 from datetime import date
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, HttpResponseRedirect  
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
 from django.views.generic.edit import CreateView
@@ -23,9 +23,9 @@ class ASCrearCursoView(LoginRequiredMixin, View):
     Si la creación tiene éxito, el navegador es redirigido a la ficha del curso."""
 
     def get(self, request, *args, **kwargs):
-        asignatura_sigma = AsignaturaSigma.objects.get(id=kwargs['pk'])
+        asignatura_sigma = AsignaturaSigma.objects.get(id=kwargs["pk"])
         curso_existente = asignatura_sigma.get_curso_or_none()
-        if (curso_existente):
+        if curso_existente:
             # TODO: Mensaje Flash
             # TODO: Redirect
             return HttpResponse("El curso ya estaba creado.")
@@ -67,6 +67,7 @@ class MisAsignaturasView(LoginRequiredMixin, SingleTableView):
 
     # filterset_class = PodFilter
 
+
 class MisCursosView(LoginRequiredMixin, SingleTableView):
 
     table_class = CursoTable
@@ -76,13 +77,16 @@ class MisCursosView(LoginRequiredMixin, SingleTableView):
 
     def get_context_data(self, **kwargs):
         context = super(MisCursosView, self).get_context_data(**kwargs)
-        context['curso'] = self.curso
+        context["curso"] = self.curso
         return context
 
     def get_queryset(self):
         fecha = date.today()
         anyo_academico = fecha.year - 1 if fecha.month < 10 else fecha.year
-        return Curso.objects.filter(profesores=self.request.user.id, anyo_academico=self.año_academico)
+        return Curso.objects.filter(
+            profesores=self.request.user.id, anyo_academico=self.año_academico
+        )
+
 
 class SolicitarCursoNoRegladoView(LoginRequiredMixin, CreateView):
 
@@ -91,15 +95,15 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, CreateView):
 
     def get(self, request, *args, **kwargs):
         formulario = SolicitaForm(user=self.request.user)
-        return render(request, self.template_name, {'form': formulario})
+        return render(request, self.template_name, {"form": formulario})
 
     def post(self, request, *args, **kwargs):
         formulario = SolicitaForm(data=request.POST, user=self.request.user)
         if formulario.is_valid():
             formulario.save()
-            return HttpResponseRedirect('/curso/mis-cursos')
-        
-        return render(request, self.template_name, {'form': formulario})
+            return HttpResponseRedirect("/curso/mis-cursos")
+
+        return render(request, self.template_name, {"form": formulario})
 
     def form_valid(self, form):
         return super().form_valid(form)

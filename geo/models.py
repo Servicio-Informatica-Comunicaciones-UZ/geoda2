@@ -79,9 +79,7 @@ class Pod(models.Model):
     anyo_academico = models.IntegerField(
         blank=True, null=True, verbose_name="Año académico"
     )
-    nip = models.CharField(
-        max_length=10, blank=True, null=True, verbose_name="NIP"
-    )
+    nip = models.CharField(max_length=10, blank=True, null=True, verbose_name="NIP")
     apellido1 = models.CharField(
         max_length=32, blank=True, null=True, verbose_name="Primer apellido"
     )
@@ -141,7 +139,7 @@ class Estado(models.Model):
     nombre = models.CharField(max_length=127, blank=True, null=True)
 
     class Meta:
-        db_table = 'estado'
+        db_table = "estado"
 
 
 class Curso(models.Model):
@@ -179,14 +177,16 @@ class Curso(models.Model):
         null=True,
         verbose_name="Asignatura Sigma",
     )
-    estado = models.ForeignKey('Estado', models.DO_NOTHING, blank=True, null=True)
+    estado = models.ForeignKey("Estado", models.DO_NOTHING, blank=True, null=True)
     motivo_solicitud = models.TextField(
         blank=True, null=True, verbose_name="Motivo de la solicitud"
     )
     motivo_denegacion = models.TextField(
         blank=True, null=True, verbose_name="Motivo de la denegación"
     )
-    profesores = models.ManyToManyField("accounts.CustomUser",related_name='profesores', through="ProfesorCurso")
+    profesores = models.ManyToManyField(
+        "accounts.CustomUser", related_name="profesores", through="ProfesorCurso"
+    )
 
     def get_absolute_url(self):
         return "/curso/%i/" % self.id
@@ -194,15 +194,12 @@ class Curso(models.Model):
     class Meta:
         db_table = "curso"
 
+
 class ProfesorCurso(models.Model):
 
     id = models.IntegerField(primary_key=True)
-    curso = models.ForeignKey(
-        "Curso", models.DO_NOTHING
-    )
-    profesor = models.ForeignKey(
-        "accounts.CustomUser", models.DO_NOTHING
-    )
+    curso = models.ForeignKey("Curso", models.DO_NOTHING)
+    profesor = models.ForeignKey("accounts.CustomUser", models.DO_NOTHING)
     fecha_alta = models.DateTimeField(
         blank=True, null=True, verbose_name="Fecha de alta"
     )
@@ -212,4 +209,3 @@ class ProfesorCurso(models.Model):
 
     class Meta:
         db_table = "profesor_curso"
-     
