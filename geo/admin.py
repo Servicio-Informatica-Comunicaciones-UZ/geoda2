@@ -1,7 +1,9 @@
 from django.contrib import admin
 
-# Register your models here.
 from .models import AsignaturaSigma, Categoria, Curso, Estado, Pod
+
+
+# Register your models here.
 
 admin.site.register(AsignaturaSigma)
 admin.site.register(Categoria)

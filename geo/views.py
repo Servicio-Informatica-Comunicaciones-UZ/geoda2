@@ -1,15 +1,17 @@
 from datetime import date
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
-from django.views.generic.edit import CreateView
 from django.views.generic import DetailView, TemplateView
+from django.views.generic.edit import CreateView
 from django_tables2.views import SingleTableView
-from .models import AsignaturaSigma, Curso, Pod
-from .tables import PodTable, CursoTable
+
 from .forms import SolicitaForm
 from .methods import devuelveAñoAcademicoActual
+from .models import AsignaturaSigma, Curso, Pod
+from .tables import CursoTable, PodTable
 
 
 class HomePageView(TemplateView):

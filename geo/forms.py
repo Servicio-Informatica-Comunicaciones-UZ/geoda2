@@ -1,7 +1,9 @@
 import datetime
+
 from django.forms import ModelForm
-from .models import Curso, Categoria, Estado, ProfesorCurso
+
 from .methods import devuelveAñoAcademicoActual
+from .models import Categoria, Curso, Estado, ProfesorCurso
 
 
 class SolicitaForm(ModelForm):

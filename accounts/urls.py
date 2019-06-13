@@ -1,6 +1,7 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
 
+
 urlpatterns = [
     # Evita que un usuario ya autenticado pueda volver a la página de inicio de sesión
     path(

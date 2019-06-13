@@ -1,14 +1,16 @@
 from django.urls import path
 
-# from . import views
 from .views import (
-    HomePageView,
     ASCrearCursoView,
     CursoDetailView,
+    HomePageView,
     MisAsignaturasView,
     MisCursosView,
     SolicitarCursoNoRegladoView,
 )
+
+
+# from . import views
 
 urlpatterns = [
     path("", HomePageView.as_view(), name="home"),
