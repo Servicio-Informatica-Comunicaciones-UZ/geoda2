@@ -1,4 +1,4 @@
-""" Métodos de ayuda útiles 
+""" Métodos de ayuda útiles
 en cualquier parte del código
 """
 

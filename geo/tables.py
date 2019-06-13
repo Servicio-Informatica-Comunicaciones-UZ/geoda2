@@ -21,12 +21,9 @@ class PodTable(tables.Table):
         else:
             return mark_safe(
                 "<a href={0}>Crear&nbsp;curso en la plataforma</a>".format(
-                    # "/curso/crear-desde-asignatura?asignatura_sigma_id=" + str(asig.id)
                     reverse("as-crear-curso", args=[asig.id])
                 )
             )
-
-    # enlace = tables.LinkColumn('ver-curso', text='Ver ficha del curso', args=[tables.A('asignatura_id')], orderable=False, empty_values=())
 
     nombre_estudio = tables.Column(empty_values=(), verbose_name="Estudio")
 

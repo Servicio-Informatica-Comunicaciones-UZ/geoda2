@@ -16,20 +16,20 @@
         <i class="fas fa-info-circle"></i>
             Por favor, asegúrese de que el curso solicitado no tiene asociado ningún código SIGMA.
             La solicitud de curso debe ser resuelta por la dirección del campus virtual, recibirá un correo electrónico con la resolución.</p>
-            <div class="flash-notice"><strong>IMPORTANTE:</strong> Leer ANTES de hacer la solicitud la 
+            <div class="flash-notice"><strong>IMPORTANTE:</strong> Leer ANTES de hacer la solicitud la
                     <a href="https://ayudica.unizar.es/otrs/public.pl?Action=PublicFAQZoom;ItemID=82" target="_blank">FAQ sobre los cursos no reglados</a>
             </div>
 
     </div>
     <br>
-    
+
     <form action="/curso/solicitar" method="post">
         {% csrf_token %}
         {% for field in form %}
             <div class="form-group">
                 {{ field.errors }}
                 {{ field.label_tag }}
-                {{ field }} 
+                {{ field }}
             </div>
         {% endfor %}
         <input class="btn btn-secondary btn-lg" type="submit" value="Solicitar curso" />

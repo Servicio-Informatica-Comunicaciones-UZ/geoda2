@@ -1,7 +1,7 @@
-from django import forms
+import datetime
 from django.forms import ModelForm
 from .models import Curso, Categoria, Estado, ProfesorCurso
-from .methods import *
+from .methods import devuelveAñoAcademicoActual
 
 
 class SolicitaForm(ModelForm):
@@ -32,7 +32,7 @@ class SolicitaForm(ModelForm):
         self.fields["nombre"].widget.attrs["class"] = "form-control"
 
     def campoCategoria(self):
-        """ Define el campo categoria como un select entre 
+        """ Define el campo categoria como un select entre
         las distintas categorias de este año académico con
         la posibilidad de buscar entre las opciones.
         """
@@ -81,7 +81,8 @@ class SolicitaForm(ModelForm):
         # Guardamos el curso
         curso = super(SolicitaForm, self).save(commit=commit)
 
-        # Añadimos por defecto al profesor que solicita el curso a la lista de profesores del curso
+        # Añadimos por defecto al profesor que solicita el curso
+        # a la lista de profesores del curso
         profesor_curso = ProfesorCurso(
             curso=curso, profesor=self.user, fecha_alta=datetime.now()
         )

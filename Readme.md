@@ -46,5 +46,3 @@ Django version 2.1, using settings 'geoda_project.settings'
 Starting development server at http://127.0.0.1:8000/
 Quit the server with CONTROL-C.
 ```
-
-

@@ -4,14 +4,12 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
 from django.views.generic.edit import CreateView
-from django.views.generic import DetailView, ListView, TemplateView
-from django_filters.views import FilterView
-from django_tables2.views import SingleTableMixin, SingleTableView
-from django_tables2 import RequestConfig
+from django.views.generic import DetailView, TemplateView
+from django_tables2.views import SingleTableView
 from .models import AsignaturaSigma, Curso, Pod
 from .tables import PodTable, CursoTable
 from .forms import SolicitaForm
-from .methods import *
+from .methods import devuelveAñoAcademicoActual
 
 
 class HomePageView(TemplateView):
@@ -33,7 +31,8 @@ class ASCrearCursoView(LoginRequiredMixin, View):
         return HttpResponse(asignatura_sigma.nombre_asignatura)
 
     def _cargar_asignatura_en_curso(self, asignatura):
-        """Crea una nueva instancia de Curso con los datos de la asignatura Sigma indicada."""
+        """Crea una nueva instancia de Curso
+        con los datos de la asignatura Sigma indicada."""
         pass
 
 
@@ -42,25 +41,15 @@ class CursoDetailView(LoginRequiredMixin, DetailView):
     template_name = "curso/detail.html"
 
 
-# class MisAsignaturasView(ListView):  # We subclass ListView.  It returns object_list .
-#    model = Pod
-#    template_name = 'pod/mis-asignaturas.html'
-#    # https://docs.djangoproject.com/en/2.1/topics/class-based-views/generic-display/#making-friendly-template-contexts
-#    context_object_name = 'pod_list'  # Le damos un nombre más descriptivo que object_list
-
-# def misAsignaturas(request):
-#    table = PodTable(Pod.objects.all())
-#    RequestConfig(request).configure(table)
-#    return render(request, 'pod/mis-asignaturas.html', {'table': table})
-
-
 class MisAsignaturasView(LoginRequiredMixin, SingleTableView):
     # model = Pod
     # queryset = Pod.objects.all()
     def get_queryset(self):
         fecha = date.today()
         anyo_academico = fecha.year - 1 if fecha.month < 10 else fecha.year
-        return Pod.objects.filter(nip=self.request.user.username, anyo_academico=2018)
+        return Pod.objects.filter(
+            nip=self.request.user.username, anyo_academico=anyo_academico
+        )
 
     table_class = PodTable
     template_name = "pod/mis-asignaturas.html"
@@ -81,8 +70,6 @@ class MisCursosView(LoginRequiredMixin, SingleTableView):
         return context
 
     def get_queryset(self):
-        fecha = date.today()
-        anyo_academico = fecha.year - 1 if fecha.month < 10 else fecha.year
         return Curso.objects.filter(
             profesores=self.request.user.id, anyo_academico=self.año_academico
         )
