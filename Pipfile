@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "==2.1"
+django = "==2.2"
 mysqlclient = "*"
 django-tables2 = "*"
 django-filter = "*"
@@ -13,4 +13,4 @@ django-filter = "*"
 pylint = "*"
 
 [requires]
-python_version = "3.5"
+python_version = "3.7"
