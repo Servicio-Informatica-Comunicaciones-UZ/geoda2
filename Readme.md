@@ -1,5 +1,5 @@
-Gestión de Enseñanza Online en Django 2
-=======================================
+# Gestión de Enseñanza Online en Django 2
+
 # Instalación
 
 **Python 3**:
@@ -24,20 +24,26 @@ sudo apt install pipenv
 ```
 
 **Repositorio**:
+
 ```bash
 git clone https://gitlab.unizar.es/680350/geoda2.git
 ```
+
 Vamos dentro de la carpeta,
+
 ```bash
 cd geoda2
 ```
-Ejecutamos el *shell* de PipEnv, y arrancamos el servidor web:
+
+Ejecutamos el _shell_ de PipEnv, y arrancamos el servidor web:
+
 ```bash
 pipenv shell
 python3 manage.py runserver
 ```
 
 **Resultado**:
+
 ```
 ...
 ...

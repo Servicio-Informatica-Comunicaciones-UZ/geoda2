@@ -1,80 +1,84 @@
-{% extends 'base.html' %} {% block title %}Detalles del curso nº {{ curso.id }}{% endblock title %} {% block content %}
-<div class='container-blanco'>
-    <h1>Detalles del curso nº {{ curso.id }}</h1>
-    <hr><br>
+{% extends 'base.html' %}
+{% block title %}Detalles del curso nº {{ curso.id }}{% endblock title %}
+{% block content %}
+<div class="container-blanco">
+  <h1>Detalles del curso nº {{ curso.id }}</h1>
+  <hr />
+  <br />
 
-    <div class="alert-info alert fade-in">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+  <div class="alert-info alert fade-in">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 
-        <i class="fas fa-info-circle"></i>Para acceder como profesor al curso en la plataforma ADD,
-        es posible que tenga que cerrar la sesión en la plataforma y volver a entrar.
-    </div><br>
+    <i class="fas fa-info-circle"></i>Para acceder como profesor al curso en la plataforma ADD, es posible que tenga que
+    cerrar la sesión en la plataforma y volver a entrar.
+  </div>
+  <br />
 
-    <table class='table table-striped table-hover'>
-        <tr>
-            <th>Id</th>
-            <td>{{ curso.id }}</td>
-        </tr>
-        <tr>
-            <th>Nombre</th>
-            <td>{{ curso.nombre }}</td>
-        </tr>
-        <tr>
-            <th>Año académico</th>
-            <td>{{ curso.anyo_academico|default_if_none:"—" }}</td>
-        </tr>
-        <tr>
-            <th>Asignatura Sigma</th>
-            <td>{{ curso.asignatura_sigma.id|default_if_none:"—" }}</td>
-        </tr>
+  <table class="table table-striped table-hover">
+    <tr>
+      <th>Id</th>
+      <td>{{ curso.id }}</td>
+    </tr>
+    <tr>
+      <th>Nombre</th>
+      <td>{{ curso.nombre }}</td>
+    </tr>
+    <tr>
+      <th>Año académico</th>
+      <td>{{ curso.anyo_academico|default_if_none:"—" }}</td>
+    </tr>
+    <tr>
+      <th>Asignatura Sigma</th>
+      <td>{{ curso.asignatura_sigma.id|default_if_none:"—" }}</td>
+    </tr>
 
-        <tr>
-            <th>Estado</th>
-            <td>{{ curso.estado.nombre }}</td> <!-- FIXME -->
-        </tr>
-        <tr>
-            <th>Fecha de solicitud</th>
-            <td>{{ curso.fecha_solicitud }}</td>
-        </tr>
-        <tr>
-            <th>Fecha de autorización</th>
-            <td>{{ curso.fecha_autorizacion|default_if_none:"—" }}</td>
-        </tr>
-        <tr>
-            <th>Autorizador</th>
-            <td>{{ curso.autorizador|default_if_none:"—" }}</td>
-        </tr>
-        <tr>
-            <th>Fecha de creación</th>
-            <td>{{ curso.fecha_creacion|default_if_none:"—" }}</td>
-        </tr>
-        <!--
+    <tr>
+      <th>Estado</th>
+      <td>{{ curso.estado.nombre }}</td>
+      <!-- FIXME -->
+    </tr>
+    <tr>
+      <th>Fecha de solicitud</th>
+      <td>{{ curso.fecha_solicitud }}</td>
+    </tr>
+    <tr>
+      <th>Fecha de autorización</th>
+      <td>{{ curso.fecha_autorizacion|default_if_none:"—" }}</td>
+    </tr>
+    <tr>
+      <th>Autorizador</th>
+      <td>{{ curso.autorizador|default_if_none:"—" }}</td>
+    </tr>
+    <tr>
+      <th>Fecha de creación</th>
+      <td>{{ curso.fecha_creacion|default_if_none:"—" }}</td>
+    </tr>
+    <!--
         <tr>
             <th>Cód. plataforma</th>
             <td>{{  curso.plataforma_id }}</td>
         </tr>
         -->
-        <tr>
-            <th>Código en plataforma</th>
-            <td>{{ curso.id_nk|default_if_none:"—" }}</td>
-        </tr>
-        <tr>
-            <th>URL</th>
-            <td><a target="_blank" href="{{ curso.url }}">{{ curso.url |default_if_none:"—" }}</a></td>
-        </tr>
-        <tr>
-            <th>Categoría</th>
-            <td>{{ curso.categoria.id }} - {{ curso.categoria.nombre |default_if_none:"—" }}</td>
-        </tr>
-        <tr>
-            <th>Motivo solicitud</th>
-            <td>{{ curso.motivo_solicitud|default_if_none:"—" }}</td>
-        </tr>
-        <tr>
-            <th>Motivo denegación</th>
-            <td>{{ curso.motivo_denegacion|default_if_none:"—" }}</td>
-        </tr>
-
-    </table>
+    <tr>
+      <th>Código en plataforma</th>
+      <td>{{ curso.id_nk|default_if_none:"—" }}</td>
+    </tr>
+    <tr>
+      <th>URL</th>
+      <td><a target="_blank" href="{{ curso.url }}">{{ curso.url |default_if_none:"—" }}</a></td>
+    </tr>
+    <tr>
+      <th>Categoría</th>
+      <td>{{ curso.categoria.id }} - {{ curso.categoria.nombre |default_if_none:"—" }}</td>
+    </tr>
+    <tr>
+      <th>Motivo solicitud</th>
+      <td>{{ curso.motivo_solicitud|default_if_none:"—" }}</td>
+    </tr>
+    <tr>
+      <th>Motivo denegación</th>
+      <td>{{ curso.motivo_denegacion|default_if_none:"—" }}</td>
+    </tr>
+  </table>
 </div>
 {% endblock content %}
