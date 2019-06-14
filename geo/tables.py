@@ -1,6 +1,7 @@
 import django_tables2 as tables
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
 
 from .models import Curso, Pod
 
@@ -58,14 +59,13 @@ class PodTable(tables.Table):
 class CursoTable(tables.Table):
 
     enlace = tables.Column(empty_values=(), verbose_name="")
-
-    def render_estado(self, record):
-        return record.estado.nombre
+    estado = tables.Column(accessor="estado.nombre", verbose_name=_("Estado"))
 
     def render_enlace(self, record):
-
         return mark_safe(
-            "<a href={0}>Ver&nbsp;ficha del&nbsp;curso</a>".format(
+            """<a href={0} class='btn btn-info btn-sm' title='Ver ficha del curso'>
+               <span class='far fa-eye' aria-hidden='true'></span>&nbsp;Ver&nbsp;ficha
+            </a>""".format(
                 reverse("curso-detail", args=[record.id])
             )
         )

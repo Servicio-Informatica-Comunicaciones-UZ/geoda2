@@ -1,14 +1,15 @@
-import datetime
+from datetime import datetime
 
 from django.forms import ModelForm
 
-from .methods import devuelveAñoAcademicoActual
-from .models import Categoria, Curso, Estado, ProfesorCurso
+from .models import Calendario, Categoria, Curso, Estado, ProfesorCurso
 
 
 class SolicitaForm(ModelForm):
-    """ Formulario para solicitar un curso no reglado
-    con el nombre, la categoría y el motivo de la solicitud.
+    """
+    Formulario para solicitar un curso no reglado.
+
+    Incluye el nombre, la categoría y el motivo de la solicitud.
     """
 
     class Meta:
@@ -27,20 +28,22 @@ class SolicitaForm(ModelForm):
         self.fields["motivo_solicitud"].widget.attrs["class"] = "form-control"
 
     def campoNombre(self):
-        """ Define el campo nombre del formulario
-        """
+        """Define el campo nombre del formulario."""
         self.fields["nombre"].required = True
         self.fields["nombre"].label = "Nombre del curso"
         self.fields["nombre"].widget.attrs["class"] = "form-control"
 
     def campoCategoria(self):
-        """ Define el campo categoria como un select entre
-        las distintas categorias de este año académico con
-        la posibilidad de buscar entre las opciones.
         """
+        Define el campo `categoría`.
+
+        Define el campo `categoria` como un select entre las distintas categorias de
+        este año académico con la posibilidad de buscar entre las opciones.
+        """
+        anyo_academico = Calendario.get_anyo_academico_actual()
         self.fields["categoria"].required = True
         self.fields["categoria"].widget.choices = (
-            Categoria.objects.filter(anyo_academico=devuelveAñoAcademicoActual())
+            Categoria.objects.filter(anyo_academico=anyo_academico)
             .values_list("id", "nombre")
             .order_by("nombre")
         )
@@ -52,8 +55,7 @@ class SolicitaForm(ModelForm):
         self.fields["categoria"].widget.attrs["data-size"] = "5"
 
     def clean(self):
-        """ Valida el formulario antes de registrar la solicitud
-        """
+        """Valida el formulario antes de registrar la solicitud."""
         formulario = super().clean()
         cc_nombre = formulario.get("nombre")
         cc_categoria = self.cleaned_data["categoria"]
@@ -72,20 +74,17 @@ class SolicitaForm(ModelForm):
                 )
 
     def save(self, commit=True):
-
-        # Añade la fecha de solicitud y el estado del curso en solicitado
+        """Añade la fecha de solicitud y cambia el estado del curso a Solicitado."""
         self.instance.fecha_solicitud = datetime.now()
         self.instance.estado = Estado(1)  # -> Solicitado
-        self.instance.anyo_academico = (
-            devuelveAñoAcademicoActual()
-        )  # Año académico en el que se hace la solicitud
+        self.instance.anyo_academico = Calendario.get_anyo_academico_actual()
 
         # Guardamos el curso
         curso = super(SolicitaForm, self).save(commit=commit)
 
-        # Añadimos por defecto al profesor que solicita el curso
-        # a la lista de profesores del curso
+        # Añadimos por omisión al profesor que solicita el curso
+        # a la lista de profesores del curso.
         profesor_curso = ProfesorCurso(
-            curso=curso, profesor=self.user, fecha_alta=datetime.now()
+            curso=curso, profesor=self.user, fecha_alta=datetime.today()
         )
         profesor_curso.save()

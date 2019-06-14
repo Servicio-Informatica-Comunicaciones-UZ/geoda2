@@ -1,4 +1,4 @@
-{% load static %}<!DOCTYPE html>
+{% load i18n static %}<!DOCTYPE html>
 <html lang="es">
   <head>
     <!-- Required meta tags -->
@@ -69,13 +69,16 @@
               aria-haspopup="true"
               aria-expanded="false"
             >
-              <i class="fas fa-graduation-cap"></i>&nbsp; Cursos
+              <i class="fas fa-graduation-cap"></i>&nbsp; {% trans "Cursos" %}
             </a>
             <div class="dropdown-menu" aria-labelledby="cursoMenu">
-              <a class="dropdown-item" href="/curso/mis-cursos"><i class="fas fa-list-alt"></i> Mis cursos</a>
+              <a class="dropdown-item" href="{% url 'mis-cursos' %}"><span class="fas fa-th-list"></span> {% trans "Mis cursos" %}</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="/curso/solicitar"
-                ><i class="fas fa-envelope-open"></i> Solicitar no reglado</a
+              <a class="dropdown-item" href="{% url 'mis-asignaturas' %}">
+                <span class="fas fa-plus"></span> {% trans "Solicitar reglado" %}
+              </a>
+              <a class="dropdown-item" href="{% url 'curso-solicitar' %}"
+                ><span class="far fa-envelope-open"></span> {% trans "Solicitar no reglado" %}</a
               >
             </div>
             {% endif %}

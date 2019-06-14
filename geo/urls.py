@@ -23,8 +23,6 @@ urlpatterns = [
     path("pod/mis-asignaturas", MisAsignaturasView.as_view(), name="mis-asignaturas"),
     path("curso/mis-cursos", MisCursosView.as_view(), name="mis-cursos"),
     path(
-        "curso/solicitar",
-        SolicitarCursoNoRegladoView.as_view(),
-        name="solicitar-curso-no-reglado",
+        "curso/solicitar", SolicitarCursoNoRegladoView.as_view(), name="curso-solicitar"
     ),
 ]

@@ -9,18 +9,22 @@ from django.views.generic.edit import CreateView
 from django_tables2.views import SingleTableView
 
 from .forms import SolicitaForm
-from .methods import devuelveAñoAcademicoActual
-from .models import AsignaturaSigma, Curso, Pod
+from .models import AsignaturaSigma, Calendario, Curso, Pod
 from .tables import CursoTable, PodTable
 
 
 class HomePageView(TemplateView):
+    """Muestra la página principal."""
+
     template_name = "home.html"
 
 
 class ASCrearCursoView(LoginRequiredMixin, View):
-    """Crea un nuevo Curso para una asignatura Sigma.
-    Si la creación tiene éxito, el navegador es redirigido a la ficha del curso."""
+    """
+    Crea un nuevo Curso para una asignatura Sigma.
+
+    Si la creación tiene éxito, el navegador es redirigido a la ficha del curso.
+    """
 
     def get(self, request, *args, **kwargs):
         asignatura_sigma = AsignaturaSigma.objects.get(id=kwargs["pk"])
@@ -33,17 +37,24 @@ class ASCrearCursoView(LoginRequiredMixin, View):
         return HttpResponse(asignatura_sigma.nombre_asignatura)
 
     def _cargar_asignatura_en_curso(self, asignatura):
-        """Crea una nueva instancia de Curso
-        con los datos de la asignatura Sigma indicada."""
+        """
+        Crea una nueva instancia de `Curso`.
+
+        Crea una nueva instancia de Curso con los datos de la asignatura Sigma indicada.
+        """
         pass
 
 
 class CursoDetailView(LoginRequiredMixin, DetailView):
+    """Muestra información detallada de un curso."""
+
     model = Curso
     template_name = "curso/detail.html"
 
 
 class MisAsignaturasView(LoginRequiredMixin, SingleTableView):
+    """Muestra las asignaturas del usuario, según el POD, y permite crear cursos."""
+
     # model = Pod
     # queryset = Pod.objects.all()
     def get_queryset(self):
@@ -60,10 +71,11 @@ class MisAsignaturasView(LoginRequiredMixin, SingleTableView):
 
 
 class MisCursosView(LoginRequiredMixin, SingleTableView):
+    """Muestra los cursos creados por el usuario."""
 
     table_class = CursoTable
-    año_academico = devuelveAñoAcademicoActual()
-    curso = "{}/{}".format(año_academico, año_academico + 1)
+    anyo_academico = Calendario.get_anyo_academico_actual()
+    curso = f"{anyo_academico}/{anyo_academico + 1}"
     template_name = "curso/mis-cursos.html"
 
     def get_context_data(self, **kwargs):
@@ -73,11 +85,12 @@ class MisCursosView(LoginRequiredMixin, SingleTableView):
 
     def get_queryset(self):
         return Curso.objects.filter(
-            profesores=self.request.user.id, anyo_academico=self.año_academico
+            profesores=self.request.user.id, anyo_academico=self.anyo_academico
         )
 
 
 class SolicitarCursoNoRegladoView(LoginRequiredMixin, CreateView):
+    """Muestra un formulario para solicitar un curso no reglado."""
 
     model = Curso
     template_name = "curso/solicitar.html"

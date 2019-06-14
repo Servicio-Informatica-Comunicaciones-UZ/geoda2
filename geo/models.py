@@ -1,45 +1,48 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class AsignaturaSigma(models.Model):
-    plan_id_nk = models.IntegerField(blank=True, null=True, verbose_name="Cód. plan")
+    plan_id_nk = models.IntegerField(blank=True, null=True, verbose_name=_("Cód. plan"))
     nombre_estudio = models.CharField(
-        max_length=254, blank=True, null=True, verbose_name="Estudio"
+        max_length=254, blank=True, null=True, verbose_name=_("Estudio")
     )
-    centro_id = models.IntegerField(blank=True, null=True, verbose_name="Cód. centro")
+    centro_id = models.IntegerField(
+        blank=True, null=True, verbose_name=_("Cód. centro")
+    )
     nombre_centro = models.CharField(
-        max_length=150, blank=True, null=True, verbose_name="Centro"
+        max_length=150, blank=True, null=True, verbose_name=_("Centro")
     )
     tipo_estudio_id = models.IntegerField(
-        blank=True, null=True, verbose_name="Cód. tipo estudio"
+        blank=True, null=True, verbose_name=_("Cód. tipo estudio")
     )
     nombre_tipo_estudio = models.CharField(
-        max_length=30, blank=True, null=True, verbose_name="Tipo de estudio"
+        max_length=30, blank=True, null=True, verbose_name=_("Tipo de estudio")
     )
     asignatura_id = models.IntegerField(
-        blank=True, null=True, verbose_name="Cód. asignatura"
+        blank=True, null=True, verbose_name=_("Cód. asignatura")
     )
     nombre_asignatura = models.CharField(
-        max_length=120, blank=True, null=True, verbose_name="Asignatura"
+        max_length=120, blank=True, null=True, verbose_name=_("Asignatura")
     )
     prela_cu = models.CharField(max_length=5, blank=True, null=True)
     tipo_periodo = models.CharField(
-        max_length=1, blank=True, null=True, verbose_name="Tipo de periodo"
+        max_length=1, blank=True, null=True, verbose_name=_("Tipo de periodo")
     )
     valor_periodo = models.CharField(
-        max_length=2, blank=True, null=True, verbose_name="Periodo"
+        max_length=2, blank=True, null=True, verbose_name=_("Periodo")
     )
     cod_grupo_asignatura = models.IntegerField(
-        blank=True, null=True, verbose_name="Grupo"
+        blank=True, null=True, verbose_name=_("Grupo")
     )
     turno = models.CharField(max_length=1, blank=True, null=True)
     tipo_docencia = models.IntegerField(
-        blank=True, null=True, verbose_name="Tipo de docencia"
+        blank=True, null=True, verbose_name=_("Tipo de docencia")
     )
     anyo_academico = models.IntegerField(
-        blank=True, null=True, verbose_name="Año académico"
+        blank=True, null=True, verbose_name=_("Año académico")
     )
-    edicion = models.IntegerField(blank=True, null=True, verbose_name="Edición")
+    edicion = models.IntegerField(blank=True, null=True, verbose_name=_("Edición"))
 
     class Meta:
         db_table = "asignatura_sigma"
@@ -58,6 +61,19 @@ class AsignaturaSigma(models.Model):
             return Curso.objects.get(asignatura_sigma_id=self.id)
         except Curso.DoesNotExist:
             return None
+
+
+class Calendario(models.Model):
+    """Este modelo almacena el año académico actual."""
+
+    id = models.IntegerField(primary_key=True, verbose_name=_("Año académico"))
+
+    @staticmethod
+    def get_anyo_academico_actual():
+        return Calendario.objects.first().id
+
+    class Meta:
+        db_table = "calendario"
 
 
 class Pod(models.Model):
@@ -107,19 +123,21 @@ class Pod(models.Model):
 
 class Categoria(models.Model):
     plataforma_id = models.IntegerField(
-        blank=True, null=True, verbose_name="Cód. plataforma"
+        blank=True, null=True, verbose_name=_("Cód. plataforma")
     )
     id_nk = models.CharField(
-        max_length=45, blank=True, null=True, verbose_name="Cód. en plataforma"
+        max_length=45, blank=True, null=True, verbose_name=_("Cód. en plataforma")
     )
     nombre = models.CharField(max_length=250, blank=True, null=True)
     supercategoria = models.ForeignKey(
-        "self", models.DO_NOTHING, blank=True, null=True, verbose_name="Categoría padre"
+        "self", models.PROTECT, blank=True, null=True, verbose_name=_("Categoría padre")
     )
-    centro_id = models.IntegerField(blank=True, null=True, verbose_name="Cód. centro")
-    plan_id_nk = models.IntegerField(blank=True, null=True, verbose_name="Cód. plan")
+    centro_id = models.IntegerField(
+        blank=True, null=True, verbose_name=_("Cód. centro")
+    )
+    plan_id_nk = models.IntegerField(blank=True, null=True, verbose_name=_("Cód. plan"))
     anyo_academico = models.IntegerField(
-        blank=True, null=True, verbose_name="Año académico"
+        blank=True, null=True, verbose_name=_("Año académico")
     )
 
     class Meta:
@@ -138,44 +156,44 @@ class Estado(models.Model):
 class Curso(models.Model):
     nombre = models.CharField(max_length=200, blank=True, null=True)
     fecha_solicitud = models.DateTimeField(
-        blank=True, null=True, verbose_name="Fecha de solicitud"
+        blank=True, null=True, verbose_name=_("Fecha de solicitud")
     )
     fecha_autorizacion = models.DateTimeField(
-        blank=True, null=True, verbose_name="Fecha de autorización"
+        blank=True, null=True, verbose_name=_("Fecha de autorización")
     )
     autorizador = models.ForeignKey(
-        "accounts.CustomUser", models.DO_NOTHING, blank=True, null=True
+        "accounts.CustomUser", models.PROTECT, blank=True, null=True
     )
     plataforma_id = models.IntegerField(
-        blank=True, null=True, verbose_name="Cód. plataforma"
+        blank=True, null=True, verbose_name=_("Cód. plataforma")
     )
     id_nk = models.CharField(
-        max_length=45, blank=True, null=True, verbose_name="Código en plataforma"
+        max_length=45, blank=True, null=True, verbose_name=_("Código en plataforma")
     )
     fecha_creacion = models.DateTimeField(
-        blank=True, null=True, verbose_name="Fecha de creación"
+        blank=True, null=True, verbose_name=_("Fecha de creación")
     )
-    url = models.CharField(max_length=200, blank=True, null=True, verbose_name="URL")
+    url = models.CharField(max_length=200, blank=True, null=True, verbose_name=_("URL"))
     categoria = models.ForeignKey(
-        Categoria, models.DO_NOTHING, blank=True, null=True, verbose_name="Categoría"
+        Categoria, models.PROTECT, blank=True, null=True, verbose_name=_("Categoría")
     )
     anyo_academico = models.IntegerField(
-        blank=True, null=True, verbose_name="Año académico"
+        blank=True, null=True, verbose_name=_("Año académico")
     )
     asignatura_sigma = models.ForeignKey(
         "AsignaturaSigma",
-        models.DO_NOTHING,
+        models.PROTECT,
         unique=True,
         blank=True,
         null=True,
         verbose_name="Asignatura Sigma",
     )
-    estado = models.ForeignKey("Estado", models.DO_NOTHING, blank=True, null=True)
+    estado = models.ForeignKey("Estado", models.PROTECT, blank=True, null=True)
     motivo_solicitud = models.TextField(
-        blank=True, null=True, verbose_name="Motivo de la solicitud"
+        blank=True, null=True, verbose_name=_("Motivo de la solicitud")
     )
     motivo_denegacion = models.TextField(
-        blank=True, null=True, verbose_name="Motivo de la denegación"
+        blank=True, null=True, verbose_name=_("Motivo de la denegación")
     )
     profesores = models.ManyToManyField(
         "accounts.CustomUser", related_name="profesores", through="ProfesorCurso"
@@ -190,14 +208,14 @@ class Curso(models.Model):
 
 class ProfesorCurso(models.Model):
 
-    id = models.IntegerField(primary_key=True)
-    curso = models.ForeignKey("Curso", models.DO_NOTHING)
-    profesor = models.ForeignKey("accounts.CustomUser", models.DO_NOTHING)
+    id = models.AutoField(primary_key=True)
+    curso = models.ForeignKey("Curso", models.PROTECT)
+    profesor = models.ForeignKey("accounts.CustomUser", models.PROTECT)
     fecha_alta = models.DateTimeField(
-        blank=True, null=True, verbose_name="Fecha de alta"
+        blank=True, null=True, verbose_name=_("Fecha de alta")
     )
     fecha_baja = models.DateTimeField(
-        blank=True, null=True, verbose_name="Fecha de baja"
+        blank=True, null=True, verbose_name=_("Fecha de baja")
     )
 
     class Meta:
