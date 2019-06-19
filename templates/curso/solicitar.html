@@ -1,8 +1,5 @@
 {% extends 'base.html' %}
-
-{% block extracss %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.2/css/bootstrap-select.min.css">
-{% endblock extracss %}
+{% load crispy_forms_tags i18n %}
 
 {% block title %}Solicitar curso no reglado {% endblock title %}
 
@@ -13,31 +10,30 @@
     <hr><br>
 
     <div class="alert-info alert fade-in">
-        <i class="fas fa-info-circle"></i>
-            Por favor, asegúrese de que el curso solicitado no tiene asociado ningún código SIGMA.
-            La solicitud de curso debe ser resuelta por la dirección del campus virtual, recibirá un correo electrónico con la resolución.</p>
-            <div class="flash-notice"><strong>IMPORTANTE:</strong> Leer ANTES de hacer la solicitud la
-                    <a href="https://ayudica.unizar.es/otrs/public.pl?Action=PublicFAQZoom;ItemID=82" target="_blank">FAQ sobre los cursos no reglados</a>
-            </div>
-
+        <span class="fas fa-info-circle"></span>
+            <p>Por favor, asegúrese de que el curso solicitado no tiene asociado ningún código SIGMA.<br />
+            La solicitud de curso debe ser resuelta por la dirección del campus virtual.
+            Recibirá un correo electrónico con la resolución.</p>
+            <p><strong>IMPORTANTE:</strong>
+            Antes de hacer la solicitud, lea las
+            <a href="https://ayudica.unizar.es/otrs/public.pl?Action=PublicFAQZoom;ItemID=82" target="_blank">FAQ sobre los cursos no reglados</a>.
+            </p>
     </div>
     <br>
 
     <form action="/curso/solicitar" method="post">
         {% csrf_token %}
-        {% for field in form %}
-            <div class="form-group">
-                {{ field.errors }}
-                {{ field.label_tag }}
-                {{ field }}
-            </div>
-        {% endfor %}
-        <input class="btn btn-secondary btn-lg" type="submit" value="Solicitar curso" />
+        {{ form | crispy }}
+
+        <div class="btn-group" role="group" aria-label="Botones">
+            <a href="{% url 'mis-cursos' %}" class="btn btn-info">
+                <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
+            </a>
+            <button class="btn btn-warning" type="submit" title="{% trans 'Solicitar curso no reglado' %}">
+                <span class="fas fa-check"></span> {% trans 'Solicitar curso' %}
+            </button>
+        </div>
     </form>
 </div>
 
 {% endblock content %}
-
-{% block extrajs %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.2/js/bootstrap-select.min.js"></script>
-{% endblock extrajs %}

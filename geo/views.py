@@ -1,8 +1,6 @@
-from datetime import date
-
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
 from django.views import View
 from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import CreateView
@@ -58,8 +56,7 @@ class MisAsignaturasView(LoginRequiredMixin, SingleTableView):
     # model = Pod
     # queryset = Pod.objects.all()
     def get_queryset(self):
-        fecha = date.today()
-        anyo_academico = fecha.year - 1 if fecha.month < 10 else fecha.year
+        anyo_academico = Calendario.get_anyo_academico_actual()
         return Pod.objects.filter(
             nip=self.request.user.username, anyo_academico=anyo_academico
         )
@@ -103,9 +100,6 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, CreateView):
         formulario = SolicitaForm(data=request.POST, user=self.request.user)
         if formulario.is_valid():
             formulario.save()
-            return HttpResponseRedirect("/curso/mis-cursos")
+            return redirect("mis-cursos")
 
         return render(request, self.template_name, {"form": formulario})
-
-    def form_valid(self, form):
-        return super().form_valid(form)

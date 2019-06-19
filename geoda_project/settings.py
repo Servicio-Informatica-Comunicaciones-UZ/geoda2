@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "geo.apps.GeoConfig",
     "accounts.apps.AccountsConfig",
     # 3rd Party
+    "crispy_forms",  # https://github.com/django-crispy-forms/django-crispy-forms
     "django_filters",  # https://pypi.org/project/django-filter/
     "django_tables2",  # https://github.com/jieter/django-tables2
 ]
@@ -128,3 +129,6 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 AUTH_USER_MODEL = "accounts.CustomUser"
 LOGIN_REDIRECT_URL = "mis-asignaturas"
 LOGOUT_REDIRECT_URL = "home"
+
+# CRISPY FORMS
+CRISPY_TEMPLATE_PACK = "bootstrap4"

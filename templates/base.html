@@ -72,13 +72,13 @@
               <i class="fas fa-graduation-cap"></i>&nbsp; {% trans "Cursos" %}
             </a>
             <div class="dropdown-menu" aria-labelledby="cursoMenu">
-              <a class="dropdown-item" href="{% url 'mis-cursos' %}"><span class="fas fa-th-list"></span> {% trans "Mis cursos" %}</a>
+              <a class="dropdown-item" href="{% url 'mis-cursos' %}"><span class="fas fa-th-list"></span>&nbsp; {% trans "Mis cursos" %}</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="{% url 'mis-asignaturas' %}">
-                <span class="fas fa-plus"></span> {% trans "Solicitar reglado" %}
+                <span class="fas fa-plus"></span>&nbsp; {% trans "Crear reglado" %}
               </a>
               <a class="dropdown-item" href="{% url 'curso-solicitar' %}"
-                ><span class="far fa-envelope-open"></span> {% trans "Solicitar no reglado" %}</a
+                ><span class="far fa-envelope-open"></span>&nbsp; {% trans "Solicitar no reglado" %}</a
               >
             </div>
             {% endif %}

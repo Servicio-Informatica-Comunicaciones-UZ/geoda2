@@ -8,6 +8,7 @@ django = "==2.2"
 mysqlclient = "*"
 django-tables2 = "*"
 django-filter = "*"
+django-crispy-forms = "==1.7.2"
 
 [dev-packages]
 pylint = "*"

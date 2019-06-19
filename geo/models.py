@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 
@@ -55,6 +56,8 @@ class AsignaturaSigma(models.Model):
                 "anyo_academico",
             ),
         )
+        verbose_name = _("asignatura SIGM@")
+        verbose_name_plural = _("asignaturas SIGM@")
 
     def get_curso_or_none(self):
         try:
@@ -68,12 +71,12 @@ class Calendario(models.Model):
 
     id = models.IntegerField(primary_key=True, verbose_name=_("Año académico"))
 
+    class Meta:
+        db_table = "calendario"
+
     @staticmethod
     def get_anyo_academico_actual():
         return Calendario.objects.first().id
-
-    class Meta:
-        db_table = "calendario"
 
 
 class Pod(models.Model):
@@ -133,16 +136,17 @@ class Categoria(models.Model):
         "self", models.PROTECT, blank=True, null=True, verbose_name=_("Categoría padre")
     )
     centro_id = models.IntegerField(
-        blank=True, null=True, verbose_name=_("Cód. centro")
+        blank=True, null=True, verbose_name=_("Cód. centro"), db_index=True
     )
     plan_id_nk = models.IntegerField(blank=True, null=True, verbose_name=_("Cód. plan"))
     anyo_academico = models.IntegerField(
-        blank=True, null=True, verbose_name=_("Año académico")
+        blank=True, null=True, verbose_name=_("Año académico"), db_index=True
     )
 
     class Meta:
         db_table = "categoria"
         unique_together = (("anyo_academico", "centro_id", "plan_id_nk"),)
+        verbose_name = _("categoría")
 
 
 class Estado(models.Model):
@@ -154,7 +158,7 @@ class Estado(models.Model):
 
 
 class Curso(models.Model):
-    nombre = models.CharField(max_length=200, blank=True, null=True)
+    nombre = models.CharField(max_length=200)
     fecha_solicitud = models.DateTimeField(
         blank=True, null=True, verbose_name=_("Fecha de solicitud")
     )
@@ -199,11 +203,11 @@ class Curso(models.Model):
         "accounts.CustomUser", related_name="profesores", through="ProfesorCurso"
     )
 
-    def get_absolute_url(self):
-        return "/curso/%i/" % self.id
-
     class Meta:
         db_table = "curso"
+
+    def get_absolute_url(self):
+        return reverse("curso-detail", args=[self.id])
 
 
 class ProfesorCurso(models.Model):
