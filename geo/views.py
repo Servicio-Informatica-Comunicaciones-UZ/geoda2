@@ -11,6 +11,12 @@ from .models import AsignaturaSigma, Calendario, Curso, Pod
 from .tables import CursoTable, PodTable
 
 
+class AyudaView(TemplateView):
+    """Muestra la página de ayuda."""
+
+    template_name = "ayuda.html"
+
+
 class HomePageView(TemplateView):
     """Muestra la página principal."""
 
@@ -53,8 +59,6 @@ class CursoDetailView(LoginRequiredMixin, DetailView):
 class MisAsignaturasView(LoginRequiredMixin, SingleTableView):
     """Muestra las asignaturas del usuario, según el POD, y permite crear cursos."""
 
-    # model = Pod
-    # queryset = Pod.objects.all()
     def get_queryset(self):
         anyo_academico = Calendario.get_anyo_academico_actual()
         return Pod.objects.filter(
@@ -63,8 +67,6 @@ class MisAsignaturasView(LoginRequiredMixin, SingleTableView):
 
     table_class = PodTable
     template_name = "pod/mis-asignaturas.html"
-
-    # filterset_class = PodFilter
 
 
 class MisCursosView(LoginRequiredMixin, SingleTableView):

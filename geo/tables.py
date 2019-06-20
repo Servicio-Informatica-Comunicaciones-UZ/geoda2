@@ -64,7 +64,7 @@ class CursoTable(tables.Table):
     def render_enlace(self, record):
         return mark_safe(
             """<a href={0} class='btn btn-info btn-sm' title='Ver ficha del curso'>
-               <span class='far fa-eye' aria-hidden='true'></span>&nbsp; Ver&nbsp;ficha
+               <span class='far fa-eye' aria-hidden='true'></span>&nbsp;Ver&nbsp;ficha
             </a>""".format(
                 reverse("curso-detail", args=[record.id])
             )

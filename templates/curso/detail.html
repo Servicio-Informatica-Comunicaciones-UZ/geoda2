@@ -9,7 +9,7 @@
   <div class="alert-info alert fade-in">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 
-    <i class="fas fa-info-circle"></i>Para acceder como profesor al curso en la plataforma ADD, es posible que tenga que
+    <span class="fas fa-info-circle"></span>Para acceder como profesor al curso en la plataforma ADD, es posible que tenga que
     cerrar la sesión en la plataforma y volver a entrar.
   </div>
   <br />
@@ -35,7 +35,6 @@
     <tr>
       <th>Estado</th>
       <td>{{ curso.estado.nombre }}</td>
-      <!-- FIXME -->
     </tr>
     <tr>
       <th>Fecha de solicitud</th>
@@ -53,12 +52,6 @@
       <th>Fecha de creación</th>
       <td>{{ curso.fecha_creacion|default_if_none:"—" }}</td>
     </tr>
-    <!--
-        <tr>
-            <th>Cód. plataforma</th>
-            <td>{{  curso.plataforma_id }}</td>
-        </tr>
-        -->
     <tr>
       <th>Código en plataforma</th>
       <td>{{ curso.id_nk|default_if_none:"—" }}</td>

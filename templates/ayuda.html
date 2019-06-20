@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Ayuda" %}{% endblock title %}
+{% block description %}{% trans "Ayuda" %}{% endblock description %}
+
+{% block content %}
+<div class="container-blanco">
+  <h1>{% trans "Ayuda" %}</h1>
+  <hr />
+  <br />
+
+  <p>{% blocktrans %}
+    Para recibir soporte, ya sea de carácter administrativo o técnico,
+    abra un ticket en <a href="https://ayudica.unizar.es/otrs/customer.pl">Ayudica</a>.
+  {% endblocktrans %}</p>
+</div>
+{% endblock content %}
