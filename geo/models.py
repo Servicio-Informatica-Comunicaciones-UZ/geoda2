@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -76,7 +78,11 @@ class Calendario(models.Model):
 
     @staticmethod
     def get_anyo_academico_actual():
-        return Calendario.objects.first().id
+        try:
+            return Calendario.objects.first().id
+        except AttributeError:
+            hoy = datetime.today()
+            return hoy.year if hoy.month > 6 else hoy.year - 1
 
 
 class Pod(models.Model):

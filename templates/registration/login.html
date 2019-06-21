@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
-{% load static %}
-{% block title %}Inicio de sesión{% endblock title %}
-{% block extracss %}<link rel="stylesheet" href="{% static 'css/signin.css' %}" />{% endblock extracss %}
+{% load i18n static %}
+{% block title %}{% trans "Inicio de sesión" %}{% endblock title %}
+{% block description %}{% trans "Inicio de sesión local" %}{% endblock description %}
+{% block extracss %}
+  <link rel="stylesheet" href="{% static 'css/signin.css' %}" />
+{% endblock extracss %}
+
 {% block content %}
 <div class="jumbotron">
   <a href="{% url 'home' %}"><span class="fas fa-chalkboard-teacher" style="font-size: 400%;"></span></a><br /><br />
@@ -9,13 +13,13 @@
   <form class="form-signin" method="post">
     {% csrf_token %}
 
-    <label for="id_username" class="sr-only">Usuario</label>
+    <label for="id_username" class="sr-only">{% trans "Usuario" %}</label>
     <input type="text" id="id_username" name="username" class="form-control" placeholder="Usuario" required autofocus />
 
-    <label for="id_password" class="sr-only">Contraseña</label>
+    <label for="id_password" class="sr-only">{% trans "Contraseña" %}</label>
     <input type="password" id="id_password" name="password" class="form-control" placeholder="Contraseña" required />
 
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Iniciar sesión</button>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">{% trans "Iniciar sesión" %}</button>
   </form>
 </div>
 {% endblock content %}

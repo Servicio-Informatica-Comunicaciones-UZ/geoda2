@@ -1,7 +1,9 @@
-"""geoda_project URL Configuration
+"""
+geoda_project URL Configuration.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.1/topics/http/urls/
+
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -39,5 +41,6 @@ urlpatterns = [
         TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
         name="robots_file",
     ),
+    path("", include("social_django.urls", namespace="social")),
     path("", include("geo.urls")),
 ]
