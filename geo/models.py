@@ -1,5 +1,7 @@
 from datetime import datetime
+from time import time
 
+from annoying.functions import get_object_or_None, get_config, get_object_or_this
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -62,10 +64,32 @@ class AsignaturaSigma(models.Model):
         verbose_name_plural = _("asignaturas SIGM@")
 
     def get_curso_or_none(self):
-        try:
-            return Curso.objects.get(asignatura_sigma_id=self.id)
-        except Curso.DoesNotExist:
-            return None
+        """Devuelve el modelo Curso correspondiente a la asignatura, o None."""
+
+        return get_object_or_None(Curso, asignatura_sigma_id=self.id)
+
+    def get_categoria(self):
+        """Devuelve la categoría correspondiente a esta asignatura, o la Miscelánea."""
+
+        categoria_por_omision = Categoria.objects.get(
+            anyo_academico=self.anyo_academico, nombre="Miscelánea"
+        )
+        categoria = get_object_or_this(
+            Categoria,
+            categoria_por_omision,
+            plan_id_nk=self.plan_id_nk,
+            centro_id=self.centro_id,
+            anyo_academico=self.anyo_academico,
+        )
+        return categoria
+
+    def get_shortname(self):
+        """Devuelve el nombre corto que tendrá el curso de esta asignatura en Moodle."""
+
+        return (
+            f"{self.centro_id}_{self.plan_id_nk}_{self.asignatura_id}_"
+            f"{self.cod_grupo_asignatura}_{self.anyo_academico}"
+        )
 
 
 class Calendario(models.Model):
@@ -214,6 +238,30 @@ class Curso(models.Model):
 
     def get_absolute_url(self):
         return reverse("curso-detail", args=[self.id])
+
+    def actualizar_tras_creacion(self, datos_recibidos):
+        """Actualiza el modelo con los datos recibidos de Moodle al crear el curso."""
+
+        self.id_nk = datos_recibidos["id"]
+        self.fecha_creacion = datetime.today()
+        url_plataforma = get_config("URL_PLATAFORMA")
+        self.url = f"{url_plataforma}/course/view.php?id={self.id_nk}"
+        self.estado_id = 3  # Creado
+        self.save()
+
+    def get_datos(self):
+        """Devuelve los datos necesarios para crear el curso en Moodle usando WS."""
+
+        return {
+            "fullname": self.nombre,
+            "shortname": self.asignatura_sigma.get_shortname(),
+            "categoryid": self.categoria.id_nk,  # id de la categoría en Moodle
+            "idnumber": self.id,
+            "visible": 1,
+            # `startdate` es la hora actual más 60 segundos.
+            # Así es un poco mayor que la fecha de creación en la plataforma.
+            "startdate": int(time() + 60),
+        }
 
 
 class ProfesorCurso(models.Model):

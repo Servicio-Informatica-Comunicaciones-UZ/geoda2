@@ -231,3 +231,8 @@ SOCIAL_AUTH_URL_NAMESPACE = "social"
 
 # CRISPY FORMS
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+# DATOS DE LA PLATAFORMA
+URL_PLATAFORMA = "https://moodle.local"
+API_TOKEN = "fabadabaca1a0cafecaca0"
+API_URL = f"{URL_PLATAFORMA}/webservice/rest/server.php"

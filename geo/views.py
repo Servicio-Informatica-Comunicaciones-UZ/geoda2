@@ -1,14 +1,18 @@
+from datetime import datetime
+
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import CreateView
 from django_tables2.views import SingleTableView
 
 from .forms import SolicitaForm
-from .models import AsignaturaSigma, Calendario, Curso, Pod
+from .models import AsignaturaSigma, Calendario, Curso, Pod, ProfesorCurso
 from .tables import CursoTable, PodTable
+from .wsclient import WSClient
 
 
 class AyudaView(TemplateView):
@@ -31,22 +35,57 @@ class ASCrearCursoView(LoginRequiredMixin, View):
     """
 
     def get(self, request, *args, **kwargs):
-        asignatura_sigma = AsignaturaSigma.objects.get(id=kwargs["pk"])
-        curso_existente = asignatura_sigma.get_curso_or_none()
+        asignatura = get_object_or_404(AsignaturaSigma, id=kwargs["pk"])
+        curso_existente = asignatura.get_curso_or_none()
         if curso_existente:
-            # TODO: Mensaje Flash
-            # TODO: Redirect
-            return HttpResponse("El curso ya estaba creado.")
+            messages.error(request, _("El curso ya estaba creado."))
+            return redirect("curso-detail", curso_existente.id)
 
-        return HttpResponse(asignatura_sigma.nombre_asignatura)
+        curso = self._cargar_asignatura_en_curso(asignatura)
+        datos_curso = curso.get_datos()
+
+        cliente = WSClient()
+        datos_recibidos = cliente.crear_curso(datos_curso)
+        curso.actualizar_tras_creacion(datos_recibidos)
+        self._anyadir_usuario_como_profesor(curso)
+
+        return redirect("curso-detail", curso.id)
+
+    def _anyadir_usuario_como_profesor(self, curso):
+        """
+        Añade al usuario que solicita el curso a la lista de profesores del curso.
+        """
+
+        profesor_curso = ProfesorCurso(
+            curso=curso, profesor=self.request.user, fecha_alta=datetime.today()
+        )
+        profesor_curso.save()
+        messages.warning(
+            self.request,
+            _(
+                "Para acceder como profesor al curso en la plataforma ADD, es posible "
+                "que tenga que cerrar la sesión en la plataforma y volver a entrar."
+            ),
+        )
 
     def _cargar_asignatura_en_curso(self, asignatura):
         """
-        Crea una nueva instancia de `Curso`.
-
         Crea una nueva instancia de Curso con los datos de la asignatura Sigma indicada.
         """
-        pass
+
+        curso = Curso(
+            nombre=asignatura.nombre_asignatura,
+            fecha_solicitud=datetime.today(),
+            # Las asignaturas Sigm@ se aprueban automáticamente, por el administrador.
+            fecha_autorizacion=datetime.today(),
+            autorizador_id=1,
+            plataforma_id=1,
+            categoria=asignatura.get_categoria(),
+            anyo_academico=asignatura.anyo_academico,
+            asignatura_sigma_id=asignatura.id,
+        )
+        curso.save()
+        return curso
 
 
 class CursoDetailView(LoginRequiredMixin, DetailView):

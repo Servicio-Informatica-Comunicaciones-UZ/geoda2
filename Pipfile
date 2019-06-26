@@ -16,6 +16,8 @@ social-auth-core = {extras = ["saml"],version = "*"}
 python3-saml = "*"
 cx-oracle = "*"
 django-crispy-forms = "==1.7.2"
+requests = "*"
+django-annoying = "*"
 
 [requires]
 python_version = "3.7"
