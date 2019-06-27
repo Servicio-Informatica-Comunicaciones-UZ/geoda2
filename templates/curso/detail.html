@@ -1,68 +1,81 @@
 {% extends 'base.html' %}
-{% block title %}Detalles del curso nº {{ curso.id }}{% endblock title %}
+{% load i18n %}
+
+{% block title %}{% trans "Detalles del curso" %}{% endblock title %}
+
 {% block content %}
 <div class="container-blanco">
-  <h1>Detalles del curso nº {{ curso.id }}</h1>
+  <h1>{% trans "Detalles del curso" %}</h1>
   <hr />
   <br />
 
   <table class="table table-striped table-hover">
     <tr>
-      <th>Id</th>
+      <th>{% trans "Id" %}</th>
       <td>{{ curso.id }}</td>
     </tr>
     <tr>
-      <th>Nombre</th>
+      <th>{% trans "Nombre" %}</th>
       <td>{{ curso.nombre }}</td>
     </tr>
     <tr>
-      <th>Año académico</th>
-      <td>{{ curso.anyo_academico|default_if_none:"—" }}</td>
+      <th>{% trans "Año académico" %}</th>
+      <td>{{ curso.anyo_academico | default_if_none:"—" }}</td>
     </tr>
     <tr>
-      <th>Asignatura Sigma</th>
-      <td>{{ curso.asignatura_sigma.id|default_if_none:"—" }}</td>
+      <th>{% trans "Cód. asignatura Sigma" %}</th>
+      <td>{{ curso.asignatura_sigma.asignatura_id | default_if_none:"—" }}</td>
     </tr>
 
     <tr>
-      <th>Estado</th>
+      <th>{% trans "Estado" %}</th>
       <td>{{ curso.estado.nombre }}</td>
     </tr>
     <tr>
-      <th>Fecha de solicitud</th>
+      <th>{% trans "Fecha de solicitud" %}</th>
       <td>{{ curso.fecha_solicitud }}</td>
     </tr>
     <tr>
-      <th>Fecha de autorización</th>
-      <td>{{ curso.fecha_autorizacion|default_if_none:"—" }}</td>
+      <th>{% trans "Fecha de autorización" %}</th>
+      <td>{{ curso.fecha_autorizacion | default_if_none:"—" }}</td>
     </tr>
     <tr>
-      <th>Autorizador</th>
-      <td>{{ curso.autorizador|default_if_none:"—" }}</td>
+      <th>{% trans "Autorizador" %}</th>
+      <td>{{ curso.autorizador | default_if_none:"—" }}</td>
     </tr>
     <tr>
-      <th>Fecha de creación</th>
-      <td>{{ curso.fecha_creacion|default_if_none:"—" }}</td>
+      <th>{% trans "Fecha de creación" %}</th>
+      <td>{{ curso.fecha_creacion | default_if_none:"—" }}</td>
     </tr>
     <tr>
-      <th>Código en plataforma</th>
-      <td>{{ curso.id_nk|default_if_none:"—" }}</td>
+      <th>{% trans "Código en plataforma" %}</th>
+      <td>{{ curso.id_nk | default_if_none:"—" }}</td>
     </tr>
     <tr>
-      <th>URL</th>
-      <td><a target="_blank" href="{{ curso.url }}">{{ curso.url |default_if_none:"—" }}</a></td>
+      <th>{% trans "URL" %}</th>
+      <td><a target="_blank" href="{{ curso.url }}">{{ curso.url | default_if_none:"—" }}</a></td>
     </tr>
     <tr>
-      <th>Categoría</th>
-      <td>{{ curso.categoria.id }} - {{ curso.categoria.nombre |default_if_none:"—" }}</td>
+      <th>{% trans "Categoría" %}</th>
+      <td>{{ curso.categoria.nombre | default_if_none:"—" }} ({{ curso.categoria.id_nk }})</td>
     </tr>
     <tr>
-      <th>Motivo solicitud</th>
-      <td>{{ curso.motivo_solicitud|default_if_none:"—" }}</td>
+      <th>{% trans "Motivo solicitud" %}</th>
+      <td>{{ curso.motivo_solicitud | default_if_none:"—" }}</td>
     </tr>
     <tr>
-      <th>Motivo denegación</th>
-      <td>{{ curso.motivo_denegacion|default_if_none:"—" }}</td>
+      <th>{% trans "Motivo denegación" %}</th>
+      <td>{{ curso.motivo_denegacion | default_if_none:"—" }}</td>
+    </tr>
+    <tr>
+      <th>{% trans "Profesorado" %}</th>
+      <td>
+        <ul class="listado">
+        {% for profesor in curso.profesores.all %}
+          <li>{{ profesor.get_full_name }} &lt;{{profesor.email}}&gt;</li>
+        {% endfor %}
+        </ul>
+      </td>
     </tr>
   </table>
 </div>

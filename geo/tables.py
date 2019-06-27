@@ -16,8 +16,10 @@ class PodTable(tables.Table):
 
         if curso:
             return mark_safe(
-                """<a href={0} class='btn btn-info btn-sm' title='Ver ficha del curso'>
-                <span class='far fa-eye' aria-hidden='true'></span>&nbsp;Ver&nbsp;ficha
+                """
+                <a href={0} class='btn btn-info btn-sm' title='Ver ficha del curso'>
+                  <span class='far fa-eye' aria-hidden='true' style='display: inline;'
+                  ></span>&nbsp;&nbsp;Ver&nbsp;ficha
                 </a>""".format(
                     reverse("curso-detail", args=[curso.id])
                 )
@@ -29,7 +31,8 @@ class PodTable(tables.Table):
                   class='btn btn-warning btn-sm'
                   title='Crear curso en la plataforma'
                 >
-                  <span class='fas fa-plus' aria-hidden='true'></span>Crear&nbsp;curso
+                  <span class='fas fa-plus' aria-hidden='true' style='display: inline;'
+                  ></span>&nbsp;Crear&nbsp;curso
                 </a>""".format(
                     reverse("as-crear-curso", args=[asig.id])
                 )

@@ -1,19 +1,24 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load render_table from django_tables2 %}
-{% block title %}Mis asignaturas{% endblock title %}
+
+{% block title %}{% trans "Mis asignaturas" %}{% endblock title %}
+
 {% block content %}
 <div class="container-blanco">
-  <h1>Mis asignaturas</h1>
+  <h1>{% trans "Mis asignaturas" %}</h1>
   <hr />
   <br />
 
   <div class="alert-info alert fade-in">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 
-    <span class="fas fa-info-circle"></span>En esta página puede ver las asignaturas que tiene asignadas en el Plan de
+    <span class="fas fa-info-circle"></span>
+    {% blocktrans %}
+    En esta página puede ver las asignaturas que tiene asignadas en el Plan de
     Ordenación Docente.<br /><br />
 
-    Pulsando «Crear curso» se creará el cursoen la plataforma, con la carga automática de los alumnos del grupo
+    Pulsando «Crear curso» se creará el curso en la plataforma, con la carga automática de los alumnos del grupo
     correspondiente preparada pero desactivada.<br />
     El curso se crea ACTIVADO (visible para los matriculados). Si lo desea puede
     <a
@@ -25,6 +30,7 @@
     Es posible que tenga que salir de la plataforma y volver a entrar para ver el nuevo curso.<br /><br />
 
     Si el curso ya está creado puede consultar la ficha para ver qué profesor lo tiene asociado.
+    {% endblocktrans %}
   </div>
   <br />
 
