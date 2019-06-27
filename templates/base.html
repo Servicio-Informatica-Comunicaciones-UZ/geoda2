@@ -15,8 +15,8 @@
     />
     <link
       rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
-      integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+      href="https://use.fontawesome.com/releases/v5.9.0/css/all.css"
+      integrity="sha384-i1LQnF23gykqWXg6jxC2ZbCbUMxyw5gLZY6UiUS98LYV5unm8GWmfkIS6jqJfb4E"
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="{% static 'css/base.css' %}" />
@@ -53,6 +53,7 @@
       <a class="navbar-brand" href="http://www.unizar.es">
         <span class="icon-logoUZ"></span> <span class="screen-reader">{% trans "Universidad de Zaragoza" %}</span>
       </a>
+
       <button
         class="navbar-toggler"
         type="button"
@@ -64,9 +65,25 @@
       >
         <span class="navbar-toggler-icon"></span>
       </button>
+
       <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav" style="margin-left: 150px;">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">
+              <span class="fas fa-chalkboard-teacher"></span>&nbsp;
+              {% trans "Gestión de la Enseñanza Online" %}
+            </a>
+          </li>
+        </ul>
+
         <ul class="navbar-nav ml-auto">
           {% if user.is_authenticated %}
+            {# TODO: Restringir visibilidad a los gestores #}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'cursos-pendientes' %}">
+                <span class="fas fa-cog"></span>&nbsp; {% trans "Gestión" %}
+              </a>
+            </li>
             <li class="nav-item dropdown">
               <a
                 class="nav-link dropdown-toggle"

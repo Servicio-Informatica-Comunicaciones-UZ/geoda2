@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Cursos pendientes de aprobación" %}{% endblock title %}
+
+{% block content %}
+  <div class='container-blanco'>
+    <h1>{% trans "Cursos pendientes de aprobación" %}</h1>
+    <hr>
+
+    <div class="alert-info alert fade-in">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+
+      <span class="fas fa-info-circle"></span>
+      {% trans "Aquí puede ver los cursos que están pendientes de aprobación." %}<br />
+      {% trans "Puede entrar en cada uno de ellos para aprobar o denegar la solicitud." %}
+    </div><br>
+
+    {% if cursos_pendientes %}
+      <table class="table table-striped table-hover">
+      <tr>
+        <th>{% trans "Fecha" %}</th>
+        <th>{% trans "Nombre del curso" %}</th>
+        <th>{% trans "Solicitante" %}</th>
+        <th>{% trans "Correo electrónico" %}</th>
+      </tr>
+      {% for curso in cursos_pendientes %}
+        <tr>
+          <td>{{ curso.fecha_solicitud }}</td>
+          <td><a href="{% url 'curso-detail' curso.id %}">{{ curso.nombre }}</a></td>
+          <td>{{ curso.profesores.first.get_full_name }}</td>
+          <td>{{ curso.profesores.first.email }}</td>
+        </tr>
+      {% endfor %}
+      </table>
+
+      {% if is_paginated %}
+        {% include "partials/pagination.html" %}
+      {% endif %}
+    {% else %}
+        {% trans "En estos momentos no hay ningún curso pendiente de aprobación." %}
+    {% endif %}
+  </div>
+{% endblock content %}

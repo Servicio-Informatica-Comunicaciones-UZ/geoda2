@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext_lazy as _
 from django.views import View
-from django.views.generic import DetailView, TemplateView
+from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.edit import CreateView
 from django_tables2.views import SingleTableView
 
@@ -93,6 +93,17 @@ class CursoDetailView(LoginRequiredMixin, DetailView):
 
     model = Curso
     template_name = "curso/detail.html"
+
+
+# TODO: Restringir acceso a los gestores
+class CursosPendientesView(LoginRequiredMixin, ListView):
+    """Muestra los cursos no reglados pendientes de aprobación."""
+
+    context_object_name = "cursos_pendientes"
+    paginate_by = 10
+    ordering = ["-fecha_solicitud"]
+    queryset = Curso.objects.filter(estado=1)  # Solicitado
+    template_name = "gestion/cursos-pendientes.html"
 
 
 class MisAsignaturasView(LoginRequiredMixin, SingleTableView):
