@@ -78,12 +78,13 @@
 
         <ul class="navbar-nav ml-auto">
           {% if user.is_authenticated %}
-            {# TODO: Restringir visibilidad a los gestores #}
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'cursos-pendientes' %}">
-                <span class="fas fa-cog"></span>&nbsp; {% trans "Gestión" %}
-              </a>
-            </li>
+            {% if user|has_group:"Gestores" %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'cursos-pendientes' %}">
+                  <span class="fas fa-cog"></span>&nbsp; {% trans "Gestión" %}
+                </a>
+              </li>
+            {% endif %}
             <li class="nav-item dropdown">
               <a
                 class="nav-link dropdown-toggle"

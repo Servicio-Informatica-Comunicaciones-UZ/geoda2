@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext_lazy as _
 from django.views import View
@@ -95,10 +95,11 @@ class CursoDetailView(LoginRequiredMixin, DetailView):
     template_name = "curso/detail.html"
 
 
-# TODO: Restringir acceso a los gestores
-class CursosPendientesView(LoginRequiredMixin, ListView):
+class CursosPendientesView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     """Muestra los cursos no reglados pendientes de aprobación."""
 
+    permission_required = "geo.cursos_pendientes"
+    permission_denied_message = _("Sólo los gestores pueden acceder a esta página.")
     context_object_name = "cursos_pendientes"
     paginate_by = 10
     ordering = ["-fecha_solicitud"]

@@ -235,6 +235,9 @@ class Curso(models.Model):
 
     class Meta:
         db_table = "curso"
+        permissions = [
+            ("cursos_pendientes", _("Puede ver el listado de cursos por aprobar."))
+        ]
 
     def get_absolute_url(self):
         return reverse("curso-detail", args=[self.id])
