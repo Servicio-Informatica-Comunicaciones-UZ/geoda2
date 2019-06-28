@@ -34,9 +34,8 @@
       {% endfor %}
       </table>
 
-      {% if is_paginated %}
-        {% include "partials/pagination.html" %}
-      {% endif %}
+      {% include "partials/pagination.html" %}
+
     {% else %}
         {% trans "En estos momentos no hay ningún curso pendiente de aprobación." %}
     {% endif %}
