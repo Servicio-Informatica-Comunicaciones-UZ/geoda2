@@ -60,11 +60,11 @@
       <td>{{ curso.categoria.nombre | default_if_none:"—" }} ({{ curso.categoria.id_nk }})</td>
     </tr>
     <tr>
-      <th>{% trans "Motivo solicitud" %}</th>
+      <th>{% trans "Motivo de la solicitud" %}</th>
       <td>{{ curso.motivo_solicitud | default_if_none:"—" }}</td>
     </tr>
     <tr>
-      <th>{% trans "Motivo denegación" %}</th>
+      <th>{% trans "Motivo de la denegación" %}</th>
       <td>{{ curso.motivo_denegacion | default_if_none:"—" }}</td>
     </tr>
     <tr>
@@ -78,5 +78,51 @@
       </td>
     </tr>
   </table>
+
+  {% if curso.estado.nombre == "Solicitado" and perms.geo.cursos_pendientes %}
+    <br />
+    <h2>{% trans "Resolver la solicitud" %}</h2>
+    <hr />
+    <form action="{% url 'resolver-solicitud' %}" id="resolver-form" method="post">
+      {% csrf_token %}
+      <input type='hidden' id='id' name='id' value='{{ curso.id }}'>
+      <div><strong>{% trans "Decisión" %}</strong></div>
+      <div class="form-check-inline">
+        <label class="form-check-label">
+          <input type="radio" class="form-check-input" name="decision" value="denegar" required>
+          {% trans "Denegar" %}
+        </label>
+      </div>
+      <div class="form-check-inline">
+        <label class="form-check-label">
+          <input type="radio" class="form-check-input" name="decision" value="autorizar" required>
+          {% trans "Autorizar" %}
+        </label>
+      </div>
+
+      <div id="div_id_motivo_denegacion" class="form-group">
+        <label for="id_motivo_denegacion" class="col-form-label">
+          <strong>{% trans "Motivo de la denegación" %}</strong>
+        </label>
+        <div class="">
+          <textarea name="motivo_denegacion" cols="40" rows="10" class="textarea form-control" id="id_motivo_denegacion">
+          </textarea>
+          <small id="hint_id_motivo_denegacion" class="form-text text-muted">
+            {% trans "En su caso, explique la razón de denegar el curso solicitado." %}
+          </small>
+        </div>
+      </div>
+
+      <br style="clear: both;" />
+      <div class="btn-group" role="group" aria-label="Botones">
+        <a href="{% url 'cursos-pendientes' %}" class="btn btn-info">
+          <span class="fas fa-step-backward"></span> {% trans "Retroceder" %}
+        </a>
+        <button type="submit" class="btn btn-warning">
+          <span class="fas fa-gavel"></span> {% trans "Resolver" %}
+        </button>
+      </div>
+    </form>
+  {% endif %}
 </div>
 {% endblock content %}

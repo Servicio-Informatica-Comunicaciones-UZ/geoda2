@@ -257,7 +257,9 @@ class Curso(models.Model):
 
         return {
             "fullname": self.nombre,
-            "shortname": self.asignatura_sigma.get_shortname(),
+            "shortname": self.asignatura_sigma.get_shortname()
+            if self.asignatura_sigma
+            else f"NR_{self.id}",
             "categoryid": self.categoria.id_nk,  # id de la categoría en Moodle
             "idnumber": self.id,
             "visible": 1,

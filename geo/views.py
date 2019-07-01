@@ -3,14 +3,15 @@ from datetime import datetime
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views import View
-from django.views.generic import DetailView, ListView, TemplateView
+from django.views.generic import DetailView, ListView, RedirectView, TemplateView
 from django.views.generic.edit import CreateView
 from django_tables2.views import SingleTableView
 
 from .forms import SolicitaForm
-from .models import AsignaturaSigma, Calendario, Curso, Pod, ProfesorCurso
+from .models import AsignaturaSigma, Calendario, Curso, Estado, Pod, ProfesorCurso
 from .tables import CursoTable, PodTable
 from .wsclient import WSClient
 
@@ -137,6 +138,42 @@ class MisCursosView(LoginRequiredMixin, SingleTableView):
         return Curso.objects.filter(
             profesores=self.request.user.id, anyo_academico=self.anyo_academico
         )
+
+
+class ResolverSolicitudCursoView(
+    LoginRequiredMixin, PermissionRequiredMixin, RedirectView
+):
+    """Autoriza o deniega una solicitud de curso."""
+
+    permission_required = "geo.cursos_pendientes"
+    permission_denied_message = _("Sólo los gestores pueden acceder a esta página.")
+
+    def get_redirect_url(self, *args, **kwargs):
+        return reverse_lazy("cursos-pendientes")
+
+    def post(self, request, *args, **kwargs):
+        id = request.POST.get("id")
+        curso = get_object_or_404(Curso, pk=id)
+        curso.autorizador = request.user
+        curso.fecha_autorizacion = datetime.now()
+        curso.motivo_denegacion = request.POST.get("motivo_denegacion")
+
+        if request.POST.get("decision") == "autorizar":
+            curso.estado = Estado.objects.get(id=2)  # Autorizado
+            curso.save()
+
+            cliente = WSClient()
+            datos_recibidos = cliente.crear_curso(curso.get_datos())
+            curso.actualizar_tras_creacion(datos_recibidos)
+            messages.info(
+                request, _(f"El curso «{curso.nombre}» ha sido autorizado y creado.")
+            )
+        else:
+            curso.estado = Estado.objects.get(id=6)  # Denegado
+            curso.save()
+            messages.info(request, _(f"El curso «{curso.nombre}» ha sido denegado."))
+
+        return super().post(request, *args, **kwargs)
 
 
 class SolicitarCursoNoRegladoView(LoginRequiredMixin, CreateView):

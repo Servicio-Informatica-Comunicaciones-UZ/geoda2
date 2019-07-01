@@ -8,6 +8,7 @@ from .views import (
     HomePageView,
     MisAsignaturasView,
     MisCursosView,
+    ResolverSolicitudCursoView,
     SolicitarCursoNoRegladoView,
 )
 
@@ -28,6 +29,11 @@ urlpatterns = [
     ),
     path("pod/mis-asignaturas", MisAsignaturasView.as_view(), name="mis-asignaturas"),
     path("curso/mis-cursos", MisCursosView.as_view(), name="mis-cursos"),
+    path(
+        "curso/resolver-solicitud",
+        ResolverSolicitudCursoView.as_view(),
+        name="resolver-solicitud",
+    ),
     path(
         "curso/solicitar", SolicitarCursoNoRegladoView.as_view(), name="curso-solicitar"
     ),
