@@ -234,5 +234,6 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 # DATOS DE LA PLATAFORMA
 URL_PLATAFORMA = "https://moodle.local"
-API_TOKEN = "fabadabaca1a0cafecaca0"
+GEO_TOKEN = "fabadabaca1a0cafecaca0"
+GEODAWS_TOKEN = "1acebadaacabad3c0d1f1cada"
 API_URL = f"{URL_PLATAFORMA}/webservice/rest/server.php"

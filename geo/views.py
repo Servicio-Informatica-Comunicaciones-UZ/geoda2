@@ -49,6 +49,9 @@ class ASCrearCursoView(LoginRequiredMixin, View):
         datos_recibidos = cliente.crear_curso(datos_curso)
         curso.actualizar_tras_creacion(datos_recibidos)
         self._anyadir_usuario_como_profesor(curso)
+        mensaje = cliente.automatricular(asignatura, curso)
+        messages.info(request, mensaje)
+        messages.success(request, _("Curso creado correctamente en Moodle."))
 
         return redirect("curso-detail", curso.id)
 
@@ -173,6 +176,7 @@ class ResolverSolicitudCursoView(
             curso.save()
             messages.info(request, _(f"El curso «{curso.nombre}» ha sido denegado."))
 
+        # TODO: Enviar mensaje al solicitante
         return super().post(request, *args, **kwargs)
 
 
@@ -190,6 +194,11 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, CreateView):
         formulario = SolicitaForm(data=request.POST, user=self.request.user)
         if formulario.is_valid():
             formulario.save()
+            messages.success(
+                request,
+                _(f"La solicitud ha sido recibida. Se le avisará cuando se resuelva."),
+            )
+            # TODO: Enviar mensaje a los gestores
             return redirect("mis-cursos")
 
         return render(request, self.template_name, {"form": formulario})
