@@ -7,7 +7,7 @@ verify_ssl = true
 pylint = "*"
 
 [packages]
-django = "==2.2.2"
+django = "==2.2.3"
 mysqlclient = "*"
 django-tables2 = "*"
 django-filter = "*"
@@ -18,6 +18,7 @@ cx-oracle = "*"
 django-crispy-forms = "==1.7.2"
 requests = "*"
 django-annoying = "*"
+django-templated-email = "*"
 
 [requires]
 python_version = "3.7"

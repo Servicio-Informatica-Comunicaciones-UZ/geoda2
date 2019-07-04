@@ -10,6 +10,9 @@ from django.views.generic import DetailView, ListView, RedirectView, TemplateVie
 from django.views.generic.edit import CreateView
 from django_tables2.views import SingleTableView
 
+from annoying.functions import get_config
+from templated_email import send_templated_mail
+
 from .forms import SolicitaForm
 from .models import AsignaturaSigma, Calendario, Curso, Estado, Pod, ProfesorCurso
 from .tables import CursoTable, PodTable
@@ -176,8 +179,16 @@ class ResolverSolicitudCursoView(
             curso.save()
             messages.info(request, _(f"El curso «{curso.nombre}» ha sido denegado."))
 
-        # TODO: Enviar mensaje al solicitante
+        self._notifica_resolucion(curso)
         return super().post(request, *args, **kwargs)
+
+    def _notifica_resolucion(self, curso):
+        send_templated_mail(
+            template_name="resolucion",
+            from_email=None,  # settings.DEFAULT_FROM_EMAIL
+            recipient_list=[curso.profesores.first().email],
+            context={"curso": curso, "site_url": get_config("SITE_URL")[:-1]},
+        )
 
 
 class SolicitarCursoNoRegladoView(LoginRequiredMixin, CreateView):

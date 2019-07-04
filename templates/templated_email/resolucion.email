@@ -1,0 +1,28 @@
+{% block subject %}Resolución de su solicitud de curso «{{ curso.nombre }}»{% endblock %}
+{% block plain %}
+{% if curso.profesores.first.sexo == 'F' %}
+Estimada {{ curso.profesores.first.get_full_name }}:
+{% elif curso.profesores.first.sexo == 'M' %}
+Estimado {{ curso.profesores.first.get_full_name }}:
+{% else %}
+Estimad@ {{ curso.profesores.first.get_full_name }}:
+{% endif %}
+
+{% if curso.estado.nombre == 'Creado' %}
+El curso «{{ curso.nombre }}» que había solicitado ha sido *autorizado* y *creado*.
+
+Puede ver su estado en la página <{{ site_url }}{% url 'curso-detail' curso.id %}>.
+Puede acceder directamente al curso en la página <{{ curso.url }}>.
+{% elif curso.estado.nombre == 'Denegado' %}
+El curso «{{ curso.nombre }}» que había solicitado ha sido *denegado*.
+{% if curso.motivo_denegacion %}
+{{ curso.motivo_denegacion }}
+{% endif %}
+
+Si considera que ha sido un error puede abrir una incidencia en Ayudica:
+<https://ayudica.unizar.es>
+{% endif %}
+
+Atentamente,
+    el equipo del Anillo Digital Docente
+{% endblock %}
