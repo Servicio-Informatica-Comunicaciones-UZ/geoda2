@@ -59,3 +59,5 @@ class SolicitaForm(forms.ModelForm):
             curso=curso, profesor=self.user, fecha_alta=datetime.today()
         )
         profesor_curso.save()
+
+        return curso

@@ -1,0 +1,13 @@
+{% block subject %}Solicitud de curso «{{ curso.nombre }}»{% endblock %}
+{% block plain %}
+{{ curso.profesores.first.get_full_name }} ha solicitado el curso  
+«{{ curso.nombre }}»
+
+Puede examinar esta solicitud y aprobarla o denegarla en la página
+ <{{ site_url }}{% url 'curso-detail' curso.id %}>.
+
+
+-- 
+Por favor, no responda este mensaje.  
+Para solicitar soporte, use Ayudica: <https://ayudica.unizar.es>
+{% endblock %}

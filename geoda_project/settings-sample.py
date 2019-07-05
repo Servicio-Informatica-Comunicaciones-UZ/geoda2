@@ -31,7 +31,7 @@ DEBUG = os.environ.get("DEBUG", False) == "True"
 ALLOWED_HOSTS = []  # ['*']
 
 
-DEFAULT_FROM_EMAIL = "leocricia@manhattan.local"
+DEFAULT_FROM_EMAIL = "La Maestra <leocricia@manhattan.local>"
 # Production value: 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_HOST = "smtp.manhattan.local"

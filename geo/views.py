@@ -1,7 +1,14 @@
+import json
 from datetime import datetime
 
+from annoying.functions import get_config
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    UserPassesTestMixin,
+)
+from django.contrib.auth.models import Group
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -9,14 +16,32 @@ from django.views import View
 from django.views.generic import DetailView, ListView, RedirectView, TemplateView
 from django.views.generic.edit import CreateView
 from django_tables2.views import SingleTableView
-
-from annoying.functions import get_config
 from templated_email import send_templated_mail
 
 from .forms import SolicitaForm
 from .models import AsignaturaSigma, Calendario, Curso, Estado, Pod, ProfesorCurso
 from .tables import CursoTable, PodTable
 from .wsclient import WSClient
+
+
+class ChecksMixin(UserPassesTestMixin):
+    """Proporciona comprobaciones para autorizar o no una acción a un usuario."""
+
+    def es_pas_o_pdi(self):
+        """
+        Devuelve si el usuario actual es PAS o PDI de la UZ o de sus centros adscritos.
+        """
+        usuario_actual = self.request.user
+        colectivos_del_usuario = json.loads(usuario_actual.colectivos)
+        self.permission_denied_message = _(
+            "Usted no es PAS ni PDI de la Universidad de Zaragoza"
+            " o de sus centros adscritos."
+        )
+
+        return any(
+            col_autorizado in colectivos_del_usuario
+            for col_autorizado in ["PAS", "ADS", "PDI"]
+        )
 
 
 class AyudaView(TemplateView):
@@ -31,7 +56,7 @@ class HomePageView(TemplateView):
     template_name = "home.html"
 
 
-class ASCrearCursoView(LoginRequiredMixin, View):
+class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
     """
     Crea un nuevo Curso para una asignatura Sigma.
 
@@ -57,6 +82,9 @@ class ASCrearCursoView(LoginRequiredMixin, View):
         messages.success(request, _("Curso creado correctamente en Moodle."))
 
         return redirect("curso-detail", curso.id)
+
+    def test_func(self):
+        return self.es_pas_o_pdi()
 
     def _anyadir_usuario_como_profesor(self, curso):
         """
@@ -114,7 +142,7 @@ class CursosPendientesView(LoginRequiredMixin, PermissionRequiredMixin, ListView
     template_name = "gestion/cursos-pendientes.html"
 
 
-class MisAsignaturasView(LoginRequiredMixin, SingleTableView):
+class MisAsignaturasView(LoginRequiredMixin, ChecksMixin, SingleTableView):
     """Muestra las asignaturas del usuario, según el POD, y permite crear cursos."""
 
     def get_queryset(self):
@@ -125,6 +153,9 @@ class MisAsignaturasView(LoginRequiredMixin, SingleTableView):
 
     table_class = PodTable
     template_name = "pod/mis-asignaturas.html"
+
+    def test_func(self):
+        return self.es_pas_o_pdi()
 
 
 class MisCursosView(LoginRequiredMixin, SingleTableView):
@@ -183,6 +214,7 @@ class ResolverSolicitudCursoView(
         return super().post(request, *args, **kwargs)
 
     def _notifica_resolucion(self, curso):
+        """Envía un correo al solicitante del curso informando de la resolucíon."""
         send_templated_mail(
             template_name="resolucion",
             from_email=None,  # settings.DEFAULT_FROM_EMAIL
@@ -191,7 +223,7 @@ class ResolverSolicitudCursoView(
         )
 
 
-class SolicitarCursoNoRegladoView(LoginRequiredMixin, CreateView):
+class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
     """Muestra un formulario para solicitar un curso no reglado."""
 
     model = Curso
@@ -204,12 +236,28 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, CreateView):
     def post(self, request, *args, **kwargs):
         formulario = SolicitaForm(data=request.POST, user=self.request.user)
         if formulario.is_valid():
-            formulario.save()
+            curso = formulario.save()
             messages.success(
                 request,
                 _(f"La solicitud ha sido recibida. Se le avisará cuando se resuelva."),
             )
-            # TODO: Enviar mensaje a los gestores
+            self._notifica_solicitud(curso)
+
             return redirect("mis-cursos")
 
         return render(request, self.template_name, {"form": formulario})
+
+    def test_func(self):
+        return self.es_pas_o_pdi()
+
+    def _notifica_solicitud(self, curso):
+        """Envía email a los miembros del grupo Gestores informando de la solicitud."""
+        grupo_gestores = Group.objects.get(name="Gestores")
+        gestores = grupo_gestores.user_set.all()
+        destinatarios = list(map(lambda g: g.email, gestores))
+        send_templated_mail(
+            template_name="solicitud",
+            from_email=None,  # settings.DEFAULT_FROM_EMAIL
+            recipient_list=destinatarios,
+            context={"curso": curso, "site_url": get_config("SITE_URL")[:-1]},
+        )
