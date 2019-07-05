@@ -2,6 +2,7 @@ from django.urls import path
 
 from .views import (
     ASCrearCursoView,
+    ASTodasView,
     AyudaView,
     CursoDetailView,
     CursosPendientesView,
@@ -22,6 +23,7 @@ urlpatterns = [
         ASCrearCursoView.as_view(),
         name="as-crear-curso",
     ),
+    path("asignatura-sigma/todas", ASTodasView.as_view(), name="as-todas"),
     path(
         "gestion/cursos-pendientes",
         CursosPendientesView.as_view(),

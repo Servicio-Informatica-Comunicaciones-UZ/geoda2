@@ -5,26 +5,31 @@
 {% block title %}{% trans "Mis cursos" %}{% endblock title %}
 
 {% block content %}
-    <div class='container-blanco'>
-        <h1>{% trans "Mis cursos" %} <small class="text-secondary">{{curso}}</small></h1>
-        <hr>
+<div class="container-blanco">
+  <h1>
+    {% trans "Mis cursos" %} <small class="text-secondary">{{ curso }}</small>
+  </h1>
+  <hr />
 
-        <div class="alert-info alert fade-in">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+  <div class="alert-info alert fade-in">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 
-            <span class="fas fa-info-circle"></span>
-            {% trans "En esta página puede ver sus cursos y solicitudes." %}
-        </div><br>
+    <span class="fas fa-info-circle"></span>
+    {% trans "En esta página puede ver sus cursos y solicitudes." %}
+  </div>
+  <br />
 
-        {% render_table table %}
+  {% if table.data|length > 0 %} {% render_table table %} {% else %}
+  <p>{% trans "No ha solicitado ningún curso hasta el momento." %}</p>
+  {% endif %}
 
-        <div class="float-right">
-            <a href="{% url 'mis-asignaturas' %}" class="btn btn-success active" role="button" aria-pressed="true">
-                <span class="fas fa-plus" aria-hidden="true"></span>&nbsp; {% trans "Crear curso reglado" %}
-            </a>
-            <a href="{% url 'curso-solicitar' %}" class="btn btn-success active" role="button" aria-pressed="true">
-                <span class="far fa-envelope-open" aria-hidden="true"></span>&nbsp; {% trans "Solicitar curso no reglado" %}
-            </a>
-        </div>
-    </div>
+  <div class="float-right">
+    <a href="{% url 'mis-asignaturas' %}" class="btn btn-success active" role="button" aria-pressed="true">
+      <span class="fas fa-plus" aria-hidden="true"></span>&nbsp; {% trans "Crear curso reglado" %}
+    </a>
+    <a href="{% url 'curso-solicitar' %}" class="btn btn-success active" role="button" aria-pressed="true">
+      <span class="far fa-envelope-open" aria-hidden="true"></span>&nbsp; {% trans "Solicitar curso no reglado" %}
+    </a>
+  </div>
+</div>
 {% endblock content %}

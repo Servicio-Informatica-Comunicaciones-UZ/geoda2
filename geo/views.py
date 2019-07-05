@@ -20,7 +20,7 @@ from templated_email import send_templated_mail
 
 from .forms import SolicitaForm
 from .models import AsignaturaSigma, Calendario, Curso, Estado, Pod, ProfesorCurso
-from .tables import CursoTable, PodTable
+from .tables import AsignaturasTable, CursoTable, PodTable
 from .wsclient import WSClient
 
 
@@ -121,6 +121,20 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
         )
         curso.save()
         return curso
+
+
+class ASTodasView(LoginRequiredMixin, ChecksMixin, SingleTableView):
+    """Muestra todas las asignaturas, y permite crear curso de cualquiera de ellas."""
+
+    table_class = AsignaturasTable
+    template_name = "asignatura/todas.html"
+
+    def get_queryset(self):
+        anyo_academico = Calendario.get_anyo_academico_actual()
+        return AsignaturaSigma.objects.filter(anyo_academico=anyo_academico)
+
+    def test_func(self):
+        return self.es_pas_o_pdi()
 
 
 class CursoDetailView(LoginRequiredMixin, DetailView):

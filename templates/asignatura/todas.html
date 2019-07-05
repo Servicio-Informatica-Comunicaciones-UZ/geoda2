@@ -2,11 +2,11 @@
 {% load i18n %}
 {% load render_table from django_tables2 %}
 
-{% block title %}{% trans "Mis asignaturas" %}{% endblock title %}
+{% block title %}{% trans "Todas las asignaturas" %}{% endblock title %}
 
 {% block content %}
 <div class="container-blanco">
-  <h1>{% trans "Mis asignaturas" %}</h1>
+  <h1>{% trans "Todas las asignaturas" %}</h1>
   <hr />
   <br />
 
@@ -14,9 +14,7 @@
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 
     <span class="fas fa-info-circle"></span>
-    {% blocktrans %}
-    En esta página puede ver las asignaturas que tiene asignadas en el Plan de
-    Ordenación Docente.<br /><br />
+    {% blocktrans %} En esta página puede ver todas las asignaturas, aunque no las tenga asignadas en el POD.<br /><br />
 
     Pulsando «Crear curso» se creará el curso en la plataforma, con la carga automática de los alumnos del grupo
     correspondiente preparada pero desactivada.<br />
@@ -29,19 +27,10 @@
     en los «Ajustes del curso» en la plataforma.<br />
     Es posible que tenga que salir de la plataforma y volver a entrar para ver el nuevo curso.<br /><br />
 
-    Si el curso ya está creado puede consultar la ficha para ver qué profesor lo tiene asociado.
-    {% endblocktrans %}
+    Si el curso ya está creado puede consultar la ficha para ver qué profesor lo tiene asociado. {% endblocktrans %}
   </div>
   <br />
 
-  {% if table.data|length > 0 %}
-    {% render_table table %}
-  {% else %}
-    <p>{% trans "En estos momentos no tiene asignada ninguna asignatura en el POD." %}</p>
-  {% endif %}
-
-  <div><a href={% url "as-todas" %} class='btn btn-warning btn-xs' title='Ver todas las asignaturas'>
-    <span class='far fa-eye' aria-hidden='true' style='display: inline;'></span>&nbsp;{% trans "Ver todas" %}
-  </a></div>
+  {% render_table table %}
 </div>
 {% endblock content %}
