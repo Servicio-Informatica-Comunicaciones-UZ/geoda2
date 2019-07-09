@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Vincular un usuario externo" %}{% endblock title %}
+
+{% block content %}
+
+<div class="container-blanco">
+  <h1>{% trans "Vincular un usuario externo" %}</h1>
+  <hr />
+  <br />
+
+  <div class="alert-info alert fade-in">
+    <span class="fas fa-info-circle"></span>
+    {% blocktrans %}
+    <p>Para que un usuario externo a la Universidad de Zaragoza pueda acceder a un curso de Moodle, debe:</p>
+    <dl>
+      <dt>Tener un NIP (identificador de usuario)</dt>
+      <dd>
+        Si el usuario nunca ha estado vinculado a la UZ, puede obtener visitando la
+        <a href="https://identidad.unizar.es/autoregistro">página de autorregistro</a>.
+      </dd>
+      <dt>Estar vinculado a Moodle en el Sistema de Gestión de Identidades</dt>
+      <dd>
+        Una vez que el usuario disponga de un NIP, debe comunicárselo a usted para crear la vinculación desde esta
+        página. La vinculación será válida durante un año.
+      </dd>
+    </dl>
+    <p>
+      Es posible que usted no vea al invitado entre los usuarios de la plataforma hasta que el invitado acceda a la
+      plataforma la primera vez.
+    </p>
+    {% endblocktrans %}
+  </div>
+  <br />
+
+  <form action="{% url 'vincular-forano' %}" id="vincular-form" method="post">
+    {% csrf_token %}
+
+    <div id="div_id_nip" class="form-group">
+      <label for="id_nip" class="col-form-label requiredField">
+        {% trans 'NIP' %}<span class="asteriskField">*</span>
+      </label>
+      <div class="">
+        <input
+          type="text"
+          name="nip"
+          maxlength="200"
+          class="textinput textInput form-control"
+          required
+          id="id_nip"
+          autofocus
+        />
+        <small id="hint_id_nip" class="form-text text-muted"
+          >{% trans 'Número de Identificación Personal del usuario a vincular.' %}</small
+        >
+      </div>
+    </div>
+
+    <div class="btn-group" role="group" aria-label="Botones">
+      <button class="btn btn-warning" type="submit" title="{% trans 'Vincular a Moodle un usuario externo' %}">
+        <span class="fas fa-check"></span> {% trans 'Vincular' %}
+      </button>
+    </div>
+  </form>
+</div>
+
+{% endblock content %}

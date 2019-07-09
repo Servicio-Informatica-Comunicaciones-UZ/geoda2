@@ -85,6 +85,12 @@
                 </a>
               </li>
             {% endif %}
+	    <!-- TODO Ocultar a no autorizados -->
+	    <li class="nav-item">
+              <a class="nav-link" href="{% url 'vincular-forano' %}">
+                <span class="fas fa-user-plus"></span>&nbsp; {% trans "Invitar" %}
+              </a>
+            </li>
             <li class="nav-item dropdown">
               <a
                 class="nav-link dropdown-toggle"

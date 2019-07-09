@@ -6,6 +6,7 @@ from .views import (
     AyudaView,
     CursoDetailView,
     CursosPendientesView,
+    ForanoView,
     HomePageView,
     MisAsignaturasView,
     MisCursosView,
@@ -39,4 +40,5 @@ urlpatterns = [
     path(
         "curso/solicitar", SolicitarCursoNoRegladoView.as_view(), name="curso-solicitar"
     ),
+    path("usuario-externo/vincular", ForanoView.as_view(), name="vincular-forano"),
 ]

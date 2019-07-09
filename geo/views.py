@@ -1,5 +1,9 @@
 import json
-from datetime import datetime
+import zeep
+from datetime import date, datetime
+from dateutil.relativedelta import relativedelta
+from requests import Session
+from requests.auth import HTTPBasicAuth
 
 from annoying.functions import get_config
 from django.contrib import messages
@@ -275,3 +279,47 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
             recipient_list=destinatarios,
             context={"curso": curso, "site_url": get_config("SITE_URL")[:-1]},
         )
+
+
+class ForanoView(LoginRequiredMixin, ChecksMixin, View):
+    """
+    Muestra un formulario para crear una vinculacion de un usuario externo
+    en Gestión de Identidades.
+    """
+
+    def get(self, request, *args, **kwargs):
+        return render(request, "forano/vincular.html")
+
+    def post(self, request, *args, **kwargs):
+        nip = request.POST.get("nip")
+        wsdl = get_config("WSDL_VINCULACIONES")
+        session = Session()
+        session.auth = HTTPBasicAuth(
+            get_config("USER_VINCULACIONES"), get_config("PASS_VINCULACIONES")
+        )
+        client = zeep.Client(
+            wsdl=wsdl, transport=zeep.transports.Transport(session=session)
+        )
+        response = client.service.creaVinculacion(
+            f"{nip}",  # nip
+            "6",  # codVinculacion  FIXME
+            date.today().isoformat(),  # fechaInicio
+            (date.today() + relativedelta(years=1)).isoformat(),  # fechaFin FIXME
+            request.user.username,  # nipResponsable
+        )
+
+        if response.error:
+            messages.error(request, response.descripcionResultado)
+        else:
+            messages.success(
+                request,
+                _(
+                    f"El NIP «{nip}» ha sido vinculado a Moodle.  Es posible que usted"
+                    " no vea al invitado entre los usuarios de la plataforma hasta que"
+                    " el invitado acceda a la plataforma la primera vez."
+                ),
+            )
+        return redirect("vincular-forano")
+
+    def test_func(self):
+        return self.es_pas_o_pdi()

@@ -237,3 +237,8 @@ URL_PLATAFORMA = "https://moodle.local"
 GEO_TOKEN = "fabadabaca1a0cafecaca0"
 GEODAWS_TOKEN = "1acebadaacabad3c0d1f1cada"
 API_URL = f"{URL_PLATAFORMA}/webservice/rest/server.php"
+
+# DATOS DEL WebService DE GESTIÓN DE IDENTIDADES para vincular usuarios externos
+WSDL_VINCULACIONES = "https://sitio.red/wss/Vinculaciones?wsdl"
+USER_VINCULACIONES = "rick"
+PASS_VINCULACIONES = "morty"

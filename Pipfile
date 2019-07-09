@@ -19,6 +19,8 @@ django-crispy-forms = "==1.7.2"
 requests = "*"
 django-annoying = "*"
 django-templated-email = "*"
+zeep = "*"
+python-dateutil = "*"
 
 [requires]
 python_version = "3.7"
