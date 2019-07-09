@@ -21,7 +21,7 @@
     </div>
     <br>
 
-    <form action="/curso/solicitar" method="post">
+    <form action="{% url 'curso-solicitar' %}" id="solicitar-form" method="post">
         {% csrf_token %}
         {{ form | crispy }}
 
