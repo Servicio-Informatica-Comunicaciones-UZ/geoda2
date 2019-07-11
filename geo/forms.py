@@ -51,6 +51,7 @@ class SolicitaForm(forms.ModelForm):
         self.instance.fecha_solicitud = datetime.now()
         self.instance.estado = Estado(1)  # -> Solicitado
         self.instance.anyo_academico = Calendario.get_anyo_academico_actual()
+        self.instance.plataforma_id = 1
         curso = super(SolicitaForm, self).save(commit=commit)
 
         # Añadimos por omisión al profesor que solicita el curso
