@@ -226,9 +226,7 @@ class Curso(models.Model):
     motivo_solicitud = models.TextField(
         blank=True, null=True, verbose_name=_("Motivo de la solicitud")
     )
-    motivo_denegacion = models.TextField(
-        blank=True, null=True, verbose_name=_("Motivo de la denegación")
-    )
+    comentarios = models.TextField(blank=True, null=True, verbose_name=_("Comentarios"))
     profesores = models.ManyToManyField(
         "accounts.CustomUser", related_name="profesores", through="ProfesorCurso"
     )

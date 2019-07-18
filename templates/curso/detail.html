@@ -64,8 +64,8 @@
       <td>{{ curso.motivo_solicitud | default_if_none:"—" }}</td>
     </tr>
     <tr>
-      <th>{% trans "Motivo de la denegación" %}</th>
-      <td>{{ curso.motivo_denegacion | default_if_none:"—" }}</td>
+      <th>{% trans "Comentarios" %}</th>
+      <td>{{ curso.comentarios | default_if_none:"—" }}</td>
     </tr>
     <tr>
       <th>{% trans "Profesorado" %}</th>
@@ -100,15 +100,15 @@
         </label>
       </div>
 
-      <div id="div_id_motivo_denegacion" class="form-group">
-        <label for="id_motivo_denegacion" class="col-form-label">
-          <strong>{% trans "Motivo de la denegación" %}</strong>
+      <div id="div_id_comentarios" class="form-group">
+        <label for="id_comentarios" class="col-form-label">
+          <strong>{% trans "Comentarios" %}</strong>
         </label>
         <div class="">
-          <textarea name="motivo_denegacion" cols="40" rows="10" class="textarea form-control" id="id_motivo_denegacion">
+          <textarea name="comentarios" cols="40" rows="10" class="textarea form-control" id="id_comentarios">
           </textarea>
-          <small id="hint_id_motivo_denegacion" class="form-text text-muted">
-            {% trans "En su caso, explique la razón de denegar el curso solicitado." %}
+          <small id="hint_id_comentarios" class="form-text text-muted">
+            {% trans "Si lo desea, añada una explicación para el solicitante sobre la razón de aprobar o denegar el curso solicitado." %}
           </small>
         </div>
       </div>

@@ -10,14 +10,19 @@ Estimad@ {{ curso.profesores.first.get_full_name }}:
 
 {% if curso.estado.nombre == 'Creado' %}
 El curso «{{ curso.nombre }}» que había solicitado ha sido *autorizado* y *creado*.
-Puede ver su estado en la página <{{ site_url }}{% url 'curso-detail' curso.id %}>.  
+
 Puede acceder directamente al curso en la página <{{ curso.url }}>.
 {% elif curso.estado.nombre == 'Denegado' %}
 El curso «{{ curso.nombre }}» que había solicitado ha sido *denegado*.
-{% if curso.motivo_denegacion %}
-{{ curso.motivo_denegacion }}
 {% endif %}
+
+Puede ver los detalles del curso solicitado en la página <{{ site_url }}{% url 'curso-detail' curso.id %}>.
+
+{% if curso.comentarios %}
+== Comentarios ==
+{{ curso.comentarios }}
 {% endif %}
+
 
 Atentamente,  
     el equipo del Anillo Digital Docente

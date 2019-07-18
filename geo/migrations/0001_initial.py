@@ -271,7 +271,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "motivo_denegacion",
+                    "comentarios",
                     models.TextField(
                         blank=True, null=True, verbose_name="Motivo de la denegación"
                     ),

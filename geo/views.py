@@ -211,7 +211,7 @@ class ResolverSolicitudCursoView(
         curso = get_object_or_404(Curso, pk=id)
         curso.autorizador = request.user
         curso.fecha_autorizacion = datetime.now()
-        curso.motivo_denegacion = request.POST.get("motivo_denegacion")
+        curso.comentarios = request.POST.get("comentarios")
 
         if request.POST.get("decision") == "autorizar":
             curso.estado = Estado.objects.get(id=2)  # Autorizado
