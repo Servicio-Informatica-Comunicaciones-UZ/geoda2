@@ -1,8 +1,12 @@
+from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.urls import reverse
-from django.views.generic.base import View
+from django.urls import reverse, reverse_lazy
+from django.views.generic.base import RedirectView, View
+
+
+from annoying.functions import get_config
 from social_django.utils import load_backend, load_strategy
 
 
@@ -27,3 +31,12 @@ class UserdataView(LoginRequiredMixin, View):
             for field in request.user._meta.fields
         }
         return render(request, "registration/userdata.html", context=context)
+
+
+class LogoutView(LoginRequiredMixin, RedirectView):
+    url = reverse_lazy(get_config("LOGOUT_REDIRECT_URL"))
+
+    def get(self, request, *args, **kwargs):
+        # TODO Desconectar de SAML
+        logout(request)
+        return super().get(request, *args, **kwargs)
