@@ -7,7 +7,6 @@ from .models import AsignaturaSigma, Curso, Pod
 
 
 class AsignaturasTable(tables.Table):
-
     enlace = tables.Column(empty_values=(), verbose_name=_("Acción"))
 
     def render_enlace(self, record):
@@ -48,7 +47,11 @@ class AsignaturasTable(tables.Table):
             "cod_grupo_asignatura",
             "enlace",
         )
+        empty_text = _(
+            "No hay ninguna asignatura que satisfaga los criterios de búsqueda."
+        )
         template_name = "django_tables2/bootstrap4.html"
+        per_page = 20
 
 
 class PodTable(tables.Table):

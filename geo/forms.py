@@ -3,7 +3,46 @@ from datetime import datetime
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
+from crispy_forms.bootstrap import FormActions, InlineField
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Div, Fieldset, Layout, Submit
+
 from .models import Calendario, Categoria, Curso, Estado, ProfesorCurso
+
+
+class AsignaturaFilterFormHelper(FormHelper):
+    """
+    Formulario para filtrar el listado de todas las asignaturas.
+
+    Ver https://django-crispy-forms.readthedocs.io/en/latest/form_helper.html
+    """
+
+    form_class = "form form-inline"
+    form_id = "asignatura-search-form"
+    form_method = "GET"
+    form_tag = True
+    html5_required = True
+    layout = Layout(
+        Div(
+            Fieldset(
+                "<span class='fa fa-search'></span> " + str(_("Buscar asignatura")),
+                Div(
+                    InlineField("nombre_estudio__icontains", wrapper_class="col-4"),
+                    InlineField("nombre_centro__icontains", wrapper_class="col-4"),
+                    InlineField("asignatura_id", wrapper_class="col-4"),
+                    InlineField("nombre_asignatura__icontains", wrapper_class="col-4"),
+                    InlineField("cod_grupo_asignatura", wrapper_class="col-4"),
+                    css_class="row",
+                ),
+                css_class="col-10 border p-3",
+            ),
+            FormActions(
+                Submit("submit", _("Filtrar")),
+                css_class="col-2 text-right align-self-center",
+            ),
+            css_class="row",
+        )
+    )
 
 
 class SolicitaForm(forms.ModelForm):

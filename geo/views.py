@@ -22,9 +22,11 @@ from django.views.generic.edit import CreateView
 from django_tables2.views import SingleTableView
 from templated_email import send_templated_mail
 
-from .forms import SolicitaForm
+from .filters import AsignaturaSigmaListFilter
+from .forms import SolicitaForm, AsignaturaFilterFormHelper
 from .models import AsignaturaSigma, Calendario, Curso, Estado, Pod, ProfesorCurso
 from .tables import AsignaturasTable, CursoTable, PodTable
+from .utils import PagedFilteredTableView
 from .wsclient import WSClient
 
 
@@ -127,11 +129,14 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
         return curso
 
 
-class ASTodasView(LoginRequiredMixin, ChecksMixin, SingleTableView):
+class ASTodasView(LoginRequiredMixin, ChecksMixin, PagedFilteredTableView):
     """Muestra todas las asignaturas, y permite crear curso de cualquiera de ellas."""
 
+    filter_class = AsignaturaSigmaListFilter
+    model = AsignaturaSigma
     table_class = AsignaturasTable
     template_name = "asignatura/todas.html"
+    formhelper_class = AsignaturaFilterFormHelper
 
     def get_queryset(self):
         anyo_academico = Calendario.get_anyo_academico_actual()
