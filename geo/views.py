@@ -22,9 +22,9 @@ from django.views.generic.edit import CreateView
 from django_tables2.views import SingleTableView
 from templated_email import send_templated_mail
 
-from .filters import AsignaturaSigmaListFilter
+from .filters import AsignaturaListFilter
 from .forms import SolicitaForm, AsignaturaFilterFormHelper
-from .models import AsignaturaSigma, Calendario, Curso, Estado, Pod, ProfesorCurso
+from .models import Asignatura, Calendario, Curso, Estado, Pod, ProfesorCurso
 from .tables import AsignaturasTable, CursoTable, PodTable
 from .utils import PagedFilteredTableView
 from .wsclient import WSClient
@@ -70,7 +70,7 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
     """
 
     def get(self, request, *args, **kwargs):
-        asignatura = get_object_or_404(AsignaturaSigma, id=kwargs["pk"])
+        asignatura = get_object_or_404(Asignatura, id=kwargs["pk"])
         curso_existente = asignatura.get_curso_or_none()
         if curso_existente:
             messages.error(request, _("El curso ya estaba creado."))
@@ -123,7 +123,7 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
             plataforma_id=1,
             categoria=asignatura.get_categoria(),
             anyo_academico=asignatura.anyo_academico,
-            asignatura_sigma_id=asignatura.id,
+            asignatura_id=asignatura.id,
         )
         curso.save()
         return curso
@@ -132,15 +132,15 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
 class ASTodasView(LoginRequiredMixin, ChecksMixin, PagedFilteredTableView):
     """Muestra todas las asignaturas, y permite crear curso de cualquiera de ellas."""
 
-    filter_class = AsignaturaSigmaListFilter
-    model = AsignaturaSigma
+    filter_class = AsignaturaListFilter
+    model = Asignatura
     table_class = AsignaturasTable
     template_name = "asignatura/todas.html"
     formhelper_class = AsignaturaFilterFormHelper
 
     def get_queryset(self):
         anyo_academico = Calendario.get_anyo_academico_actual()
-        return AsignaturaSigma.objects.filter(anyo_academico=anyo_academico)
+        return Asignatura.objects.filter(anyo_academico=anyo_academico)
 
     def test_func(self):
         return self.es_pas_o_pdi()

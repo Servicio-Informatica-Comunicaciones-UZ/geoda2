@@ -20,11 +20,11 @@ urlpatterns = [
     path("ayuda/", AyudaView.as_view(), name="ayuda"),
     path("curso/<int:pk>/", CursoDetailView.as_view(), name="curso-detail"),
     path(
-        "asignatura-sigma/<int:pk>/crear-curso",
+        "asignatura/<int:pk>/crear-curso",
         ASCrearCursoView.as_view(),
         name="as-crear-curso",
     ),
-    path("asignatura-sigma/todas", ASTodasView.as_view(), name="as-todas"),
+    path("asignatura/todas", ASTodasView.as_view(), name="as-todas"),
     path(
         "gestion/cursos-pendientes",
         CursosPendientesView.as_view(),

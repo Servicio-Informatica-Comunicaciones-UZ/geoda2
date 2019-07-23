@@ -7,7 +7,9 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 
-class AsignaturaSigma(models.Model):
+class Asignatura(models.Model):
+    """Este modelo representa una asignatura Sigma, de un estudio reglado."""
+
     plan_id_nk = models.IntegerField(blank=True, null=True, verbose_name=_("Cód. plan"))
     nombre_estudio = models.CharField(
         max_length=254, blank=True, null=True, verbose_name=_("Estudio")
@@ -50,7 +52,7 @@ class AsignaturaSigma(models.Model):
     edicion = models.IntegerField(blank=True, null=True, verbose_name=_("Edición"))
 
     class Meta:
-        db_table = "asignatura_sigma"
+        db_table = "asignatura"
         unique_together = (
             (
                 "plan_id_nk",
@@ -66,7 +68,7 @@ class AsignaturaSigma(models.Model):
     def get_curso_or_none(self):
         """Devuelve el modelo Curso correspondiente a la asignatura, o None."""
 
-        return get_object_or_None(Curso, asignatura_sigma_id=self.id)
+        return get_object_or_None(Curso, asignatura_id=self.id)
 
     def get_categoria(self):
         """Devuelve la categoría correspondiente a esta asignatura, o la Miscelánea."""
@@ -110,6 +112,12 @@ class Calendario(models.Model):
 
 
 class Pod(models.Model):
+    """
+    Correspondencia entre asignaturas regladas y profesores.
+
+    Establecida en el Plan de Ordenación Docente.
+    """
+
     plan_id_nk = models.IntegerField(blank=True, null=True, verbose_name="Cód. plan")
     centro_id = models.IntegerField(blank=True, null=True, verbose_name="Cód. centro")
     asignatura_id = models.IntegerField(
@@ -134,8 +142,8 @@ class Pod(models.Model):
     tipo_docencia = models.IntegerField()
 
     # Alternative: https://pypi.org/project/django-composite-foreignkey/
-    def get_asignatura_sigma(self):
-        asig = AsignaturaSigma.objects.get(
+    def get_asignatura(self):
+        asig = Asignatura.objects.get(
             anyo_academico=self.anyo_academico,
             centro_id=self.centro_id,
             plan_id_nk=self.plan_id_nk,
@@ -188,6 +196,15 @@ class Estado(models.Model):
 
 
 class Curso(models.Model):
+    """
+    Este modelo representa un curso en Moodle.
+
+    Pueden ser de 2 tipos:
+
+    * correspondientes a una asignatura dada de alta en Sigma (de un estudio reglado)
+    * no reglados
+    """
+
     nombre = models.CharField(max_length=200)
     fecha_solicitud = models.DateTimeField(
         blank=True, null=True, verbose_name=_("Fecha de solicitud")
@@ -214,8 +231,8 @@ class Curso(models.Model):
     anyo_academico = models.IntegerField(
         blank=True, null=True, verbose_name=_("Año académico")
     )
-    asignatura_sigma = models.ForeignKey(
-        "AsignaturaSigma",
+    asignatura = models.ForeignKey(
+        "Asignatura",
         models.PROTECT,
         unique=True,
         blank=True,
@@ -255,8 +272,8 @@ class Curso(models.Model):
 
         return {
             "fullname": self.nombre,
-            "shortname": self.asignatura_sigma.get_shortname()
-            if self.asignatura_sigma
+            "shortname": self.asignatura.get_shortname()
+            if self.asignatura
             else f"NR_{self.id}",
             "categoryid": self.categoria.id_nk,  # id de la categoría en Moodle
             "idnumber": self.id,
@@ -268,6 +285,7 @@ class Curso(models.Model):
 
 
 class ProfesorCurso(models.Model):
+    """Vinculación entre un curso y la persona que lo creó/solicitó."""
 
     id = models.AutoField(primary_key=True)
     curso = models.ForeignKey("Curso", models.PROTECT)

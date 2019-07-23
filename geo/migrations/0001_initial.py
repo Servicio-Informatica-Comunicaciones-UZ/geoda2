@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="AsignaturaSigma",
+            name="Asignatura",
             fields=[
                 (
                     "id",
@@ -116,7 +116,7 @@ class Migration(migrations.Migration):
             options={
                 "verbose_name": "asignatura SIGM@",
                 "verbose_name_plural": "asignaturas SIGM@",
-                "db_table": "asignatura_sigma",
+                "db_table": "asignatura",
                 "unique_together": {
                     (
                         "plan_id_nk",
@@ -277,12 +277,12 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "asignatura_sigma",
+                    "asignatura",
                     models.ForeignKey(
                         blank=True,
                         null=True,
                         on_delete=django.db.models.deletion.PROTECT,
-                        to="geo.AsignaturaSigma",
+                        to="geo.Asignatura",
                         unique=True,
                         verbose_name="Asignatura Sigma",
                     ),

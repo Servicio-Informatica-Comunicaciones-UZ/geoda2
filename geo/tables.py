@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from .models import AsignaturaSigma, Curso, Pod
+from .models import Asignatura, Curso, Pod
 
 
 class AsignaturasTable(tables.Table):
@@ -38,7 +38,7 @@ class AsignaturasTable(tables.Table):
 
     class Meta:
         attrs = {"class": "table table-striped table-hover cabecera-azul"}
-        model = AsignaturaSigma
+        model = Asignatura
         fields = (
             "nombre_estudio",
             "nombre_centro",
@@ -59,7 +59,7 @@ class PodTable(tables.Table):
     enlace = tables.Column(empty_values=(), verbose_name="")
 
     def render_enlace(self, record):
-        asig = record.get_asignatura_sigma()
+        asig = record.get_asignatura()
         curso = asig.get_curso_or_none()
 
         if curso:
@@ -89,17 +89,17 @@ class PodTable(tables.Table):
     nombre_estudio = tables.Column(empty_values=(), verbose_name="Estudio")
 
     def render_nombre_estudio(self, record):
-        return record.get_asignatura_sigma().nombre_estudio
+        return record.get_asignatura().nombre_estudio
 
     nombre_centro = tables.Column(empty_values=(), verbose_name="Centro")
 
     def render_nombre_centro(self, record):
-        return record.get_asignatura_sigma().nombre_centro
+        return record.get_asignatura().nombre_centro
 
     nombre_asignatura = tables.Column(empty_values=(), verbose_name="Asignatura")
 
     def render_nombre_asignatura(self, record):
-        return record.get_asignatura_sigma().nombre_asignatura
+        return record.get_asignatura().nombre_asignatura
 
     class Meta:
         attrs = {"class": "table table-striped table-hover cabecera-azul"}
