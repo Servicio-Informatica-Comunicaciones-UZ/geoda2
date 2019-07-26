@@ -11,8 +11,10 @@ urlpatterns = [
         auth_views.LoginView.as_view(redirect_authenticated_user=True),
         name="login",
     ),
-    # Logout personalizado para cerrar autenticación SAML.
+    # Logout personalizado para solicitar el fin de la sesión SAML.
     path("logout/", views.LogoutView.as_view(), name="logout"),
+    # Finalizar la sesión SAML.
+    path("sls/", views.SlsView.as_view(), name="sls"),
     # Muestra los metadatos para el Proveedor de Identidad (IdP) de SAML.
     path("metadata", views.metadata_xml, name="metadata"),
     # Muestra los datos del usuario.

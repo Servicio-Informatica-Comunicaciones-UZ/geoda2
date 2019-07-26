@@ -203,6 +203,7 @@ SOCIAL_AUTH_SAML_ENABLED_IDPS = {
     "lord": {
         "entity_id": "https://FIXME.idp.com/saml2/idp/metadata.php",
         "url": "https://FIXME.idp.com/saml2/idp/SSOService.php",
+        "slo_url": "https://FIXME.idp.com/saml2/idp/SingleLogoutService.php",
         "x509cert": "Lovely spam, wonderful spam",
         "attr_user_permanent_id": "uid",
         "attr_full_name": "cn",  # "urn:oid:2.5.4.3"
