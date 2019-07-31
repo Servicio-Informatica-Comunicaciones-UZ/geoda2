@@ -83,7 +83,8 @@ Descripción
 
 ### Autenticación
 
-La autenticación de los usuarios es vía _Single Sign On_ (SAML).
+La autenticación de los usuarios es vía _Single Sign On_ (SAML), usando el NIP y la
+contraseña administrativa.
 
 ### Autorización
 
@@ -106,8 +107,9 @@ por la dirección del Campus Virtual, que tiene el rol «Gestor» en la aplicaci
 ### Creación de cursos
 
 Se crean en la plataforma por medio de un _Web Service_ (`core_course_create_courses`).
-Se indica también la categoría del curso, que ya debe existir en la plataforma (se crean
-mediante un script de moosh).
+Se indica también la categoría del curso, que ya debe existir en la plataforma (en la
+versión anterior de GEO se creaban todas las posibles categorías lanzando un comando de
+consola al empezar el año académico).
 
 > TODO: Crear categorías al vuelo, para que sólo existan las realmente necesarias.
 
@@ -133,7 +135,8 @@ Para que un usuario ajeno a la universidad pueda participar en un curso:
 3. El docente debe matricular al usuario en el curso, con el rol apropiado.
 
 > TODO: Crear el usuario en Moodle mediante un WS, al hacer el paso 2.
-> Alternativa: que lo haga la pasarela nocturna
+> Alternativa: que lo haga la pasarela nocturna.
+> Alternativa 2: que los usuarios se creen al vuelo al iniciar sesión por primera vez.
 
 ### Matriculación automática de alumnos
 
