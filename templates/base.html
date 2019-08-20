@@ -77,7 +77,7 @@
         </ul>
 
         <ul class="navbar-nav ml-auto">
-          {% if user.is_authenticated %}
+          {% if user.puede_usar_aplicacion %}
             {% if user|has_group:"Gestores" %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'cursos-pendientes' %}">
@@ -85,8 +85,7 @@
                 </a>
               </li>
             {% endif %}
-	    <!-- TODO Ocultar a no autorizados -->
-	    <li class="nav-item">
+            <li class="nav-item">
               <a class="nav-link" href="{% url 'vincular-forano' %}">
                 <span class="fas fa-user-plus"></span>&nbsp; {% trans "Invitar" %}
               </a>

@@ -74,5 +74,11 @@ class CustomUser(AbstractUser):
                 return col
         return None
 
+    def puede_usar_aplicacion(self):
+        """
+        Devuelve si el usuario está autorizado a usar esta aplicación.
+        """
+        return any(col in self.colectivos for col in ["ADS", "PAS", "PDI"])
+
     # Custom Manager
     objects = CustomUserManager()
