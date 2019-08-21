@@ -71,10 +71,9 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
 
     def get(self, request, *args, **kwargs):
         asignatura = get_object_or_404(Asignatura, id=kwargs["pk"])
-        curso_existente = asignatura.get_curso_or_none()
-        if curso_existente:
+        if hasattr(asignatura, "curso"):
             messages.error(request, _("El curso ya estaba creado."))
-            return redirect("curso-detail", curso_existente.id)
+            return redirect("curso-detail", asignatura.curso.id)
 
         curso = self._cargar_asignatura_en_curso(asignatura)
         datos_curso = curso.get_datos()

@@ -1,7 +1,7 @@
 from datetime import datetime
 from time import time
 
-from annoying.functions import get_object_or_None, get_config, get_object_or_this
+from annoying.functions import get_config, get_object_or_this
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -64,11 +64,6 @@ class Asignatura(models.Model):
         )
         verbose_name = _("asignatura SIGM@")
         verbose_name_plural = _("asignaturas SIGM@")
-
-    def get_curso_or_none(self):
-        """Devuelve el modelo Curso correspondiente a la asignatura, o None."""
-
-        return get_object_or_None(Curso, asignatura_id=self.id)
 
     def get_categoria(self):
         """Devuelve la categoría correspondiente a esta asignatura, o la Miscelánea."""
@@ -231,13 +226,12 @@ class Curso(models.Model):
     anyo_academico = models.IntegerField(
         blank=True, null=True, verbose_name=_("Año académico")
     )
-    asignatura = models.ForeignKey(
-        "Asignatura",
-        models.PROTECT,
-        unique=True,
+    asignatura = models.OneToOneField(
+        Asignatura,
         blank=True,
         null=True,
-        verbose_name="Asignatura Sigma",
+        on_delete=models.PROTECT,
+        verbose_name=_("Asignatura"),
     )
     estado = models.ForeignKey("Estado", models.PROTECT, blank=True, null=True)
     motivo_solicitud = models.TextField(

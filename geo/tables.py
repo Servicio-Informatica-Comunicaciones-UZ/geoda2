@@ -10,16 +10,14 @@ class AsignaturasTable(tables.Table):
     enlace = tables.Column(empty_values=(), verbose_name=_("Acción"))
 
     def render_enlace(self, record):
-        curso = record.get_curso_or_none()
-
-        if curso:
+        if hasattr(record, "curso"):
             return mark_safe(
                 """
                 <a href={0} class='btn btn-info btn-sm' title='Ver ficha del curso'>
                   <span class='far fa-eye' aria-hidden='true' style='display: inline;'
                   ></span>&nbsp;&nbsp;Ver&nbsp;ficha
                 </a>""".format(
-                    reverse("curso-detail", args=[curso.id])
+                    reverse("curso-detail", args=[record.curso.id])
                 )
             )
         else:
@@ -60,16 +58,15 @@ class PodTable(tables.Table):
 
     def render_enlace(self, record):
         asig = record.get_asignatura()
-        curso = asig.get_curso_or_none()
 
-        if curso:
+        if hasattr(asig, "curso"):
             return mark_safe(
                 """
                 <a href={0} class='btn btn-info btn-sm' title='Ver ficha del curso'>
                   <span class='far fa-eye' aria-hidden='true' style='display: inline;'
                   ></span>&nbsp;&nbsp;Ver&nbsp;ficha
                 </a>""".format(
-                    reverse("curso-detail", args=[curso.id])
+                    reverse("curso-detail", args=[asig.curso.id])
                 )
             )
         else:
