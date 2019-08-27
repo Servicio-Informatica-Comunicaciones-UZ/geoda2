@@ -38,7 +38,9 @@ class ChecksMixin(UserPassesTestMixin):
         Devuelve si el usuario actual es PAS o PDI de la UZ o de sus centros adscritos.
         """
         usuario_actual = self.request.user
-        colectivos_del_usuario = json.loads(usuario_actual.colectivos)
+        colectivos_del_usuario = (
+            json.loads(usuario_actual.colectivos) if usuario_actual.colectivos else []
+        )
         self.permission_denied_message = _(
             "Usted no es PAS ni PDI de la Universidad de Zaragoza"
             " o de sus centros adscritos."

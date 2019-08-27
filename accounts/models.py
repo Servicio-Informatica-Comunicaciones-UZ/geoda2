@@ -68,7 +68,7 @@ class CustomUser(AbstractUser):
 
         Se determina usando el orden de prelación PDI > ADS > PAS > EST.
         """
-        colectivos_del_usuario = json.loads(self.colectivos)
+        colectivos_del_usuario = json.loads(self.colectivos) if self.colectivos else []
         for col in ("PDI", "ADS", "PAS", "EST"):
             if col in colectivos_del_usuario:
                 return col
@@ -78,7 +78,10 @@ class CustomUser(AbstractUser):
         """
         Devuelve si el usuario está autorizado a usar esta aplicación.
         """
-        return any(col in self.colectivos for col in ["ADS", "PAS", "PDI"])
+        colectivos_del_usuario = json.loads(self.colectivos) if self.colectivos else []
+        return self.is_superuser or any(
+            col in colectivos_del_usuario for col in ["ADS", "PAS", "PDI"]
+        )
 
     # Custom Manager
     objects = CustomUserManager()
