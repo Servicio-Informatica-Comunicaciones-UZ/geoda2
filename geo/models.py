@@ -92,18 +92,14 @@ class Asignatura(models.Model):
 class Calendario(models.Model):
     """Este modelo almacena el año académico actual."""
 
-    id = models.IntegerField(primary_key=True, verbose_name=_("Año académico"))
+    anyo = models.PositiveSmallIntegerField(
+        verbose_name=_("Año académico"), default=2019
+    )
+    slug = models.SlugField(unique=True, default="actual")
 
     class Meta:
         db_table = "calendario"
-
-    @staticmethod
-    def get_anyo_academico_actual():
-        try:
-            return Calendario.objects.first().id
-        except AttributeError:
-            hoy = datetime.today()
-            return hoy.year if hoy.month > 6 else hoy.year - 1
+        permissions = [("calendario", _("Puede modificar el año académico actual."))]
 
 
 class Pod(models.Model):

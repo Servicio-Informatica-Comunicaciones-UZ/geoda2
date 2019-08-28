@@ -79,10 +79,25 @@
         <ul class="navbar-nav ml-auto">
           {% if user.puede_usar_aplicacion %}
             {% if user|has_group:"Gestores" %}
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'cursos-pendientes' %}">
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href=""
+                  id="gestionMenu"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
                   <span class="fas fa-cog"></span>&nbsp; {% trans "Gestión" %}
                 </a>
+                <div class="dropdown-menu" aria-labelledby="gestionMenu">
+                  <a class="dropdown-item" href="{% url 'cursos-pendientes' %}">
+                    <span class="far fa-thumbs-up"></span>&nbsp; {% trans "Cursos por aprobar" %}
+                  </a>
+                  <a class="dropdown-item" href="{% url 'calendario' 'actual' %}">
+                    <span class="far fa-calendar-alt"></span>&nbsp; {% trans "Curso actual" %}
+                  </a>
+                </div>
               </li>
             {% endif %}
             <li class="nav-item">

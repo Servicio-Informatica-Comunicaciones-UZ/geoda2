@@ -4,6 +4,7 @@ from .views import (
     ASCrearCursoView,
     ASTodasView,
     AyudaView,
+    CalendarioUpdate,
     CursoDetailView,
     CursosPendientesView,
     ForanoView,
@@ -25,6 +26,9 @@ urlpatterns = [
         name="as-crear-curso",
     ),
     path("asignatura/todas", ASTodasView.as_view(), name="as-todas"),
+    path(
+        "gestion/calendario/<slug:slug>", CalendarioUpdate.as_view(), name="calendario"
+    ),
     path(
         "gestion/cursos-pendientes",
         CursosPendientesView.as_view(),

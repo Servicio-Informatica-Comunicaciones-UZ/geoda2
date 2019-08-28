@@ -13,11 +13,18 @@ from django.contrib.auth.mixins import (
     UserPassesTestMixin,
 )
 from django.contrib.auth.models import Group
+from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views import View
-from django.views.generic import DetailView, ListView, RedirectView, TemplateView
+from django.views.generic import (
+    DetailView,
+    ListView,
+    RedirectView,
+    TemplateView,
+    UpdateView,
+)
 from django.views.generic.edit import CreateView
 from django_tables2.views import SingleTableView
 from templated_email import send_templated_mail
@@ -140,11 +147,25 @@ class ASTodasView(LoginRequiredMixin, ChecksMixin, PagedFilteredTableView):
     formhelper_class = AsignaturaFilterFormHelper
 
     def get_queryset(self):
-        anyo_academico = Calendario.get_anyo_academico_actual()
+        anyo_academico = Calendario.objects.get(slug="actual").anyo
         return Asignatura.objects.filter(anyo_academico=anyo_academico)
 
     def test_func(self):
         return self.es_pas_o_pdi()
+
+
+class CalendarioUpdate(
+    LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, UpdateView
+):
+    """Muestra un formulario para actualizar el año académico actual."""
+
+    permission_required = "geo.calendario"
+    permission_denied_message = _("Sólo los gestores pueden acceder a esta página.")
+    model = Calendario
+    fields = ("anyo",)
+    template_name = "calendario/form.html"
+    success_message = _("Se ha actualizado el curso académico actual.")
+    success_url = reverse_lazy("calendario", args=["actual"])
 
 
 class CursoDetailView(LoginRequiredMixin, DetailView):
@@ -169,14 +190,14 @@ class CursosPendientesView(LoginRequiredMixin, PermissionRequiredMixin, ListView
 class MisAsignaturasView(LoginRequiredMixin, ChecksMixin, SingleTableView):
     """Muestra las asignaturas del usuario, según el POD, y permite crear cursos."""
 
+    table_class = PodTable
+    template_name = "pod/mis-asignaturas.html"
+
     def get_queryset(self):
-        anyo_academico = Calendario.get_anyo_academico_actual()
+        anyo_academico = Calendario.objects.get(slug="actual").anyo
         return Pod.objects.filter(
             nip=self.request.user.username, anyo_academico=anyo_academico
         )
-
-    table_class = PodTable
-    template_name = "pod/mis-asignaturas.html"
 
     def test_func(self):
         return self.es_pas_o_pdi()
@@ -186,18 +207,18 @@ class MisCursosView(LoginRequiredMixin, SingleTableView):
     """Muestra los cursos creados por el usuario."""
 
     table_class = CursoTable
-    anyo_academico = Calendario.get_anyo_academico_actual()
-    curso = f"{anyo_academico}/{anyo_academico + 1}"
     template_name = "curso/mis-cursos.html"
 
     def get_context_data(self, **kwargs):
         context = super(MisCursosView, self).get_context_data(**kwargs)
-        context["curso"] = self.curso
+        anyo_academico = Calendario.objects.get(slug="actual").anyo
+        context["curso"] = f"{anyo_academico}/{anyo_academico + 1}"
         return context
 
     def get_queryset(self):
         return Curso.objects.filter(
-            profesores=self.request.user.id, anyo_academico=self.anyo_academico
+            profesores=self.request.user.id,
+            anyo_academico=Calendario.objects.get(slug="actual").anyo,
         )
 
 

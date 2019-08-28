@@ -54,7 +54,7 @@ class SolicitaForm(forms.ModelForm):
 
     CATEGORIAS_NO_REGLADAS = (
         Categoria.objects.filter(centro_id=None)
-        .filter(anyo_academico=Calendario.get_anyo_academico_actual())
+        .filter(anyo_academico=Calendario.objects.get(slug="actual").anyo)
         .exclude(supercategoria_id=None)
         .values_list("id", "nombre")
         .order_by("nombre")
@@ -89,7 +89,7 @@ class SolicitaForm(forms.ModelForm):
         # Añade la fecha de solicitud y cambia el estado del curso a Solicitado.
         self.instance.fecha_solicitud = datetime.now()
         self.instance.estado = Estado(1)  # -> Solicitado
-        self.instance.anyo_academico = Calendario.get_anyo_academico_actual()
+        self.instance.anyo_academico = Calendario.objects.get(slug="actual").anyo
         self.instance.plataforma_id = 1
         curso = super(SolicitaForm, self).save(commit=commit)
 

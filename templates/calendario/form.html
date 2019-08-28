@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags i18n %}
+
+{% block title %}{% trans "Año académico actual" %}{% endblock title %}
+
+{% block content %}
+
+<div class='container-blanco'>
+    <h1>{% trans "Año académico actual" %}</h1>
+    <hr><br>
+
+    <div class="alert-info alert fade-in">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+
+        <span class="fas fa-info-circle"></span>
+        {% trans "En esta página puede establecer el curso actual." %}<br />
+        {% trans "Debe indicar el año en que comienza el curso. " %}
+        {% trans "Por ejemplo, para el curso 2019-2019, introduzca «2019»." %}
+    </div><br>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form | crispy }}
+
+        <div class="btn-group" role="group" aria-label="Botones">
+            <button class="btn btn-warning" type="submit">
+                <span class="fas fa-check"></span> {% trans 'Actualizar' %}
+            </button>
+        </div>
+    </form>
+</div>
+
+{% endblock content %}

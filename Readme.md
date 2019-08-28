@@ -68,7 +68,9 @@ Configuración inicial
     ```
 
 5. Insertar el año académico actual en la tabla `calendario`.
-6. Añadir usuarios al grupo `Gestores`.
+
+    `INSERT INTO calendario(anyo, slug) VALUES (2018, 'actual');`
+6. Añadir usuarios al grupo `Gestores` (incluyendo el superusuario).
 
 Servidor web para desarrollo
 ----------------------------
