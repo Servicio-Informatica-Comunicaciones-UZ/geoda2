@@ -163,7 +163,7 @@ class CalendarioUpdate(
     permission_denied_message = _("Sólo los gestores pueden acceder a esta página.")
     model = Calendario
     fields = ("anyo",)
-    template_name = "calendario/form.html"
+    template_name = "gestion/calendario_form.html"
     success_message = _("Se ha actualizado el curso académico actual.")
     success_url = reverse_lazy("calendario", args=["actual"])
 
