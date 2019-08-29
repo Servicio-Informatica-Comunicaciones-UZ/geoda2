@@ -109,11 +109,13 @@ por la dirección del Campus Virtual, que tiene el rol «Gestor» en la aplicaci
 ### Creación de cursos
 
 Se crean en la plataforma por medio de un _Web Service_ (`core_course_create_courses`).
-Se indica también la categoría del curso, que ya debe existir en la plataforma (en la
-versión anterior de GEO se creaban todas las posibles categorías lanzando un comando de
-consola al empezar el año académico).
 
-> TODO: Crear categorías al vuelo, para que sólo existan las realmente necesarias.
+Al empezar el año académico, mediante unas órdenes SQL, se crean en Geoda todas las posibles categorías.
+Si la categoría del curso no existe en la plataforma, Geoda la crea previamente mediante
+un _Web Service_ (`core_course_create_categories`).
+La categoría raíz (correspondiente al curso académico) se debe crear manualmente.
+(En la versión anterior de GEO había que crear en la plataforma todas las posibles categorías,
+lanzando un comando de consola al empezar el año académico).
 
 El servicio web devuelve el ID del curso creado, así como su URL.
 Este ID, junto con el creador del curso, se guarda en la tabla `profesor_curso`, y se

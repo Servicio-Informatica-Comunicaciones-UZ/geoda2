@@ -5,6 +5,7 @@ from annoying.functions import get_config, get_object_or_this
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from .wsclient import WSClient
 
 
 class Asignatura(models.Model):
@@ -154,6 +155,13 @@ class Pod(models.Model):
 
 
 class Categoria(models.Model):
+    """
+    Este modelo representa la categoría de los cursos.
+
+    Las categorías son jerárquicas:
+    Curso académico > Centro o departamento > Estudio
+    """
+
     plataforma_id = models.IntegerField(
         blank=True, null=True, verbose_name=_("Cód. plataforma")
     )
@@ -171,6 +179,40 @@ class Categoria(models.Model):
     anyo_academico = models.IntegerField(
         blank=True, null=True, verbose_name=_("Año académico"), db_index=True
     )
+
+    def crear_en_plataforma(self):
+        """
+        Crea la categoría en la plataforma.
+
+        Las categorías raíz (de cada curso académico) deben crearse manualmente.
+        Las subcategorías se crean en la plataforma según van siendo necesarias
+        al crear nuevos cursos.
+        """
+
+        # Comprobar si existe la categoría padre en la plataforma, y si no, crearla.
+        categoria_padre = self.supercategoria
+        if not categoria_padre.id_nk:
+            categoria_padre.crear_en_plataforma()
+
+        cliente = WSClient()
+        datos_categoria = self.get_datos()
+        datos_recibidos = cliente.crear_categoria(datos_categoria)
+        self.id_nk = datos_recibidos["id"]
+        self.save()
+
+    def get_datos(self):
+        """
+        Devuelve los datos necesarios para crear la categoría en Moodle usando WS.
+
+        Consultar Administration → Site Administration → Plugins → Web Services →
+                  API Documentation → core_course_create_categories
+        """
+
+        return {
+            "name": self.nombre,
+            "parent": self.supercategoria.id_nk,
+            "idnumber": f"cat_{self.id}",
+        }
 
     class Meta:
         db_table = "categoria"
@@ -258,7 +300,12 @@ class Curso(models.Model):
         self.save()
 
     def get_datos(self):
-        """Devuelve los datos necesarios para crear el curso en Moodle usando WS."""
+        """
+        Devuelve los datos necesarios para crear el curso en Moodle usando WS.
+
+        Consultar Administration → Site Administration → Plugins → Web Services →
+                  API Documentation → core_course_create_courses
+        """
 
         return {
             "fullname": self.nombre,

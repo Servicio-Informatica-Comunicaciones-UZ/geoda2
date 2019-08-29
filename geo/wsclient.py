@@ -19,6 +19,22 @@ class WSClient:
     api_url = get_config("API_URL")
     geodaws_token = get_config("GEODAWS_TOKEN")
 
+    def crear_categoria(self, datos_categoria):
+        """
+        Crea una nueva categoría en Moodle con los datos indicados.
+
+        Consultar Administration → Site Administration → Plugins → Web Services →
+                  API Documentation → core_course_create_categories
+        """
+
+        payload = {}
+        for clave, valor in datos_categoria.items():
+            payload[f"categories[0][{clave}]"] = valor
+        datos_recibidos = self._request_url(
+            "POST", "core_course_create_categories", self.geo_token, payload
+        )
+        return datos_recibidos[0]
+
     def crear_curso(self, datos_curso):
         """
         Crea nuevo curso en Moodle con los datos indicados.

@@ -85,9 +85,14 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
             return redirect("curso-detail", asignatura.curso.id)
 
         curso = self._cargar_asignatura_en_curso(asignatura)
-        datos_curso = curso.get_datos()
+
+        # Comprobar si existe la categoría en la plataforma, y si no, crearla.
+        categoria = curso.categoria
+        if not categoria.id_nk:
+            categoria.crear_en_plataforma()
 
         cliente = WSClient()
+        datos_curso = curso.get_datos()
         datos_recibidos = cliente.crear_curso(datos_curso)
         curso.actualizar_tras_creacion(datos_recibidos)
         self._anyadir_usuario_como_profesor(curso)
@@ -103,6 +108,8 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
     def _anyadir_usuario_como_profesor(self, curso):
         """
         Añade al usuario que solicita el curso a la lista de profesores del curso.
+        Esta tabla la usa un plugin de matriculación (enrolment) de Moodle
+        de tipo «Base de datos externa».
         """
 
         profesor_curso = ProfesorCurso(
@@ -243,6 +250,11 @@ class ResolverSolicitudCursoView(
         if request.POST.get("decision") == "autorizar":
             curso.estado = Estado.objects.get(id=2)  # Autorizado
             curso.save()
+
+            # Comprobar si existe la categoría en la plataforma, y si no, crearla.
+            categoria = curso.categoria
+            if not categoria.id_nk:
+                categoria.crear_en_plataforma()
 
             cliente = WSClient()
             datos_recibidos = cliente.crear_curso(curso.get_datos())
