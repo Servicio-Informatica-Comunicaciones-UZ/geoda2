@@ -4,9 +4,8 @@ from django.db import connections
 
 
 class UsuarioNoEncontrado(Exception):
-    """Excepción elevada cuando no se encuentra al usuario en Gestión de Identidades."""
 
-    pass
+    """Excepción elevada cuando no se encuentra al usuario en Gestión de Identidades."""
 
 
 def dictfetchall(cursor):
@@ -21,10 +20,10 @@ def dictfetchone(cursor):
     row = cursor.fetchone()
     if row:
         return dict(zip(columns, row))
-    else:
-        raise UsuarioNoEncontrado(
-            "Usuario desconocido. No se ha encontrado en Gestión de Identidades."
-        )
+
+    raise UsuarioNoEncontrado(
+        "Usuario desconocido. No se ha encontrado en Gestión de Identidades."
+    )
 
 
 def get_identidad(strategy, response, user, *args, **kwargs):

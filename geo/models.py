@@ -68,7 +68,6 @@ class Asignatura(models.Model):
 
     def get_categoria(self):
         """Devuelve la categoría correspondiente a esta asignatura, o la Miscelánea."""
-
         categoria_por_omision = Categoria.objects.get(
             anyo_academico=self.anyo_academico, nombre="Miscelánea"
         )
@@ -83,7 +82,6 @@ class Asignatura(models.Model):
 
     def get_shortname(self):
         """Devuelve el nombre corto que tendrá el curso de esta asignatura en Moodle."""
-
         return (
             f"{self.centro_id}_{self.plan_id_nk}_{self.asignatura_id}_"
             f"{self.cod_grupo_asignatura}_{self.anyo_academico}"
@@ -104,8 +102,7 @@ class Calendario(models.Model):
 
 
 class Pod(models.Model):
-    """
-    Correspondencia entre asignaturas regladas y profesores.
+    """Correspondencia entre asignaturas regladas y profesores.
 
     Establecida en el Plan de Ordenación Docente.
     """
@@ -181,8 +178,7 @@ class Categoria(models.Model):
     )
 
     def crear_en_plataforma(self):
-        """
-        Crea la categoría en la plataforma.
+        """Crea la categoría en la plataforma.
 
         Las categorías raíz (de cada curso académico) deben crearse manualmente.
         Las subcategorías se crean en la plataforma según van siendo necesarias
@@ -201,13 +197,11 @@ class Categoria(models.Model):
         self.save()
 
     def get_datos(self):
-        """
-        Devuelve los datos necesarios para crear la categoría en Moodle usando WS.
+        """Devuelve los datos necesarios para crear la categoría en Moodle usando WS.
 
         Consultar Administration → Site Administration → Plugins → Web Services →
                   API Documentation → core_course_create_categories
         """
-
         return {
             "name": self.nombre,
             "parent": self.supercategoria.id_nk,
@@ -229,8 +223,7 @@ class Estado(models.Model):
 
 
 class Curso(models.Model):
-    """
-    Este modelo representa un curso en Moodle.
+    """Este modelo representa un curso en Moodle.
 
     Pueden ser de 2 tipos:
 
@@ -296,17 +289,15 @@ class Curso(models.Model):
         self.fecha_creacion = datetime.today()
         url_plataforma = get_config("URL_PLATAFORMA")
         self.url = f"{url_plataforma}/course/view.php?id={self.id_nk}"
-        self.estado_id = 3  # Creado
+        self.estado = Estado.objects.get(nombre="Creado")  # 3
         self.save()
 
     def get_datos(self):
-        """
-        Devuelve los datos necesarios para crear el curso en Moodle usando WS.
+        """Devuelve los datos necesarios para crear el curso en Moodle usando WS.
 
         Consultar Administration → Site Administration → Plugins → Web Services →
                   API Documentation → core_course_create_courses
         """
-
         return {
             "fullname": self.nombre,
             "shortname": self.asignatura.get_shortname()

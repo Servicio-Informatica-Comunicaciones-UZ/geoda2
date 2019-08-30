@@ -19,8 +19,9 @@ def metadata_xml(request):
         load_strategy(request), "saml", redirect_uri=complete_url
     )
     metadata, errors = saml_backend.generate_metadata_xml()
-    if not errors:
-        return HttpResponse(content=metadata, content_type="text/xml")
+    if errors:
+        raise Exception("\n".join(errors))
+    return HttpResponse(content=metadata, content_type="text/xml")
 
 
 class UserdataView(LoginRequiredMixin, View):
@@ -37,7 +38,8 @@ class UserdataView(LoginRequiredMixin, View):
 
 @method_decorator(never_cache, name="dispatch")
 class LogoutView(LoginRequiredMixin, RedirectView):
-    """
+    """Log out the current user.
+
     This view logs out a locally authenticated user,
     or sends a Logout request to the SAML2 Identity Provider.
     """
@@ -75,7 +77,7 @@ class SlsView(View):
         # As of now, this code only handles the first association.
         association = request.user.social_auth.first()
         idp_name = association.uid.split(":")[0]
-        url, errors = saml_backend.process_logout(idp_name, None)
+        _, errors = saml_backend.process_logout(idp_name, None)
 
         if errors:
             messages = "\n".join(errors)

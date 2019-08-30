@@ -5,8 +5,7 @@ from annoying.functions import get_config
 
 
 class WSClient:
-    """
-    Cliente para conectarse a los Web Services de Moodle usando el protocolo REST.
+    """Cliente para conectarse a los Web Services de Moodle usando el protocolo REST.
 
     Véase:
 
@@ -20,13 +19,11 @@ class WSClient:
     geodaws_token = get_config("GEODAWS_TOKEN")
 
     def crear_categoria(self, datos_categoria):
-        """
-        Crea una nueva categoría en Moodle con los datos indicados.
+        """Crea una nueva categoría en Moodle con los datos indicados.
 
         Consultar Administration → Site Administration → Plugins → Web Services →
                   API Documentation → core_course_create_categories
         """
-
         payload = {}
         for clave, valor in datos_categoria.items():
             payload[f"categories[0][{clave}]"] = valor
@@ -36,13 +33,11 @@ class WSClient:
         return datos_recibidos[0]
 
     def crear_curso(self, datos_curso):
-        """
-        Crea nuevo curso en Moodle con los datos indicados.
+        """Crea nuevo curso en Moodle con los datos indicados.
 
         Devuelve una estructura como ésta:
         {'id': 181, 'shortname': '107_356_68500_99_2018'}
         """
-
         payload = {}
         for clave, valor in datos_curso.items():
             payload[f"courses[0][{clave}]"] = valor
@@ -52,9 +47,10 @@ class WSClient:
         return datos_recibidos[0]
 
     def automatricular(self, asignatura, curso):
-        """
-        Crea un registro en la tabla `sigma` de Moodle para matricular automáticamente
-        los estudiantes de un plan-centro-asignatura-grupo-año.
+        """Crea un registro en la tabla `sigma` de la base de datos de Moodle.
+
+        Esta tabla se usa para matricular automáticamente a los estudiantes
+        de un plan-centro-asignatura-grupo-año.
         """
         payload = {}
         payload["curso_id_nk"] = curso.id_nk
@@ -69,7 +65,6 @@ class WSClient:
 
     def _request_url(self, verb, wsfunction, token, data=None):
         """Envía una petición al Web Service."""
-
         if verb == "POST":
             resp = requests.post(
                 f"{self.api_url}?wstoken={token}&wsfunction={wsfunction}"
@@ -85,11 +80,11 @@ class WSClient:
         else:
             raise Exception("Método HTTP no soportado")
 
-        if resp.ok:  # resp.status_code 200
-            received_data = json.loads(resp.content.decode("utf-8"))
-            if isinstance(received_data, dict) and received_data.get("exception", None):
-                raise Exception(received_data.get("message"))
-
-            return received_data
-        else:
+        if not resp.ok:  # resp.status_code 200
             resp.raise_for_status()
+
+        received_data = json.loads(resp.content.decode("utf-8"))
+        if isinstance(received_data, dict) and received_data.get("exception", None):
+            raise Exception(received_data.get("message"))
+
+        return received_data

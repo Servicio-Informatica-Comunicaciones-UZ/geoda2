@@ -20,19 +20,19 @@ class AsignaturasTable(tables.Table):
                     reverse("curso-detail", args=[record.curso.id])
                 )
             )
-        else:
-            return mark_safe(
-                """
-                <a href={0}
-                  class='btn btn-warning btn-sm'
-                  title='Crear curso en la plataforma'
-                >
-                  <span class='fas fa-plus' aria-hidden='true' style='display: inline;'
-                  ></span>&nbsp;Crear&nbsp;curso
-                </a>""".format(
-                    reverse("as-crear-curso", args=[record.id])
-                )
+
+        return mark_safe(
+            """
+            <a href={0}
+                class='btn btn-warning btn-sm'
+                title='Crear curso en la plataforma'
+            >
+                <span class='fas fa-plus' aria-hidden='true' style='display: inline;'
+                ></span>&nbsp;Crear&nbsp;curso
+            </a>""".format(
+                reverse("as-crear-curso", args=[record.id])
             )
+        )
 
     class Meta:
         attrs = {"class": "table table-striped table-hover cabecera-azul"}
@@ -69,19 +69,19 @@ class PodTable(tables.Table):
                     reverse("curso-detail", args=[asig.curso.id])
                 )
             )
-        else:
-            return mark_safe(
-                """
-                <a href={0}
-                  class='btn btn-warning btn-sm'
-                  title='Crear curso en la plataforma'
-                >
-                  <span class='fas fa-plus' aria-hidden='true' style='display: inline;'
-                  ></span>&nbsp;Crear&nbsp;curso
-                </a>""".format(
-                    reverse("as-crear-curso", args=[asig.id])
-                )
+
+        return mark_safe(
+            """
+            <a href={0}
+                class='btn btn-warning btn-sm'
+                title='Crear curso en la plataforma'
+            >
+                <span class='fas fa-plus' aria-hidden='true' style='display: inline;'
+                ></span>&nbsp;Crear&nbsp;curso
+            </a>""".format(
+                reverse("as-crear-curso", args=[asig.id])
             )
+        )
 
     nombre_estudio = tables.Column(empty_values=(), verbose_name="Estudio")
 

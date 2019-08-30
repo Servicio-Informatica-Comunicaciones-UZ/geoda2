@@ -1,9 +1,9 @@
-import json
-import zeep
 from datetime import date, datetime
+import json
 from dateutil.relativedelta import relativedelta
 from requests import Session
 from requests.auth import HTTPBasicAuth
+import zeep
 
 from annoying.functions import get_config
 from django.contrib import messages
@@ -41,9 +41,7 @@ class ChecksMixin(UserPassesTestMixin):
     """Proporciona comprobaciones para autorizar o no una acción a un usuario."""
 
     def es_pas_o_pdi(self):
-        """
-        Devuelve si el usuario actual es PAS o PDI de la UZ o de sus centros adscritos.
-        """
+        """Devuelve si el usuario es PAS o PDI de la UZ o de sus centros adscritos."""
         usuario_actual = self.request.user
         colectivos_del_usuario = (
             json.loads(usuario_actual.colectivos) if usuario_actual.colectivos else []
@@ -72,8 +70,7 @@ class HomePageView(TemplateView):
 
 
 class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
-    """
-    Crea un nuevo Curso para una asignatura Sigma.
+    """Crea un nuevo Curso para una asignatura Sigma.
 
     Si la creación tiene éxito, el navegador es redirigido a la ficha del curso.
     """
@@ -106,12 +103,11 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
         return self.es_pas_o_pdi()
 
     def _anyadir_usuario_como_profesor(self, curso):
-        """
-        Añade al usuario que solicita el curso a la lista de profesores del curso.
+        """Añade al usuario que solicita el curso a la lista de profesores del curso.
+
         Esta tabla la usa un plugin de matriculación (enrolment) de Moodle
         de tipo «Base de datos externa».
         """
-
         profesor_curso = ProfesorCurso(
             curso=curso, profesor=self.request.user, fecha_alta=datetime.today()
         )
@@ -125,10 +121,7 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
         )
 
     def _cargar_asignatura_en_curso(self, asignatura):
-        """
-        Crea una nueva instancia de Curso con los datos de la asignatura Sigma indicada.
-        """
-
+        """Crea una nueva instancia de Curso con los datos de la asignatura indicada."""
         curso = Curso(
             nombre=asignatura.nombre_asignatura,
             fecha_solicitud=datetime.today(),
@@ -241,8 +234,8 @@ class ResolverSolicitudCursoView(
         return reverse_lazy("cursos-pendientes")
 
     def post(self, request, *args, **kwargs):
-        id = request.POST.get("id")
-        curso = get_object_or_404(Curso, pk=id)
+        id_recibido = request.POST.get("id")
+        curso = get_object_or_404(Curso, pk=id_recibido)
         curso.autorizador = request.user
         curso.fecha_autorizacion = datetime.now()
         curso.comentarios = request.POST.get("comentarios")
@@ -321,10 +314,7 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
 
 
 class ForanoView(LoginRequiredMixin, ChecksMixin, View):
-    """
-    Muestra un formulario para crear una vinculacion de un usuario externo
-    en Gestión de Identidades.
-    """
+    """Crea una vinculacion de un usuario externo en Gestión de Identidades."""
 
     def get(self, request, *args, **kwargs):
         return render(request, "forano/vincular.html")
