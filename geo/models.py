@@ -1,7 +1,7 @@
 from datetime import datetime
 from time import time
 
-from annoying.functions import get_config, get_object_or_this
+from annoying.functions import get_config, get_object_or_None
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -9,7 +9,9 @@ from .wsclient import WSClient
 
 
 class Asignatura(models.Model):
-    """Este modelo representa una asignatura Sigma, de un estudio reglado."""
+    """Este modelo representa una asignatura Sigma, de un estudio reglado.
+
+    La tabla se carga mediante una tarea ETL (Pentaho Spoon)."""
 
     plan_id_nk = models.IntegerField(blank=True, null=True, verbose_name=_("Cód. plan"))
     nombre_estudio = models.CharField(
@@ -67,17 +69,18 @@ class Asignatura(models.Model):
         verbose_name_plural = _("asignaturas SIGM@")
 
     def get_categoria(self):
-        """Devuelve la categoría correspondiente a esta asignatura, o la Miscelánea."""
-        categoria_por_omision = Categoria.objects.get(
-            anyo_academico=self.anyo_academico, nombre="Miscelánea"
-        )
-        categoria = get_object_or_this(
+        """Devuelve la categoría correspondiente a esta asignatura.
+
+        Si no existe previamente, se crea la categoría (y sus categorías superiores).
+        """
+        categoria = get_object_or_None(
             Categoria,
-            categoria_por_omision,
             plan_id_nk=self.plan_id_nk,
             centro_id=self.centro_id,
             anyo_academico=self.anyo_academico,
         )
+        if not categoria:
+            categoria = Categoria.crear_desde_asignatura(self)
         return categoria
 
     def get_shortname(self):
@@ -105,6 +108,7 @@ class Pod(models.Model):
     """Correspondencia entre asignaturas regladas y profesores.
 
     Establecida en el Plan de Ordenación Docente.
+    La tabla se carga mediante una tarea ETL (Pentaho Spoon).
     """
 
     plan_id_nk = models.IntegerField(blank=True, null=True, verbose_name="Cód. plan")
@@ -132,6 +136,7 @@ class Pod(models.Model):
 
     # Alternative: https://pypi.org/project/django-composite-foreignkey/
     def get_asignatura(self):
+        """Devuelve el modelo Asignatura correspondiente a este registro."""
         asig = Asignatura.objects.get(
             anyo_academico=self.anyo_academico,
             centro_id=self.centro_id,
@@ -177,19 +182,69 @@ class Categoria(models.Model):
         blank=True, null=True, verbose_name=_("Año académico"), db_index=True
     )
 
+    @classmethod
+    def crear_desde_asignatura(cls, asignatura):
+        """Crea una categoría de plan de estudios para la asignatura indicada."""
+        supercategoria = get_object_or_None(
+            Categoria,
+            anyo_academico=asignatura.anyo_academico,
+            centro_id=asignatura.centro_id,
+            plan_id_nk=None,
+        )
+        if not supercategoria:
+            supercategoria = Categoria.crear_de_centro(asignatura)
+        return cls.crear(
+            asignatura.anyo_academico,
+            asignatura.nombre_estudio,
+            supercategoria.id,
+            asignatura.centro_id,
+            asignatura.plan_id_nk,
+        )
+
+    @classmethod
+    def crear_de_centro(cls, asignatura):
+        """Crea una categoría de centro/departamento para la asignatura indicada."""
+        supercategoria = get_object_or_None(
+            Categoria, anyo_academico=asignatura.anyo_academico, supercategoria_id=None
+        )
+        if not supercategoria:
+            supercategoria = Categoria.crear_de_anyo(asignatura.anyo_academico)
+        return cls.crear(
+            asignatura.anyo_academico,
+            asignatura.nombre_centro,
+            supercategoria.id,
+            asignatura.centro_id,
+        )
+
+    @classmethod
+    def crear_de_anyo(cls, anyo):
+        """Crea una categoría para el año indicado."""
+        return cls.crear(anyo, f"Cursos {anyo}-{anyo + 1}")
+
+    @classmethod
+    def crear(
+        cls,
+        anyo_academico,
+        nombre,
+        supercategoria_id=None,
+        centro_id=None,
+        plan_id_nk=None,
+    ):
+        """Crea una categoría con los datos indicados, en la aplicación y en Moodle."""
+        nueva_categoria = cls(
+            plataforma_id=1,
+            nombre=nombre,
+            supercategoria_id=supercategoria_id,
+            centro_id=centro_id,
+            plan_id_nk=plan_id_nk,
+            anyo_academico=anyo_academico,
+        )
+        nueva_categoria.save()
+        nueva_categoria.crear_en_plataforma()
+        return nueva_categoria
+
     def crear_en_plataforma(self):
-        """Crea la categoría en la plataforma.
-
-        Las categorías raíz (de cada curso académico) deben crearse manualmente.
-        Las subcategorías se crean en la plataforma según van siendo necesarias
-        al crear nuevos cursos.
-        """
-
-        # Comprobar si existe la categoría padre en la plataforma, y si no, crearla.
-        categoria_padre = self.supercategoria
-        if not categoria_padre.id_nk:
-            categoria_padre.crear_en_plataforma()
-
+        """Crea la categoría en la plataforma."""
         cliente = WSClient()
         datos_categoria = self.get_datos()
         datos_recibidos = cliente.crear_categoria(datos_categoria)
@@ -204,7 +259,7 @@ class Categoria(models.Model):
         """
         return {
             "name": self.nombre,
-            "parent": self.supercategoria.id_nk,
+            "parent": self.supercategoria.id_nk if self.supercategoria else None,
             "idnumber": f"cat_{self.id}",
         }
 

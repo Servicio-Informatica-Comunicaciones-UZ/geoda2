@@ -16,6 +16,7 @@ from django.contrib.auth.models import Group
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import (
@@ -164,7 +165,26 @@ class CalendarioUpdate(
     model = Calendario
     fields = ("anyo",)
     template_name = "gestion/calendario_form.html"
-    success_message = _("Se ha actualizado el curso académico actual.")
+    success_message = mark_safe(
+        str(_("Se ha actualizado el curso académico actual."))
+        + "<br><br>\n"
+        + str(_("Recuerde que a continuación <b>se debe</b>:"))
+        + "<br>\n<ul>\n<li>"
+        + str(
+            _(
+                "Crear la categoría «No regladas» para el nuevo curso, "
+                "así como sus subcategorías."
+            )
+        )
+        + "</li>\n<li>"
+        + str(_("Crear la categoría «Varios»."))
+        + "</li>\n<li>"
+        + str(_("Mover los cursos de la categoría «Varios» anterior a la nueva."))
+        + "</li>\n<li>"
+        + str(_("Mover la categoría de la Escuela de Doctorado al año actual."))
+        + "</li>\n</ul>\n"
+        + str(_("<b>Contacte con los responsables de Moodle y GEO del SICUZ.</b>"))
+    )
     success_url = reverse_lazy("calendario", args=["actual"])
 
 
