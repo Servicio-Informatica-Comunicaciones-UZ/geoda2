@@ -52,15 +52,6 @@ class SolicitaForm(forms.ModelForm):
     Incluye el nombre, la categoría y el motivo de la solicitud.
     """
 
-    CATEGORIAS_NO_REGLADAS = (
-        Categoria.objects.filter(centro_id=None)
-        .filter(anyo_academico=Calendario.objects.get(slug="actual").anyo)
-        .exclude(supercategoria_id=None)
-        .values_list("id", "nombre")
-        .order_by("nombre")
-        .all()
-    )
-
     class Meta:
         model = Curso
         fields = ("nombre", "categoria", "motivo_solicitud")
@@ -77,7 +68,14 @@ class SolicitaForm(forms.ModelForm):
             "Nombre del curso. No se podrá cambiar, "
             "así que debe ser descriptivo y diferenciable de otros."
         )
-        self.fields["categoria"].widget.choices = self.CATEGORIAS_NO_REGLADAS
+        self.fields["categoria"].widget.choices = (
+            Categoria.objects.filter(centro_id=None)
+            .filter(anyo_academico=Calendario.objects.get(slug="actual").anyo)
+            .exclude(supercategoria_id=None)
+            .values_list("id", "nombre")
+            .order_by("nombre")
+            .all()
+        )
         self.fields["motivo_solicitud"].help_text = _(
             "Explique la razón de solicitarlo como no reglado, "
             "justificación de su creación y público al que va dirigido."
