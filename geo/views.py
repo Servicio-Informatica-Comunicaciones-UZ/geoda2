@@ -57,6 +57,13 @@ class ChecksMixin(UserPassesTestMixin):
             for col_autorizado in ["PAS", "ADS", "PDI"]
         )
 
+    def test_func(self):
+        raise NotImplementedError(
+            "{0} carece de la implementación del método test_func().".format(
+                self.__class__.__name__
+            )
+        )
+
 
 class AyudaView(TemplateView):
     """Muestra la página de ayuda."""
@@ -283,7 +290,8 @@ class ResolverSolicitudCursoView(
         self._notifica_resolucion(curso)
         return super().post(request, *args, **kwargs)
 
-    def _notifica_resolucion(self, curso):
+    @staticmethod
+    def _notifica_resolucion(curso):
         """Envía un correo al solicitante del curso informando de la resolucíon."""
         send_templated_mail(
             template_name="resolucion",
@@ -351,9 +359,9 @@ class ForanoView(LoginRequiredMixin, ChecksMixin, View):
         )
         response = client.service.creaVinculacion(
             f"{nip}",  # nip
-            "6",  # codVinculacion  FIXME
+            "53",  # codVinculacion
             date.today().isoformat(),  # fechaInicio
-            (date.today() + relativedelta(years=1)).isoformat(),  # fechaFin FIXME
+            (date.today() + relativedelta(years=1)).isoformat(),  # fechaFin
             request.user.username,  # nipResponsable
         )
 
