@@ -359,7 +359,7 @@ class ForanoView(LoginRequiredMixin, ChecksMixin, View):
         )
         response = client.service.creaVinculacion(
             f"{nip}",  # nip
-            "53",  # codVinculacion
+            "53",  # codVinculacion Usuarios invitados a Moodle
             date.today().isoformat(),  # fechaInicio
             (date.today() + relativedelta(years=1)).isoformat(),  # fechaFin
             request.user.username,  # nipResponsable

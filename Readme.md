@@ -83,8 +83,9 @@ Para que un usuario ajeno a la universidad pueda participar en un curso:
 3. El docente debe matricular al usuario en el curso, con el rol apropiado.
 
 > TODO: Crear el usuario en Moodle mediante un WS, al hacer el paso 2.
-> Alternativa: que lo haga la pasarela nocturna.
-> Alternativa 2: que los usuarios se creen al vuelo al iniciar sesión por primera vez.
+> Que la pasarela nocturna actualice su nombre, apellidos y correo en caso de cambio.
+> Que la pasarela nocturna desactive al usuario al finalizar la vinculación.
+> Desactivar la creación de usuarios al vuelo al iniciar sesión por primera vez.
 
 ### Matriculación automática de alumnos
 
@@ -130,13 +131,13 @@ Requisitos
     Para MariaDB/MySQL instalar el paquete `libmariadb-dev` o `libmysqlclient-dev`.
     Ejecutar `ln -s libmariadb.so.3 /usr/lib/x86_64-linux-gnu/libmariadbclient.so.18` si es necesario.
 
-    La configuración deberá incluir:
+    La configuración deberá incluir, si es necesario:
 
     ```ini
-    innodb_file_per_table
-    innodb_file_format = Barracuda
-    innodb_large_prefix
-    innodb_default_row_format = dynamic
+    # innodb_file_per_table = On  # Default on MariaDB >= 5.5
+    # innodb_file_format = Barracuda  # Deprecated in MariaDB 10.2
+    # innodb_large_prefix  # Deprecated on MariaDB 10.2, Removed in MariaDB 10.3.1
+    # innodb_default_row_format = dynamic  # Default on MariaDB >= 10.2.2
     ```
 
 Instalación
