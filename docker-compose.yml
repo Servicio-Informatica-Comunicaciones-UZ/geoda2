@@ -1,0 +1,38 @@
+---
+version: "3.7"
+services:
+    db:
+        image: mariadb
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${DB_NAME}
+            MYSQL_USER: ${DB_USER}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_INITDB_SKIP_TZINFO: 1
+            TZ: ${TZ}
+        command: |
+            --character-set-server=utf8mb4
+            --collation-server=utf8mb4_unicode_ci
+            --sql-mode=ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION,ANSI_QUOTES,NO_AUTO_CREATE_USER
+    web:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        command: uwsgi
+        depends_on:
+            - db
+        environment:
+            DB_HOST: ${DB_HOST}
+            DB_NAME: ${DB_NAME}
+            DB_USER: ${DB_USER}
+            DB_PASSWORD: ${DB_PASSWORD}
+            DJANGO_MANAGEPY_MIGRATE: ${DJANGO_MANAGEPY_MIGRATE}
+            DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+        ports:
+            - protocol: tcp
+              published: 8001
+              target: 8001
+        restart: on-failure
+        volumes:
+            - ./media:/code/media:rw

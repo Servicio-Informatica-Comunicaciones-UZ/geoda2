@@ -7,7 +7,7 @@ verify_ssl = true
 pylint = "*"
 
 [packages]
-django = "==2.2.3"
+django = "==2.2.7"
 mysqlclient = "*"
 django-tables2 = "*"
 django-filter = "*"
@@ -15,7 +15,7 @@ social-auth-app-django = "*"
 social-auth-core = {extras = ["saml"],version = "*"}
 python3-saml = "*"
 cx-oracle = "*"
-django-crispy-forms = "==1.7.2"
+django-crispy-forms = "==1.8.0"
 requests = "*"
 django-annoying = "*"
 django-templated-email = "*"
