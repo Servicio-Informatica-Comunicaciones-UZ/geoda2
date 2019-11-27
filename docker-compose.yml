@@ -27,7 +27,7 @@ services:
             geoda2_net:
                 ipv4_address: 172.101.0.2
         volumes:
-            - ./data:/var/lib/mysql/
+            - ./data:/var/lib/mysql
 
     web:
         build:

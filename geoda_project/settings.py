@@ -168,7 +168,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
 
 AUTH_USER_MODEL = "accounts.CustomUser"
-LOGIN_URL = f"{SITE_URL}login/saml/?idp=lord"
+LOGIN_URL = f"{SITE_URL}/login/saml/?idp=lord"
 LOGIN_REDIRECT_URL = "mis-cursos"
 LOGOUT_REDIRECT_URL = "home"
 
@@ -202,15 +202,16 @@ SOCIAL_AUTH_SAML_TECHNICAL_CONTACT = {
     "emailAddress": os.environ.get("SOCIAL_AUTH_SAML_TECHNICAL_CONTACT_MAIL"),
 }
 SOCIAL_AUTH_SAML_SUPPORT_CONTACT = {
-    "givenName": os.environ.get("SOCIAL_AUTH_SAML_SUPPPORT_CONTACT_NAME"),
-    "emailAddress": os.environ.get("SOCIAL_AUTH_SAML_SUPPPORT_CONTACT_MAIL"),
+    "givenName": os.environ.get("SOCIAL_AUTH_SAML_SUPPORT_CONTACT_NAME"),
+    "emailAddress": os.environ.get("SOCIAL_AUTH_SAML_SUPPORT_CONTACT_MAIL"),
 }
 # Si se cambia el backend de autenticación, actualizar clean() en InvitacionForm
+IDP = os.environ.get("IDENTITY_PROVIDER")
 SOCIAL_AUTH_SAML_ENABLED_IDPS = {
     "lord": {
-        "entity_id": os.environ.get("IDP") + "/saml2/idp/metadata.php",
-        "url": os.environ.get("IDP") + "/saml2/idp/SSOService.php",
-        "slo_url": os.environ.get("IDP") + "/saml2/idp/SingleLogoutService.php",
+        "entity_id": f"{IDP}/saml2/idp/metadata.php",
+        "url": f"{IDP}/saml2/idp/SSOService.php",
+        "slo_url": f"{IDP}/saml2/idp/SingleLogoutService.php",
         "x509cert": os.environ.get("X509CERT"),
         "attr_user_permanent_id": "uid",
         "attr_full_name": "cn",  # "urn:oid:2.5.4.3"
