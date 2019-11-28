@@ -1,5 +1,8 @@
 .env
 .git
+backups
 data
+logs
 media
 static
+mariadb-backup.sh
