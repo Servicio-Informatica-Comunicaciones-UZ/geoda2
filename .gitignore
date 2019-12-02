@@ -123,3 +123,9 @@ dmypy.json
 
 # Docker stuff
 data/
+
+# App stuff
+backups
+oracle*.deb
+saml.crt
+saml.key
