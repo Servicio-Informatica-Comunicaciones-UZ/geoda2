@@ -97,8 +97,33 @@ estudiantes matriculados en Sigm@.
 
 > TODO: Crear un plugin de _enrolment_, con su propio tipo de matriculación.
 
-Requisitos
-----------
+Instalación sobre contenedores Docker
+-------------------------------------
+
+1. Copiar o renombrar el fichero `.env-sample` a `.env`.
+2. Configurar los ajustes de la base de datos, servidor de correo, la URL del sitio,
+   _Single Sign On_ (SAML) y las direcciones de los _Web services_ de Moodle y de
+   Gestión de Identidades en el fichero `.env`.
+3. Levantar los contenedores:
+   `docker-compose up -d`
+4. Crear el usuario administrador:
+
+   ```bash
+   docker exec -it geoda2_web_1 ./manage.py createsuperuser
+   ```
+
+5. Insertar el año académico actual en la tabla `calendario`.
+
+    ```bash
+    docker exec geoda2_db_1 bash -c 'echo "INSERT INTO calendario(anyo, slug) VALUES (2019, '\''actual'\'');" | mysql -u ${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE}
+    ```
+
+6. Entrar como administrador en la interfaz web, y añadir usuarios al grupo `Gestores` (incluyendo el superusuario).
+
+Instalación sobre hierro
+------------------------
+
+### Requisitos
 
 1. **Python 3.6 o superior**:
 
@@ -140,8 +165,7 @@ Requisitos
     # innodb_default_row_format = dynamic  # Default on MariaDB >= 10.2.2
     ```
 
-Instalación
------------
+### Instalación
 
 ```bash
 git clone https://gitlab.unizar.es/add/geoda2.git
@@ -149,10 +173,9 @@ cd geoda2
 pipenv [--python 3.7] install [--dev]
 ```
 
-Configuración inicial
----------------------
+### Configuración inicial
 
-1. Configurar las bases de datos en el fichero `.env` y la sección `DATABASES` de `geoda_project/settings.py`.
+1. Configurar las bases de datos.
 2. Configurar los datos para el correo, la URL del sitio, y las direcciones de los
    _Web services_ de Moodle y Gestión de Identidades.
 3. Configurar los datos para el _Single Sign On_ (SAML).
@@ -166,11 +189,10 @@ Configuración inicial
 
 5. Insertar el año académico actual en la tabla `calendario`.
 
-    `INSERT INTO calendario(anyo, slug) VALUES (2018, 'actual');`
+    `INSERT INTO calendario(anyo, slug) VALUES (2019, 'actual');`
 6. Añadir usuarios al grupo `Gestores` (incluyendo el superusuario).
 
-Servidor web para desarrollo
-----------------------------
+### Servidor web para desarrollo
 
 ```bash
 pipenv shell
