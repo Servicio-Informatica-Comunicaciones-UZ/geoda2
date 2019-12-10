@@ -11,7 +11,8 @@ from .wsclient import WSClient
 class Asignatura(models.Model):
     """Este modelo representa una asignatura Sigma, de un estudio reglado.
 
-    La tabla se carga mediante una tarea ETL (Pentaho Spoon)."""
+    La tabla se carga mediante una tarea ETL (Pentaho Spoon).
+    """
 
     plan_id_nk = models.IntegerField(blank=True, null=True, verbose_name=_("Cód. plan"))
     nombre_estudio = models.CharField(
@@ -134,6 +135,15 @@ class Pod(models.Model):
     )
     tipo_docencia = models.IntegerField()
 
+    class Meta:
+        db_table = "pod"
+        index_together = ["nip", "anyo_academico"]
+
+    def __str__(self):
+        return "{0} {1} {2} {3}".format(
+            self.anyo_academico, self.plan_id_nk, self.asignatura_id, self.nip
+        )
+
     # Alternative: https://pypi.org/project/django-composite-foreignkey/
     def get_asignatura(self):
         """Devuelve el modelo Asignatura correspondiente a este registro."""
@@ -145,15 +155,6 @@ class Pod(models.Model):
             cod_grupo_asignatura=self.cod_grupo_asignatura,
         )
         return asig
-
-    def __str__(self):
-        return "{0} {1} {2} {3}".format(
-            self.anyo_academico, self.plan_id_nk, self.asignatura_id, self.nip
-        )
-
-    class Meta:
-        db_table = "pod"
-        index_together = ["nip", "anyo_academico"]
 
 
 class Categoria(models.Model):
@@ -181,6 +182,11 @@ class Categoria(models.Model):
     anyo_academico = models.IntegerField(
         blank=True, null=True, verbose_name=_("Año académico"), db_index=True
     )
+
+    class Meta:
+        db_table = "categoria"
+        unique_together = (("anyo_academico", "centro_id", "plan_id_nk"),)
+        verbose_name = _("categoría")
 
     @classmethod
     def crear_desde_asignatura(cls, asignatura):
@@ -263,13 +269,10 @@ class Categoria(models.Model):
             "idnumber": f"cat_{self.id}",
         }
 
-    class Meta:
-        db_table = "categoria"
-        unique_together = (("anyo_academico", "centro_id", "plan_id_nk"),)
-        verbose_name = _("categoría")
-
 
 class Estado(models.Model):
+    """Representa los diferentes estados en los que se puede encontrar un curso."""
+
     id = models.IntegerField(primary_key=True)
     nombre = models.CharField(max_length=127, blank=True, null=True)
 
