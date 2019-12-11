@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import socket
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -253,3 +254,19 @@ API_URL = f"{URL_PLATAFORMA}/webservice/rest/server.php"
 WSDL_VINCULACIONES = os.environ.get("WSDL_VINCULACIONES")
 USER_VINCULACIONES = os.environ.get("USER_VINCULACIONES")
 PASS_VINCULACIONES = os.environ.get("PASS_VINCULACIONES")
+
+# DJANGO-DEBUG-TOOLBAR - <https://github.com/jazzband/django-debug-toolbar>
+# ------------------------------------------------------------------------------
+# https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#prerequisites
+INSTALLED_APPS += ["debug_toolbar"]  # noqa F405
+# https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#middleware
+MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]  # noqa F405
+# https://django-debug-toolbar.readthedocs.io/en/latest/configuration.html#debug-toolbar-config
+DEBUG_TOOLBAR_CONFIG = {
+    "DISABLE_PANELS": ["debug_toolbar.panels.redirects.RedirectsPanel"],
+    "SHOW_TEMPLATE_CONTEXT": True,
+}
+# https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#internal-ips
+# import socket
+HOSTNAME, _, IPS = socket.gethostbyname_ex(socket.gethostname())
+INTERNAL_IPS = [ip[:-1] + "1" for ip in IPS]

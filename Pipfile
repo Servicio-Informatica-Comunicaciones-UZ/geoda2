@@ -7,7 +7,7 @@ verify_ssl = true
 pylint = "*"
 
 [packages]
-django = "==2.2.7"
+django = "==2.2.8"
 mysqlclient = "*"
 django-tables2 = "*"
 django-filter = "*"
@@ -21,6 +21,7 @@ django-annoying = "*"
 django-templated-email = "*"
 zeep = "*"
 python-dateutil = "*"
+django-debug-toolbar = "==2.1"
 
 [requires]
 python_version = "3.7"

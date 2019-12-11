@@ -83,5 +83,3 @@ services:
               published: 8001
               target: 8001
         restart: on-failure
-        volumes:
-            - ./media:/code/media:rw
