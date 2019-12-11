@@ -5,7 +5,7 @@ from requests import Session
 from requests.auth import HTTPBasicAuth
 import zeep
 
-from annoying.functions import get_config
+from annoying.functions import get_config, get_object_or_None
 from django.contrib import messages
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
@@ -32,7 +32,7 @@ from templated_email import send_templated_mail
 
 from .filters import AsignaturaListFilter
 from .forms import SolicitaForm, AsignaturaFilterFormHelper
-from .models import Asignatura, Calendario, Curso, Estado, Pod, ProfesorCurso
+from .models import Asignatura, Calendario, Categoria, Curso, Estado, Pod, ProfesorCurso
 from .tables import AsignaturasTable, CursoTable, PodTable
 from .utils import PagedFilteredTableView
 from .wsclient import WSClient
@@ -128,7 +128,8 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
             ),
         )
 
-    def _cargar_asignatura_en_curso(self, asignatura):
+    @staticmethod
+    def _cargar_asignatura_en_curso(asignatura):
         """Crea una nueva instancia de Curso con los datos de la asignatura indicada."""
         curso = Curso(
             nombre=asignatura.nombre_asignatura,
@@ -179,20 +180,63 @@ class CalendarioUpdate(
         + "<br>\n<ul>\n<li>"
         + str(
             _(
-                "Crear la categoría «No regladas» para el nuevo curso, "
-                "así como sus subcategorías."
+                "Mover los cursos de las categoría «Varios» del año anterior "
+                "a la del año actual, tanto en GEO como en Moodle."
             )
         )
         + "</li>\n<li>"
-        + str(_("Crear la categoría «Varios»."))
+        + str(_("Ídem con los cursos de la categoría «Escuela de Doctorado»."))
         + "</li>\n<li>"
-        + str(_("Mover los cursos de la categoría «Varios» anterior a la nueva."))
-        + "</li>\n<li>"
-        + str(_("Mover la categoría de la Escuela de Doctorado al año actual."))
+        + str(
+            _(
+                "Actualizar el año en las pasarelas de GEO "
+                "(carga de asignaturas y POD)."
+            )
+        )
         + "</li>\n</ul>\n"
         + str(_("<b>Contacte con los responsables de Moodle y GEO del SICUZ.</b>"))
     )
     success_url = reverse_lazy("calendario", args=["actual"])
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        anyo = int(self.request.POST.get("anyo"))
+        siguiente_anyo = anyo + 1
+        nombre_cat_anyo = f"Cursos {anyo}-{siguiente_anyo}"
+
+        # Crear categoría para el año académico. Vg: «Cursos 2019-2020»
+        cat_anyo = self._crear_categoria(anyo, nombre_cat_anyo, None)
+        # Crear categorías «Varios», «Escuela de Doctorado» y «No reglada».
+        self._crear_categoria(anyo, "Varios", cat_anyo.id)
+        self._crear_categoria(anyo, "Escuela de Doctorado", cat_anyo.id)
+        cat_nr = self._crear_categoria(anyo, "No reglada", cat_anyo.id)
+        # Crear las subcategorías de los estudios no reglados
+        for nombre in Categoria.NO_REGLADAS:
+            self._crear_categoria(anyo, nombre, cat_nr.id)
+
+        return super().form_valid(form)
+
+    @staticmethod
+    def _crear_categoria(anyo, nombre, supercategoria_id):
+        """Comprueba si existe la categoría, y la crea si es necesario."""
+        cat = get_object_or_None(
+            Categoria,
+            anyo_academico=anyo,
+            nombre=nombre,
+            supercategoria_id=supercategoria_id,
+        )
+        if not cat:
+            cat = Categoria(
+                plataforma_id=1,
+                anyo_academico=anyo,
+                nombre=nombre,
+                supercategoria_id=supercategoria_id,
+            )
+            cat.save()
+        if not cat.id_nk:
+            cat.crear_en_plataforma()
+        return cat
 
 
 class CursoDetailView(LoginRequiredMixin, DetailView):
@@ -272,9 +316,9 @@ class ResolverSolicitudCursoView(
             curso.save()
 
             # Comprobar si existe la categoría en la plataforma, y si no, crearla.
-            categoria = curso.categoria
-            if not categoria.id_nk:
-                categoria.crear_en_plataforma()
+            # categoria = curso.categoria
+            # if not categoria.id_nk:
+            #     categoria.crear_en_plataforma()
 
             cliente = WSClient()
             datos_recibidos = cliente.crear_curso(curso.get_datos())
@@ -328,7 +372,8 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
     def test_func(self):
         return self.es_pas_o_pdi()
 
-    def _notifica_solicitud(self, curso):
+    @staticmethod
+    def _notifica_solicitud(curso):
         """Envía email a los miembros del grupo Gestores informando de la solicitud."""
         grupo_gestores = Group.objects.get(name="Gestores")
         gestores = grupo_gestores.user_set.all()

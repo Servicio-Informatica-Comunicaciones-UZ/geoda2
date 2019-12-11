@@ -165,6 +165,26 @@ class Categoria(models.Model):
     Curso académico > Centro o departamento > Estudio
     """
 
+    NO_REGLADAS = (
+        "Biblioteca",
+        "C.U.D.",
+        "CIRCE",
+        "Coordinación",
+        "CULM",
+        "Curso P.A.S.",
+        "Cursos 2019-2020",
+        "EPJ",
+        "Formación",
+        "G9",
+        "ICE",
+        "Miscelánea",
+        "POUZ",
+        "Proyectos de innovacion",
+        "Trabajos finales y prácticas externas",
+        "UEZ",
+        "Universa",
+    )
+
     plataforma_id = models.IntegerField(
         blank=True, null=True, verbose_name=_("Cód. plataforma")
     )

@@ -44,9 +44,17 @@ del Campus Virtual, que tiene el rol «Gestor» en la aplicación.
 Cada curso pertenece a una categoría. Las categorías se organizan jerárquicamente:
 curso académico > centro o departamento > plan de estudios
 
+- Cursos 2019-2020
+  - Facultades y Departamentos, incluyendo «Escuela de Doctorado»
+    - Grados, Másteres, Diplomas, etc
+  - No reglada
+    - Biblioteca, CUD, CULM, Curso P.A.S., etc
+  - Varios
+
 En GEO (la versión anterior de esta aplicación), al empezar el año académico se creaban
 todas las posibles categorías mediante unas órdenes SQL.  A continuación había que
 crearlas en la plataforma, lanzando un comando de consola de Yii.
+
 De esta manera, se creaban muchas categorías que no se usaban, y que ralentizaban la
 plataforma.  Además había que repetir el proceso en varias ocasiones, porque la oferta
 académica no solía estar completa en fecha.  Si la categoría de una asignatura no estaba
@@ -109,13 +117,13 @@ Instalación sobre contenedores Docker
 4. Crear el usuario administrador:
 
    ```bash
-   docker exec -it geoda2_web_1 ./manage.py createsuperuser
+   docker-compose exec web ./manage.py createsuperuser
    ```
 
 5. Insertar el año académico actual en la tabla `calendario`.
 
     ```bash
-    docker exec geoda2_db_1 bash -c 'echo "INSERT INTO calendario(anyo, slug) VALUES (2019, '\''actual'\'');" | mysql -u ${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE}
+    docker-compose exec db bash -c 'echo "INSERT INTO calendario(anyo, slug) VALUES (2018, '\''actual'\'');" | mysql -u ${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE}'
     ```
 
 6. Entrar como administrador en la interfaz web, y añadir usuarios al grupo `Gestores` (incluyendo el superusuario).
