@@ -112,9 +112,7 @@ DATABASES = {
         "HOST": os.environ.get("DB_HOST"),  # Set to empty string for localhost.
         "PORT": "",  # Set to empty string for default.
         # Additional database options
-        "OPTIONS": {
-            "charset": "utf8mb4"  # Requires `innodb_default_row_format = dynamic`
-        },
+        "OPTIONS": {"charset": os.environ.get("DB_CHARSET", "utf8mb4")},
     },
     "identidades": {
         "ENGINE": os.environ.get(

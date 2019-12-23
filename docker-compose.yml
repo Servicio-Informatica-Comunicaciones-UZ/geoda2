@@ -12,13 +12,7 @@ services:
     db:
         image: mariadb:10.4
         restart: always
-        environment:
-            MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-            MYSQL_DATABASE: ${DB_NAME}
-            MYSQL_USER: ${DB_USER}
-            MYSQL_PASSWORD: ${DB_PASSWORD}
-            MYSQL_INITDB_SKIP_TZINFO: 1
-            TZ: ${TZ}
+        env_file: ./env/common.env
         command: |
             --character-set-server=utf8mb4
             --collation-server=utf8mb4_unicode_ci
@@ -35,46 +29,11 @@ services:
             context: .
             dockerfile: Dockerfile
         command: uwsgi
+        env_file:
+            - ./env/common.env
+            - ./env/geoda2.env
         depends_on:
             - db
-        environment:
-            - DJANGO_SECRET_KEY
-            - DEBUG
-            - DEFAULT_FROM_EMAIL
-            - EMAIL_BACKEND
-            - EMAIL_HOST
-            - EMAIL_HOST_USER
-            - EMAIL_HOST_PASSWORD
-            - EMAIL_PORT
-            - SITE_URL
-            - DB_HOST
-            - DB_NAME
-            - DB_USER
-            - DB_PASSWORD
-            - DJANGO_MANAGEPY_MIGRATE
-            - ID_ENGINE
-            - ID_HOST
-            - ID_PORT
-            - ID_NAME
-            - ID_USER
-            - ID_PASSWORD
-            - TZ
-            - SOCIAL_AUTH_SAML_SP_ENTITY_ID
-            - SOCIAL_AUTH_SAML_SP_PUBLIC_CERT
-            - SOCIAL_AUTH_SAML_SP_PRIVATE_KEY
-            - SOCIAL_AUTH_SAML_ORG_INFO_URL
-            - SOCIAL_AUTH_SAML_TECHNICAL_CONTACT_NAME
-            - SOCIAL_AUTH_SAML_TECHNICAL_CONTACT_MAIL
-            - SOCIAL_AUTH_SAML_SUPPORT_CONTACT_NAME
-            - SOCIAL_AUTH_SAML_SUPPORT_CONTACT_MAIL
-            - IDENTITY_PROVIDER
-            - X509CERT
-            - URL_PLATAFORMA
-            - GEO_TOKEN
-            - GEODAWS_TOKEN
-            - WSDL_VINCULACIONES
-            - USER_VINCULACIONES
-            - PASS_VINCULACIONES
         networks:
             geoda2_net:
                 ipv4_address: 172.101.0.3
