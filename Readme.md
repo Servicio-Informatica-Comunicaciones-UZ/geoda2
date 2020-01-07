@@ -6,7 +6,7 @@ Aplicación para crear cursos en Moodle 3, desarrollada en Python 3 y Django 2.
 Descripción
 -----------
 
-En la instalaciónd de Moodle de la Universidad de Zaragoza sólo puede crear cursos
+En la instalación de Moodle de la Universidad de Zaragoza sólo puede crear cursos
 directamente la dirección del Campus Virtual.
 
 Esta aplicación permite a los usuarios crear/solicitar cursos en Moodle.
@@ -120,7 +120,8 @@ Instalación sobre contenedores Docker
    docker-compose exec web ./manage.py createsuperuser
    ```
 
-5. Insertar el año académico actual en la tabla `calendario`.
+5. Insertar un año en la tabla `calendario`.  Después se podrá cambiar al año académico
+   actual desde la interfaz web.
 
     ```bash
     docker-compose exec db bash -c 'echo "INSERT INTO calendario(anyo, slug) VALUES (2018, '\''actual'\'');" | mysql -u ${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE}'
