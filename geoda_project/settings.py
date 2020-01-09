@@ -268,3 +268,19 @@ DEBUG_TOOLBAR_CONFIG = {
 # import socket
 HOSTNAME, _, IPS = socket.gethostbyname_ex(socket.gethostname())
 INTERNAL_IPS = [ip[:-1] + "1" for ip in IPS]
+
+# SECURITY
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = "DENY"
+
+# Enable when behind a load balancer or proxy. Otherwise OneLogin SAML may not work.
+# The load balancer or proxy should be configured to add this header.
+USE_X_FORWARDED_PORT = os.environ.get("USE_X_FORWARDED_PORT", False) == "True"
+
+# Tell Django to check this header to determine whether the request came in via HTTPS.
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Tell the browser to send the cookies under an HTTPS connection only.
+SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", False) == "True"
+CSRF_COOKIE_SECURE = os.environ.get("CSRF_COOKIE_SECURE", False) == "True"
