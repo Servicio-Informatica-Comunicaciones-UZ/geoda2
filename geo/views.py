@@ -3,6 +3,7 @@ import json
 from dateutil.relativedelta import relativedelta
 from requests import Session
 from requests.auth import HTTPBasicAuth
+from requests.exceptions import ConnectionError as RequestConnectionError
 import zeep
 
 from annoying.functions import get_config, get_object_or_None
@@ -399,9 +400,18 @@ class ForanoView(LoginRequiredMixin, ChecksMixin, View):
         session.auth = HTTPBasicAuth(
             get_config("USER_VINCULACIONES"), get_config("PASS_VINCULACIONES")
         )
-        client = zeep.Client(
-            wsdl=wsdl, transport=zeep.transports.Transport(session=session)
-        )
+
+        try:
+            client = zeep.Client(
+                wsdl=wsdl, transport=zeep.transports.Transport(session=session)
+            )
+        except RequestConnectionError:
+            messages.error(request, "No fue posible conectarse al WS de Identidades.")
+            return redirect("vincular-forano")
+        except Exception as ex:
+            messages.error(request, "ERROR: %s" % str(ex))
+            return redirect("vincular-forano")
+
         response = client.service.creaVinculacion(
             f"{nip}",  # nip
             "53",  # codVinculacion Usuarios invitados a Moodle
