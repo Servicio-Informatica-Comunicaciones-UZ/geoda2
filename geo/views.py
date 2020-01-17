@@ -342,7 +342,7 @@ class ResolverSolicitudCursoView(
             template_name="resolucion",
             from_email=None,  # settings.DEFAULT_FROM_EMAIL
             recipient_list=[curso.profesores.first().email],
-            context={"curso": curso, "site_url": get_config("SITE_URL")[:-1]},
+            context={"curso": curso, "site_url": get_config("SITE_URL")},
         )
 
 
@@ -383,7 +383,7 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
             template_name="solicitud",
             from_email=None,  # settings.DEFAULT_FROM_EMAIL
             recipient_list=destinatarios,
-            context={"curso": curso, "site_url": get_config("SITE_URL")[:-1]},
+            context={"curso": curso, "site_url": get_config("SITE_URL")},
         )
 
 
