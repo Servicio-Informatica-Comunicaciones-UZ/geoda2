@@ -7,7 +7,7 @@ verify_ssl = true
 pylint = "*"
 
 [packages]
-django = "==2.2.9"  # Remember to re-generate `requirements.txt`
+django = "==2.2.10"  # Remember to re-generate `requirements.txt`
 mysqlclient = "*"
 django-tables2 = "*"
 django-filter = "*"
