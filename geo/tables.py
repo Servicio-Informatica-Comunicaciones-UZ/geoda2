@@ -129,12 +129,5 @@ class CursoTable(tables.Table):
     class Meta:
         attrs = {"class": "table table-striped table-hover cabecera-azul"}
         model = Curso
-        fields = (
-            "nombre",
-            "anyo_academico",
-            "fecha_solicitud",
-            "fecha_autorizacion",
-            "estado",
-            "enlace",
-        )
+        fields = ("nombre", "fecha_solicitud", "fecha_autorizacion", "estado", "enlace")
         template_name = "django_tables2/bootstrap4.html"

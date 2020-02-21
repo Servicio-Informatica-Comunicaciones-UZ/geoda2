@@ -19,8 +19,8 @@
       <td>{{ curso.nombre }}</td>
     </tr>
     <tr>
-      <th scope="row">{% trans "Año académico" %}</th>
-      <td>{{ curso.anyo_academico | default_if_none:"—" }}</td>
+      <th scope="row">{% trans "Curso académico" %}</th>
+      <td>{{ curso.curso_academico }}</td>
     </tr>
     <tr>
       <th scope="row">{% trans "Cód. asignatura Sigma" %}</th>
@@ -53,7 +53,13 @@
     </tr>
     <tr>
       <th scope="row">{% trans "URL" %}</th>
-      <td><a target="_blank" href="{{ curso.url }}">{{ curso.url | default_if_none:"—" }}</a></td>
+      <td>
+        {% if curso.url %}
+          <a target="_blank" href="{{ curso.url }}">{{ curso.url }}</a>
+        {% else %}
+          —
+        {% endif %}
+        </td>
     </tr>
     <tr>
       <th scope="row">{% trans "Categoría" %}</th>

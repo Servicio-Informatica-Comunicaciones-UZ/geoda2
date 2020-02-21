@@ -370,12 +370,21 @@ class Curso(models.Model):
         self.estado = Estado.objects.get(nombre="Creado")  # 3
         self.save()
 
+    @property
+    def curso_academico(self):
+        """Devuelve el curso académivo. Vg: 2019/2020"""
+
+        if self.anyo_academico:
+            return f"{self.anyo_academico}/{self.anyo_academico + 1}"
+        return "—"
+
     def get_datos(self):
         """Devuelve los datos necesarios para crear el curso en Moodle usando WS.
 
         Consultar Administration → Site Administration → Plugins → Web Services →
                   API Documentation → core_course_create_courses
         """
+
         return {
             "fullname": self.nombre,
             "shortname": self.asignatura.get_shortname()
