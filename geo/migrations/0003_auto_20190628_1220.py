@@ -5,18 +5,18 @@ from django.db import migrations
 
 
 def add_managers_group(apps, schema_editor):
-    Group = apps.get_model("auth", "Group")
-    Permission = apps.get_model("auth", "Permission")
+    Group = apps.get_model('auth', 'Group')
+    Permission = apps.get_model('auth', 'Permission')
 
-    group, created = Group.objects.get_or_create(name="Gestores")
+    group, created = Group.objects.get_or_create(name='Gestores')
     if created:
-        print("Creado el grupo «Gestores».")
-        cursos_pendientes = Permission.objects.get(codename="cursos_pendientes")
+        print('Creado el grupo «Gestores».')
+        cursos_pendientes = Permission.objects.get(codename='cursos_pendientes')
         group.permissions.add(cursos_pendientes)
 
 
 class Migration(migrations.Migration):
 
-    dependencies = [("geo", "0002_auto_20190628_1214")]
+    dependencies = [('geo', '0002_auto_20190628_1214')]
 
     operations = [migrations.RunPython(add_managers_group)]

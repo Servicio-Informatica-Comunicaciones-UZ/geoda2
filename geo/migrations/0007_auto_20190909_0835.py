@@ -4,17 +4,17 @@ from django.db import migrations
 
 
 def add_permission_to_group(apps, schema_editor):
-    Group = apps.get_model("auth", "Group")
-    Permission = apps.get_model("auth", "Permission")
+    Group = apps.get_model('auth', 'Group')
+    Permission = apps.get_model('auth', 'Permission')
 
-    gestores = Group.objects.get(name="Gestores")
+    gestores = Group.objects.get(name='Gestores')
 
-    calendario = Permission.objects.get(codename="calendario")
+    calendario = Permission.objects.get(codename='calendario')
     gestores.permissions.add(calendario)
 
 
 class Migration(migrations.Migration):
 
-    dependencies = [("geo", "0006_auto_20190827_1258")]
+    dependencies = [('geo', '0006_auto_20190827_1258')]
 
     operations = [migrations.RunPython(add_permission_to_group)]

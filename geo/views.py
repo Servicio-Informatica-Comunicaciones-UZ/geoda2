@@ -8,11 +8,7 @@ import zeep
 
 from annoying.functions import get_config, get_object_or_None
 from django.contrib import messages
-from django.contrib.auth.mixins import (
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-    UserPassesTestMixin,
-)
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import Group
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import get_object_or_404, redirect, render
@@ -20,13 +16,7 @@ from django.urls import reverse_lazy
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views import View
-from django.views.generic import (
-    DetailView,
-    ListView,
-    RedirectView,
-    TemplateView,
-    UpdateView,
-)
+from django.views.generic import DetailView, ListView, RedirectView, TemplateView, UpdateView
 from django.views.generic.edit import CreateView
 from django_tables2.views import SingleTableView
 from templated_email import send_templated_mail
@@ -40,55 +30,47 @@ from .wsclient import WSClient
 
 
 class ChecksMixin(UserPassesTestMixin):
-    """Proporciona comprobaciones para autorizar o no una acción a un usuario."""
+    '''Proporciona comprobaciones para autorizar o no una acción a un usuario.'''
 
     def es_pas_o_pdi(self):
-        """Devuelve si el usuario es PAS o PDI de la UZ o de sus centros adscritos."""
+        '''Devuelve si el usuario es PAS o PDI de la UZ o de sus centros adscritos.'''
         usuario_actual = self.request.user
-        colectivos_del_usuario = (
-            json.loads(usuario_actual.colectivos) if usuario_actual.colectivos else []
-        )
+        colectivos_del_usuario = json.loads(usuario_actual.colectivos) if usuario_actual.colectivos else []
         self.permission_denied_message = _(
-            "Usted no es PAS ni PDI de la Universidad de Zaragoza"
-            " o de sus centros adscritos."
+            'Usted no es PAS ni PDI de la Universidad de Zaragoza' ' o de sus centros adscritos.'
         )
 
-        return any(
-            col_autorizado in colectivos_del_usuario
-            for col_autorizado in ["PAS", "ADS", "PDI"]
-        )
+        return any(col_autorizado in colectivos_del_usuario for col_autorizado in ['PAS', 'ADS', 'PDI'])
 
     def test_func(self):
         raise NotImplementedError(
-            "{0} carece de la implementación del método test_func().".format(
-                self.__class__.__name__
-            )
+            '{0} carece de la implementación del método test_func().'.format(self.__class__.__name__)
         )
 
 
 class AyudaView(TemplateView):
-    """Muestra la página de ayuda."""
+    '''Muestra la página de ayuda.'''
 
-    template_name = "ayuda.html"
+    template_name = 'ayuda.html'
 
 
 class HomePageView(TemplateView):
-    """Muestra la página principal."""
+    '''Muestra la página principal.'''
 
-    template_name = "home.html"
+    template_name = 'home.html'
 
 
 class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
-    """Crea un nuevo Curso para una asignatura Sigma.
+    '''Crea un nuevo Curso para una asignatura Sigma.
 
     Si la creación tiene éxito, el navegador es redirigido a la ficha del curso.
-    """
+    '''
 
     def get(self, request, *args, **kwargs):
-        asignatura = get_object_or_404(Asignatura, id=kwargs["pk"])
-        if hasattr(asignatura, "curso"):
-            messages.error(request, _("El curso ya estaba creado."))
-            return redirect("curso-detail", asignatura.curso.id)
+        asignatura = get_object_or_404(Asignatura, id=kwargs['pk'])
+        if hasattr(asignatura, 'curso'):
+            messages.error(request, _('El curso ya estaba creado.'))
+            return redirect('curso-detail', asignatura.curso.id)
 
         curso = self._cargar_asignatura_en_curso(asignatura)
 
@@ -104,34 +86,32 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
         self._anyadir_usuario_como_profesor(curso)
         mensaje = cliente.automatricular(asignatura, curso)
         messages.info(request, mensaje)
-        messages.success(request, _("Curso creado correctamente en Moodle."))
+        messages.success(request, _('Curso creado correctamente en Moodle.'))
 
-        return redirect("curso-detail", curso.id)
+        return redirect('curso-detail', curso.id)
 
     def test_func(self):
         return self.es_pas_o_pdi()
 
     def _anyadir_usuario_como_profesor(self, curso):
-        """Añade al usuario que solicita el curso a la lista de profesores del curso.
+        '''Añade al usuario que solicita el curso a la lista de profesores del curso.
 
         Esta tabla la usa un plugin de matriculación (enrolment) de Moodle
         de tipo «Base de datos externa».
-        """
-        profesor_curso = ProfesorCurso(
-            curso=curso, profesor=self.request.user, fecha_alta=datetime.today()
-        )
+        '''
+        profesor_curso = ProfesorCurso(curso=curso, profesor=self.request.user, fecha_alta=datetime.today())
         profesor_curso.save()
         messages.warning(
             self.request,
             _(
-                "Para acceder como profesor al curso en la plataforma ADD, es posible "
-                "que tenga que cerrar la sesión en la plataforma y volver a entrar."
+                'Para acceder como profesor al curso en la plataforma ADD, es posible '
+                'que tenga que cerrar la sesión en la plataforma y volver a entrar.'
             ),
         )
 
     @staticmethod
     def _cargar_asignatura_en_curso(asignatura):
-        """Crea una nueva instancia de Curso con los datos de la asignatura indicada."""
+        '''Crea una nueva instancia de Curso con los datos de la asignatura indicada.'''
         curso = Curso(
             nombre=asignatura.nombre_asignatura,
             fecha_solicitud=datetime.today(),
@@ -148,70 +128,63 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
 
 
 class ASTodasView(LoginRequiredMixin, ChecksMixin, PagedFilteredTableView):
-    """Muestra todas las asignaturas, y permite crear curso de cualquiera de ellas."""
+    '''Muestra todas las asignaturas, y permite crear curso de cualquiera de ellas.'''
 
     filter_class = AsignaturaListFilter
     model = Asignatura
     table_class = AsignaturasTable
-    template_name = "asignatura/todas.html"
+    template_name = 'asignatura/todas.html'
     formhelper_class = AsignaturaFilterFormHelper
 
     def get_queryset(self):
-        anyo_academico = Calendario.objects.get(slug="actual").anyo
+        anyo_academico = Calendario.objects.get(slug='actual').anyo
         return Asignatura.objects.filter(anyo_academico=anyo_academico)
 
     def test_func(self):
         return self.es_pas_o_pdi()
 
 
-class CalendarioUpdate(
-    LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, UpdateView
-):
-    """Muestra un formulario para actualizar el año académico actual."""
+class CalendarioUpdate(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, UpdateView):
+    '''Muestra un formulario para actualizar el año académico actual.'''
 
-    permission_required = "geo.calendario"
-    permission_denied_message = _("Sólo los gestores pueden acceder a esta página.")
+    permission_required = 'geo.calendario'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
     model = Calendario
-    fields = ("anyo",)
-    template_name = "gestion/calendario_form.html"
+    fields = ('anyo',)
+    template_name = 'gestion/calendario_form.html'
     success_message = mark_safe(
-        str(_("Se ha actualizado el curso académico actual."))
-        + "<br><br>\n"
-        + str(_("Recuerde que a continuación <b>se debe</b>:"))
-        + "<br>\n<ul>\n<li>"
+        str(_('Se ha actualizado el curso académico actual.'))
+        + '<br><br>\n'
+        + str(_('Recuerde que a continuación <b>se debe</b>:'))
+        + '<br>\n<ul>\n<li>'
         + str(
             _(
-                "Mover los cursos de las categoría «Varios» del año anterior "
-                "a la del año actual, tanto en GEO como en Moodle."
+                'Mover los cursos de las categoría «Varios» del año anterior '
+                'a la del año actual, tanto en GEO como en Moodle.'
             )
         )
-        + "</li>\n<li>"
-        + str(_("Ídem con los cursos de la categoría «Escuela de Doctorado»."))
-        + "</li>\n<li>"
-        + str(
-            _(
-                "Actualizar el año en las pasarelas de GEO "
-                "(carga de asignaturas y POD)."
-            )
-        )
-        + "</li>\n</ul>\n"
-        + str(_("<b>Contacte con los responsables de Moodle y GEO del SICUZ.</b>"))
+        + '</li>\n<li>'
+        + str(_('Ídem con los cursos de la categoría «Escuela de Doctorado».'))
+        + '</li>\n<li>'
+        + str(_('Actualizar el año en las pasarelas de GEO ' '(carga de asignaturas y POD).'))
+        + '</li>\n</ul>\n'
+        + str(_('<b>Contacte con los responsables de Moodle y GEO del SICUZ.</b>'))
     )
-    success_url = reverse_lazy("calendario", args=["actual"])
+    success_url = reverse_lazy('calendario', args=['actual'])
 
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
-        anyo = int(self.request.POST.get("anyo"))
+        anyo = int(self.request.POST.get('anyo'))
         siguiente_anyo = anyo + 1
-        nombre_cat_anyo = f"Cursos {anyo}-{siguiente_anyo}"
+        nombre_cat_anyo = f'Cursos {anyo}-{siguiente_anyo}'
 
         # Crear categoría para el año académico. Vg: «Cursos 2019-2020»
         cat_anyo = self._crear_categoria(anyo, nombre_cat_anyo, None)
         # Crear categorías «Varios», «Escuela de Doctorado» y «No reglada».
-        self._crear_categoria(anyo, "Varios", cat_anyo.id)
-        self._crear_categoria(anyo, "Escuela de Doctorado", cat_anyo.id)
-        cat_nr = self._crear_categoria(anyo, "No reglada", cat_anyo.id)
+        self._crear_categoria(anyo, 'Varios', cat_anyo.id)
+        self._crear_categoria(anyo, 'Escuela de Doctorado', cat_anyo.id)
+        cat_nr = self._crear_categoria(anyo, 'No reglada', cat_anyo.id)
         # Crear las subcategorías de los estudios no reglados
         for nombre in Categoria.NO_REGLADAS:
             self._crear_categoria(anyo, nombre, cat_nr.id)
@@ -220,20 +193,10 @@ class CalendarioUpdate(
 
     @staticmethod
     def _crear_categoria(anyo, nombre, supercategoria_id):
-        """Comprueba si existe la categoría, y la crea si es necesario."""
-        cat = get_object_or_None(
-            Categoria,
-            anyo_academico=anyo,
-            nombre=nombre,
-            supercategoria_id=supercategoria_id,
-        )
+        '''Comprueba si existe la categoría, y la crea si es necesario.'''
+        cat = get_object_or_None(Categoria, anyo_academico=anyo, nombre=nombre, supercategoria_id=supercategoria_id)
         if not cat:
-            cat = Categoria(
-                plataforma_id=1,
-                anyo_academico=anyo,
-                nombre=nombre,
-                supercategoria_id=supercategoria_id,
-            )
+            cat = Categoria(plataforma_id=1, anyo_academico=anyo, nombre=nombre, supercategoria_id=supercategoria_id)
             cat.save()
         if not cat.id_nk:
             cat.crear_en_plataforma()
@@ -241,78 +204,73 @@ class CalendarioUpdate(
 
 
 class CursoDetailView(LoginRequiredMixin, DetailView):
-    """Muestra información detallada de un curso."""
+    '''Muestra información detallada de un curso.'''
 
     model = Curso
-    template_name = "curso/detail.html"
+    template_name = 'curso/detail.html'
 
 
 class CursosPendientesView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
-    """Muestra los cursos no reglados pendientes de aprobación."""
+    '''Muestra los cursos no reglados pendientes de aprobación.'''
 
-    permission_required = "geo.cursos_pendientes"
-    permission_denied_message = _("Sólo los gestores pueden acceder a esta página.")
-    context_object_name = "cursos_pendientes"
+    permission_required = 'geo.cursos_pendientes'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    context_object_name = 'cursos_pendientes'
     paginate_by = 10
-    ordering = ["-fecha_solicitud"]
+    ordering = ['-fecha_solicitud']
     queryset = Curso.objects.filter(estado=1)  # Solicitado
-    template_name = "gestion/cursos-pendientes.html"
+    template_name = 'gestion/cursos-pendientes.html'
 
 
 class MisAsignaturasView(LoginRequiredMixin, ChecksMixin, SingleTableView):
-    """Muestra las asignaturas del usuario, según el POD, y permite crear cursos."""
+    '''Muestra las asignaturas del usuario, según el POD, y permite crear cursos.'''
 
     table_class = PodTable
-    template_name = "pod/mis-asignaturas.html"
+    template_name = 'pod/mis-asignaturas.html'
 
     def get_queryset(self):
-        anyo_academico = Calendario.objects.get(slug="actual").anyo
-        return Pod.objects.filter(
-            nip=self.request.user.username, anyo_academico=anyo_academico
-        )
+        anyo_academico = Calendario.objects.get(slug='actual').anyo
+        return Pod.objects.filter(nip=self.request.user.username, anyo_academico=anyo_academico)
 
     def test_func(self):
         return self.es_pas_o_pdi()
 
 
 class MisCursosView(LoginRequiredMixin, SingleTableView):
-    """Muestra los cursos creados por el usuario."""
+    '''Muestra los cursos creados por el usuario.'''
 
     table_class = CursoTable
-    template_name = "curso/mis-cursos.html"
+    template_name = 'curso/mis-cursos.html'
 
     def get_context_data(self, **kwargs):
         context = super(MisCursosView, self).get_context_data(**kwargs)
-        anyo_academico = Calendario.objects.get(slug="actual").anyo
-        context["curso"] = f"{anyo_academico}/{anyo_academico + 1}"
+        anyo_academico = Calendario.objects.get(slug='actual').anyo
+        context['curso'] = f'{anyo_academico}/{anyo_academico + 1}'
         return context
 
     def get_queryset(self):
         return Curso.objects.filter(
-            profesores=self.request.user.id,
-            anyo_academico=Calendario.objects.get(slug="actual").anyo,
+            profesores=self.request.user.id, anyo_academico=Calendario.objects.get(slug='actual').anyo
         )
 
 
-class ResolverSolicitudCursoView(
-    LoginRequiredMixin, PermissionRequiredMixin, RedirectView
-):
-    """Autoriza o deniega una solicitud de curso."""
+class ResolverSolicitudCursoView(LoginRequiredMixin, PermissionRequiredMixin, RedirectView):
+    '''Autoriza o deniega una solicitud de curso.'''
 
-    permission_required = "geo.cursos_pendientes"
-    permission_denied_message = _("Sólo los gestores pueden acceder a esta página.")
+    permission_required = 'geo.cursos_pendientes'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
 
     def get_redirect_url(self, *args, **kwargs):
-        return reverse_lazy("cursos-pendientes")
+        return reverse_lazy('cursos-pendientes')
 
     def post(self, request, *args, **kwargs):
-        id_recibido = request.POST.get("id")
+        id_recibido = request.POST.get('id')
         curso = get_object_or_404(Curso, pk=id_recibido)
         curso.autorizador = request.user
         curso.fecha_autorizacion = datetime.now()
-        curso.comentarios = request.POST.get("comentarios")
+        curso.comentarios = request.POST.get('comentarios')
 
-        if request.POST.get("decision") == "autorizar":
+        if request.POST.get('decision') == 'autorizar':
             curso.estado = Estado.objects.get(id=2)  # Autorizado
             curso.save()
 
@@ -324,97 +282,88 @@ class ResolverSolicitudCursoView(
             cliente = WSClient()
             datos_recibidos = cliente.crear_curso(curso.get_datos())
             curso.actualizar_tras_creacion(datos_recibidos)
-            messages.info(
-                request, _(f"El curso «{curso.nombre}» ha sido autorizado y creado.")
-            )
+            messages.info(request, _(f'El curso «{curso.nombre}» ha sido autorizado y creado.'))
         else:
             curso.estado = Estado.objects.get(id=6)  # Denegado
             curso.save()
-            messages.info(request, _(f"El curso «{curso.nombre}» ha sido denegado."))
+            messages.info(request, _(f'El curso «{curso.nombre}» ha sido denegado.'))
 
         self._notifica_resolucion(curso)
         return super().post(request, *args, **kwargs)
 
     @staticmethod
     def _notifica_resolucion(curso):
-        """Envía un correo al solicitante del curso informando de la resolucíon."""
+        '''Envía un correo al solicitante del curso informando de la resolucíon.'''
         send_templated_mail(
-            template_name="resolucion",
+            template_name='resolucion',
             from_email=None,  # settings.DEFAULT_FROM_EMAIL
             recipient_list=[curso.profesores.first().email],
-            context={"curso": curso, "site_url": get_config("SITE_URL")},
+            context={'curso': curso, 'site_url': get_config('SITE_URL')},
         )
 
 
 class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
-    """Muestra un formulario para solicitar un curso no reglado."""
+    '''Muestra un formulario para solicitar un curso no reglado.'''
 
     model = Curso
-    template_name = "curso/solicitar.html"
+    template_name = 'curso/solicitar.html'
 
     def get(self, request, *args, **kwargs):
         formulario = SolicitaForm(user=self.request.user)
-        return render(request, self.template_name, {"form": formulario})
+        return render(request, self.template_name, {'form': formulario})
 
     def post(self, request, *args, **kwargs):
         formulario = SolicitaForm(data=request.POST, user=self.request.user)
         if formulario.is_valid():
             curso = formulario.save()
-            messages.success(
-                request,
-                _(f"La solicitud ha sido recibida. Se le avisará cuando se resuelva."),
-            )
+            messages.success(request, _(f'La solicitud ha sido recibida. Se le avisará cuando se resuelva.'))
             self._notifica_solicitud(curso)
 
-            return redirect("mis-cursos")
+            return redirect('mis-cursos')
 
-        return render(request, self.template_name, {"form": formulario})
+        return render(request, self.template_name, {'form': formulario})
 
     def test_func(self):
         return self.es_pas_o_pdi()
 
     @staticmethod
     def _notifica_solicitud(curso):
-        """Envía email a los miembros del grupo Gestores informando de la solicitud."""
-        grupo_gestores = Group.objects.get(name="Gestores")
+        '''Envía email a los miembros del grupo Gestores informando de la solicitud.'''
+        grupo_gestores = Group.objects.get(name='Gestores')
         gestores = grupo_gestores.user_set.all()
         destinatarios = list(map(lambda g: g.email, gestores))
         send_templated_mail(
-            template_name="solicitud",
+            template_name='solicitud',
             from_email=None,  # settings.DEFAULT_FROM_EMAIL
             recipient_list=destinatarios,
-            context={"curso": curso, "site_url": get_config("SITE_URL")},
+            context={'curso': curso, 'site_url': get_config('SITE_URL')},
         )
 
 
 class ForanoView(LoginRequiredMixin, ChecksMixin, View):
-    """Crea una vinculacion de un usuario externo en Gestión de Identidades."""
+    '''Crea una vinculacion de un usuario externo en Gestión de Identidades.'''
 
     def get(self, request, *args, **kwargs):
-        return render(request, "forano/vincular.html")
+        return render(request, 'forano/vincular.html')
 
     def post(self, request, *args, **kwargs):
-        nip = request.POST.get("nip")
-        wsdl = get_config("WSDL_VINCULACIONES")
+        nip = request.POST.get('nip')
+        wsdl = get_config('WSDL_VINCULACIONES')
         session = Session()
-        session.auth = HTTPBasicAuth(
-            get_config("USER_VINCULACIONES"), get_config("PASS_VINCULACIONES")
-        )
+        session.auth = HTTPBasicAuth(get_config('USER_VINCULACIONES'), get_config('PASS_VINCULACIONES'))
 
         try:
-            client = zeep.Client(
-                wsdl=wsdl, transport=zeep.transports.Transport(session=session)
-            )
+            client = zeep.Client(wsdl=wsdl, transport=zeep.transports.Transport(session=session))
         except RequestConnectionError:
-            messages.error(request, "No fue posible conectarse al WS de Identidades.")
-            return redirect("vincular-forano")
+            messages.error(request, 'No fue posible conectarse al WS de Identidades.')
+            return redirect('vincular-forano')
         except Exception as ex:
-            messages.error(request, "ERROR: %s" % str(ex))
-            return redirect("vincular-forano")
+            messages.error(request, 'ERROR: %s' % str(ex))
+            return redirect('vincular-forano')
 
         response = client.service.creaVinculacion(
-            f"{nip}",  # nip
-            "53",  # codVinculacion Usuarios invitados a Moodle
+            f'{nip}',  # nip
+            '53',  # codVinculacion Usuarios invitados a Moodle
             date.today().isoformat(),  # fechaInicio
             (date.today() + relativedelta(years=1)).isoformat(),  # fechaFin
             request.user.username,  # nipResponsable
@@ -429,12 +378,12 @@ class ForanoView(LoginRequiredMixin, ChecksMixin, View):
             messages.success(
                 request,
                 _(
-                    f"El NIP «{nip}» ha sido vinculado a Moodle.  Es posible que usted"
-                    " no vea al invitado entre los usuarios de la plataforma hasta que"
-                    " el invitado acceda a la plataforma la primera vez."
+                    f'El NIP «{nip}» ha sido vinculado a Moodle.  Es posible que usted'
+                    ' no vea al invitado entre los usuarios de la plataforma hasta que'
+                    ' el invitado acceda a la plataforma la primera vez.'
                 ),
             )
-        return redirect("vincular-forano")
+        return redirect('vincular-forano')
 
     def test_func(self):
         return self.es_pas_o_pdi()

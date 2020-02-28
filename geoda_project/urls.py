@@ -1,4 +1,4 @@
-"""
+'''
 geoda_project URL Configuration.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -14,7 +14,7 @@ Class-based views
 Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
+'''
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.staticfiles.storage import staticfiles_storage
@@ -24,29 +24,23 @@ from django.views.generic.base import RedirectView
 
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("accounts/", include("accounts.urls")),
-    path("accounts/", include("django.contrib.auth.urls")),
+    path('admin/', admin.site.urls),
+    path('accounts/', include('accounts.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
     path(
-        "browserconfig.xml",
-        RedirectView.as_view(url=staticfiles_storage.url("favicons/browserconfig.xml")),
-        name="browserconfig",
+        'browserconfig.xml',
+        RedirectView.as_view(url=staticfiles_storage.url('favicons/browserconfig.xml')),
+        name='browserconfig',
     ),
+    path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('favicons/favicon.ico')), name='favicon'),
     path(
-        "favicon.ico",
-        RedirectView.as_view(url=staticfiles_storage.url("favicons/favicon.ico")),
-        name="favicon",
+        'robots.txt', TemplateView.as_view(template_name='robots.txt', content_type='text/plain'), name='robots_file'
     ),
-    path(
-        "robots.txt",
-        TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
-        name="robots_file",
-    ),
-    path("", include("social_django.urls", namespace="social")),
-    path("", include("geo.urls")),
+    path('', include('social_django.urls', namespace='social')),
+    path('', include('geo.urls')),
 ]
 
 if settings.DEBUG:
     import debug_toolbar
 
-    urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
+    urlpatterns = [path('__debug__/', include(debug_toolbar.urls))] + urlpatterns

@@ -5,14 +5,14 @@ from django.db import migrations, models
 
 
 def migrate_permissions(apps, schema_editor):
-    """Create the pending permissions.
+    '''Create the pending permissions.
 
     Permissions are not actually created during or after an individual migration,
     but are triggered by a post-migrate signal which is sent after the
     `python manage.py migrate` command completes successfully.
 
     This is necessary because this permission is used in the next migration.
-    """
+    '''
     for app_config in apps.get_app_configs():
         app_config.models_module = True
         create_permissions(app_config, apps=apps, verbosity=2)
@@ -21,35 +21,24 @@ def migrate_permissions(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [("geo", "0005_auto_20190821_0955")]
+    dependencies = [('geo', '0005_auto_20190821_0955')]
 
     operations = [
         migrations.AlterModelOptions(
-            name="calendario",
-            options={
-                "permissions": [
-                    ("calendario", "Puede modificar el año académico actual.")
-                ]
-            },
+            name='calendario', options={'permissions': [('calendario', 'Puede modificar el año académico actual.')]}
         ),
         migrations.AddField(
-            model_name="calendario",
-            name="anyo",
-            field=models.PositiveSmallIntegerField(
-                default=2019, verbose_name="Año académico"
-            ),
+            model_name='calendario',
+            name='anyo',
+            field=models.PositiveSmallIntegerField(default=2019, verbose_name='Año académico'),
         ),
         migrations.AddField(
-            model_name="calendario",
-            name="slug",
-            field=models.SlugField(default="actual", unique=True),
+            model_name='calendario', name='slug', field=models.SlugField(default='actual', unique=True)
         ),
         migrations.AlterField(
-            model_name="calendario",
-            name="id",
-            field=models.AutoField(
-                auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
-            ),
+            model_name='calendario',
+            name='id',
+            field=models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID'),
         ),
         migrations.RunPython(migrate_permissions),
     ]
