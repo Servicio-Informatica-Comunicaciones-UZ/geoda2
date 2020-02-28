@@ -420,6 +420,9 @@ class ForanoView(LoginRequiredMixin, ChecksMixin, View):
             request.user.username,  # nipResponsable
         )
 
+        if response.aviso:
+            messages.warning(request, response.descripcionAviso)
+
         if response.error:
             messages.error(request, response.descripcionResultado)
         else:
