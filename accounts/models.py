@@ -7,10 +7,10 @@ from django.utils.translation import gettext_lazy as _
 
 class CustomUserManager(UserManager):
     def get_or_none(self, **kwargs):
-        '''Devuelve el usuario con las propiedades indicadas.
+        """Devuelve el usuario con las propiedades indicadas.
 
         Si no se encuentra, devuelve `None`.
-        '''
+        """
         try:
             return self.get(**kwargs)
         except CustomUser.DoesNotExist:
@@ -37,7 +37,7 @@ class CustomUser(AbstractUser):
 
     # Metodos sobrescritos
     def get_full_name(self):
-        '''Devuelve el nombre completo (nombre y los dos apellidos).'''
+        """Devuelve el nombre completo (nombre y los dos apellidos)."""
         full_name = '%s %s %s' % (self.first_name, self.last_name, self.last_name_2)
         return full_name.strip()
 
@@ -46,10 +46,10 @@ class CustomUser(AbstractUser):
         return self.username
 
     def get_colectivo_principal(self):
-        '''Devuelve el colectivo principal del usuario.
+        """Devuelve el colectivo principal del usuario.
 
         Se determina usando el orden de prelación PDI > ADS > PAS > EST.
-        '''
+        """
         colectivos_del_usuario = json.loads(self.colectivos) if self.colectivos else []
         for col in ('PDI', 'ADS', 'PAS', 'EST'):
             if col in colectivos_del_usuario:
@@ -57,7 +57,7 @@ class CustomUser(AbstractUser):
         return None
 
     def puede_usar_aplicacion(self):
-        '''Devuelve si el usuario está autorizado a usar esta aplicación.'''
+        """Devuelve si el usuario está autorizado a usar esta aplicación."""
         colectivos_del_usuario = json.loads(self.colectivos) if self.colectivos else []
         return self.is_superuser or any(col in colectivos_del_usuario for col in ['ADS', 'PAS', 'PDI'])
 

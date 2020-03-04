@@ -4,14 +4,13 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-django-debug-toolbar = "*"
 pylint = "*"
 
 [packages]
-cx-oracle = "*"
 django = "==3.0.4"  # Remember to re-generate `requirements.txt`
 django-annoying = "*"
 django-crispy-forms = "==1.8.1"
+django-debug-toolbar = "*"
 django-filter = "*"
 django-tables2 = "*"
 django-templated-email = "*"

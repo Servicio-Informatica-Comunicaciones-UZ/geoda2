@@ -22,9 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get(
-    "DJANGO_SECRET_KEY", "o+^%z1pkglqpsxjhdaj_u)9pfpybx0l7ko$x!d=j+y0x8qn*c)"
-)
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "o+^%z1pkglqpsxjhdaj_u)9pfpybx0l7ko$x!d=j+y0x8qn*c)")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", False) == "True"
@@ -33,9 +31,7 @@ ALLOWED_HOSTS = ["*"]  # []
 
 
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "root@localhost")
-EMAIL_BACKEND = os.environ.get(
-    "EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend"
-)
+EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "localhost")
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
@@ -103,9 +99,7 @@ WSGI_APPLICATION = "geoda_project.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": os.environ.get(
-            "ENGINE", "django.db.backends.mysql"
-        ),  # Database engine
+        "ENGINE": os.environ.get("ENGINE", "django.db.backends.mysql"),  # Database engine
         "NAME": os.environ.get("DB_NAME"),  # Database name
         "USER": os.environ.get("DB_USER"),  # Database user
         "PASSWORD": os.environ.get("DB_PASSWORD"),  # Database password
@@ -113,21 +107,7 @@ DATABASES = {
         "PORT": "",  # Set to empty string for default.
         # Additional database options
         "OPTIONS": {"charset": os.environ.get("DB_CHARSET", "utf8mb4")},
-    },
-    "identidades": {
-        "ENGINE": os.environ.get(
-            "ID_ENGINE", "django.db.backends.oracle"
-        ),  # Database engine
-        "NAME": os.environ.get("ID_NAME"),  # Database name
-        "USER": os.environ.get("ID_USER"),  # Database user
-        "PASSWORD": os.environ.get("ID_PASSWORD"),  # Database password
-        "HOST": os.environ.get("ID_HOST"),  # Set to empty string for localhost.
-        "PORT": os.environ.get("ID_PORT"),  # Set to empty string for default.
-        # Additional database options
-        # "OPTIONS": {
-        #     "charset": "WE8ISO8859P1",
-        # }
-    },
+    }
 }
 
 
@@ -135,9 +115,7 @@ DATABASES = {
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"  # noqa: E501
-    },
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},  # noqa: E501
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
@@ -175,10 +153,7 @@ LOGOUT_REDIRECT_URL = "home"
 # ## SAML with Python Social Auth ## #
 # https://python-social-auth.readthedocs.io/en/latest/backends/saml.html
 
-AUTHENTICATION_BACKENDS = (
-    "social_core.backends.saml.SAMLAuth",
-    "django.contrib.auth.backends.ModelBackend",
-)
+AUTHENTICATION_BACKENDS = ("social_core.backends.saml.SAMLAuth", "django.contrib.auth.backends.ModelBackend")
 # When using PostgreSQL,
 # it’s recommended to use the built-in JSONB field to store the extracted extra_data.
 # To enable it define the setting:
@@ -190,11 +165,7 @@ SOCIAL_AUTH_SAML_SP_ENTITY_ID = os.environ.get(
 SOCIAL_AUTH_SAML_SP_PUBLIC_CERT = os.environ.get("SOCIAL_AUTH_SAML_SP_PUBLIC_CERT")
 SOCIAL_AUTH_SAML_SP_PRIVATE_KEY = os.environ.get("SOCIAL_AUTH_SAML_SP_PRIVATE_KEY")
 SOCIAL_AUTH_SAML_ORG_INFO = {
-    "en-US": {
-        "name": "geoda2",
-        "displayname": "Gestión de la Enseñanza Online",
-        "url": f"{SITE_URL}",
-    }
+    "en-US": {"name": "geoda2", "displayname": "Gestión de la Enseñanza Online", "url": f"{SITE_URL}"}
 }
 SOCIAL_AUTH_SAML_TECHNICAL_CONTACT = {
     "givenName": os.environ.get("SOCIAL_AUTH_SAML_TECHNICAL_CONTACT_NAME"),
@@ -248,10 +219,16 @@ GEO_TOKEN = os.environ.get("GEO_TOKEN")
 GEODAWS_TOKEN = os.environ.get("GEODAWS_TOKEN")
 API_URL = f"{URL_PLATAFORMA}/webservice/rest/server.php"
 
+# DATOS DE WS GESTIÓN DE IDENTIDADES
+WSDL_IDENTIDAD = os.environ.get("WSDL_IDENTIDAD")
+USER_IDENTIDAD = os.environ.get("USER_IDENTIDAD")
+PASS_IDENTIDAD = os.environ.get("PASS_IDENTIDAD")
+
 # DATOS DE WS GESTIÓN DE IDENTIDADES para vincular usuarios externos
 WSDL_VINCULACIONES = os.environ.get("WSDL_VINCULACIONES")
 USER_VINCULACIONES = os.environ.get("USER_VINCULACIONES")
 PASS_VINCULACIONES = os.environ.get("PASS_VINCULACIONES")
+
 
 # DJANGO-DEBUG-TOOLBAR - <https://github.com/jazzband/django-debug-toolbar>
 # ------------------------------------------------------------------------------
