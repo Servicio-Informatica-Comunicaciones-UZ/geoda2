@@ -40,6 +40,7 @@ class AsignaturasTable(tables.Table):
         fields = (
             'nombre_estudio',
             'nombre_centro',
+            'plan_id_nk',
             'asignatura_id',
             'nombre_asignatura',
             'cod_grupo_asignatura',
