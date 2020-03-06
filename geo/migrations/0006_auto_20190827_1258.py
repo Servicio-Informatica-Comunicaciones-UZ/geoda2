@@ -5,14 +5,14 @@ from django.db import migrations, models
 
 
 def migrate_permissions(apps, schema_editor):
-    '''Create the pending permissions.
+    """Create the pending permissions.
 
     Permissions are not actually created during or after an individual migration,
     but are triggered by a post-migrate signal which is sent after the
     `python manage.py migrate` command completes successfully.
 
     This is necessary because this permission is used in the next migration.
-    '''
+    """
     for app_config in apps.get_app_configs():
         app_config.models_module = True
         create_permissions(app_config, apps=apps, verbosity=2)

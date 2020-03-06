@@ -3,7 +3,7 @@ from .models import Asignatura
 
 
 class AsignaturaListFilter(django_filters.FilterSet):
-    '''Filtro para buscar asignaturas según ciertos campos.'''
+    """Filtro para buscar asignaturas según ciertos campos."""
 
     class Meta:
         model = Asignatura

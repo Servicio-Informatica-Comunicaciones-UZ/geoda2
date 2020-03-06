@@ -9,10 +9,10 @@ from .wsclient import WSClient
 
 
 class Asignatura(models.Model):
-    '''Este modelo representa una asignatura Sigma, de un estudio reglado.
+    """Este modelo representa una asignatura Sigma, de un estudio reglado.
 
     La tabla se carga mediante una tarea ETL (Pentaho Spoon).
-    '''
+    """
 
     plan_id_nk = models.IntegerField(blank=True, null=True, verbose_name=_('Cód. plan'))
     nombre_estudio = models.CharField(max_length=254, blank=True, null=True, verbose_name=_('Estudio'))
@@ -38,10 +38,10 @@ class Asignatura(models.Model):
         verbose_name_plural = _('asignaturas SIGM@')
 
     def get_categoria(self):
-        '''Devuelve la categoría correspondiente a esta asignatura.
+        """Devuelve la categoría correspondiente a esta asignatura.
 
         Si no existe previamente, se crea la categoría (y sus categorías superiores).
-        '''
+        """
         categoria = get_object_or_None(
             Categoria, plan_id_nk=self.plan_id_nk, centro_id=self.centro_id, anyo_academico=self.anyo_academico
         )
@@ -50,7 +50,7 @@ class Asignatura(models.Model):
         return categoria
 
     def get_shortname(self):
-        '''Devuelve el nombre corto que tendrá el curso de esta asignatura en Moodle.'''
+        """Devuelve el nombre corto que tendrá el curso de esta asignatura en Moodle."""
         return (
             f'{self.centro_id}_{self.plan_id_nk}_{self.asignatura_id}_'
             f'{self.cod_grupo_asignatura}_{self.anyo_academico}'
@@ -58,7 +58,7 @@ class Asignatura(models.Model):
 
 
 class Calendario(models.Model):
-    '''Este modelo almacena el año académico actual.'''
+    """Este modelo almacena el año académico actual."""
 
     anyo = models.PositiveSmallIntegerField(verbose_name=_('Año académico'), default=2019)
     slug = models.SlugField(unique=True, default='actual')
@@ -69,11 +69,11 @@ class Calendario(models.Model):
 
 
 class Pod(models.Model):
-    '''Correspondencia entre asignaturas regladas y profesores.
+    """Correspondencia entre asignaturas regladas y profesores.
 
     Establecida en el Plan de Ordenación Docente.
     La tabla se carga mediante una tarea ETL (Pentaho Spoon).
-    '''
+    """
 
     plan_id_nk = models.IntegerField(blank=True, null=True, verbose_name='Cód. plan')
     centro_id = models.IntegerField(blank=True, null=True, verbose_name='Cód. centro')
@@ -95,7 +95,7 @@ class Pod(models.Model):
 
     # Alternative: https://pypi.org/project/django-composite-foreignkey/
     def get_asignatura(self):
-        '''Devuelve el modelo Asignatura correspondiente a este registro.'''
+        """Devuelve el modelo Asignatura correspondiente a este registro."""
         asig = Asignatura.objects.get(
             anyo_academico=self.anyo_academico,
             centro_id=self.centro_id,
@@ -107,12 +107,12 @@ class Pod(models.Model):
 
 
 class Categoria(models.Model):
-    '''
+    """
     Este modelo representa la categoría de los cursos.
 
     Las categorías son jerárquicas:
     Curso académico > Centro o departamento > Estudio
-    '''
+    """
 
     NO_REGLADAS = (
         'Biblioteca',
@@ -151,7 +151,7 @@ class Categoria(models.Model):
 
     @classmethod
     def crear_desde_asignatura(cls, asignatura):
-        '''Crea una categoría de plan de estudios para la asignatura indicada.'''
+        """Crea una categoría de plan de estudios para la asignatura indicada."""
         supercategoria = get_object_or_None(
             Categoria, anyo_academico=asignatura.anyo_academico, centro_id=asignatura.centro_id, plan_id_nk=None
         )
@@ -167,7 +167,7 @@ class Categoria(models.Model):
 
     @classmethod
     def crear_de_centro(cls, asignatura):
-        '''Crea una categoría de centro/departamento para la asignatura indicada.'''
+        """Crea una categoría de centro/departamento para la asignatura indicada."""
         supercategoria = get_object_or_None(
             Categoria, anyo_academico=asignatura.anyo_academico, supercategoria_id=None
         )
@@ -177,12 +177,12 @@ class Categoria(models.Model):
 
     @classmethod
     def crear_de_anyo(cls, anyo):
-        '''Crea una categoría para el año indicado.'''
+        """Crea una categoría para el año indicado."""
         return cls.crear(anyo, f'Cursos {anyo}-{anyo + 1}')
 
     @classmethod
     def crear(cls, anyo_academico, nombre, supercategoria_id=None, centro_id=None, plan_id_nk=None):
-        '''Crea una categoría con los datos indicados, en la aplicación y en Moodle.'''
+        """Crea una categoría con los datos indicados, en la aplicación y en Moodle."""
         nueva_categoria = cls(
             plataforma_id=1,
             nombre=nombre,
@@ -196,7 +196,7 @@ class Categoria(models.Model):
         return nueva_categoria
 
     def crear_en_plataforma(self):
-        '''Crea la categoría en la plataforma.'''
+        """Crea la categoría en la plataforma."""
         cliente = WSClient()
         datos_categoria = self.get_datos()
         datos_recibidos = cliente.crear_categoria(datos_categoria)
@@ -204,11 +204,11 @@ class Categoria(models.Model):
         self.save()
 
     def get_datos(self):
-        '''Devuelve los datos necesarios para crear la categoría en Moodle usando WS.
+        """Devuelve los datos necesarios para crear la categoría en Moodle usando WS.
 
         Consultar Administration → Site Administration → Plugins → Web Services →
                   API Documentation → core_course_create_categories
-        '''
+        """
         return {
             'name': self.nombre,
             'parent': self.supercategoria.id_nk if self.supercategoria else None,
@@ -217,7 +217,7 @@ class Categoria(models.Model):
 
 
 class Estado(models.Model):
-    '''Representa los diferentes estados en los que se puede encontrar un curso.'''
+    """Representa los diferentes estados en los que se puede encontrar un curso."""
 
     id = models.IntegerField(primary_key=True)
     nombre = models.CharField(max_length=127, blank=True, null=True)
@@ -227,13 +227,13 @@ class Estado(models.Model):
 
 
 class Curso(models.Model):
-    '''Este modelo representa un curso en Moodle.
+    """Este modelo representa un curso en Moodle.
 
     Pueden ser de 2 tipos:
 
     * correspondientes a una asignatura dada de alta en Sigma (de un estudio reglado)
     * no reglados
-    '''
+    """
 
     nombre = models.CharField(max_length=200)
     fecha_solicitud = models.DateTimeField(blank=True, null=True, verbose_name=_('Fecha de solicitud'))
@@ -261,7 +261,7 @@ class Curso(models.Model):
         return reverse('curso-detail', args=[self.id])
 
     def actualizar_tras_creacion(self, datos_recibidos):
-        '''Actualiza el modelo con los datos recibidos de Moodle al crear el curso.'''
+        """Actualiza el modelo con los datos recibidos de Moodle al crear el curso."""
 
         self.id_nk = datos_recibidos['id']
         self.fecha_creacion = datetime.today()
@@ -272,18 +272,18 @@ class Curso(models.Model):
 
     @property
     def curso_academico(self):
-        '''Devuelve el curso académivo. Vg: 2019/2020'''
+        """Devuelve el curso académivo. Vg: 2019/2020"""
 
         if self.anyo_academico:
             return f'{self.anyo_academico}/{self.anyo_academico + 1}'
         return '—'
 
     def get_datos(self):
-        '''Devuelve los datos necesarios para crear el curso en Moodle usando WS.
+        """Devuelve los datos necesarios para crear el curso en Moodle usando WS.
 
         Consultar Administration → Site Administration → Plugins → Web Services →
                   API Documentation → core_course_create_courses
-        '''
+        """
 
         return {
             'fullname': self.nombre,
@@ -298,7 +298,7 @@ class Curso(models.Model):
 
 
 class ProfesorCurso(models.Model):
-    '''Vinculación entre un curso y la persona que lo creó/solicitó.'''
+    """Vinculación entre un curso y la persona que lo creó/solicitó."""
 
     id = models.AutoField(primary_key=True)
     curso = models.ForeignKey('Curso', models.PROTECT)

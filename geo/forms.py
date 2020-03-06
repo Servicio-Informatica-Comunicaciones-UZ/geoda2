@@ -11,11 +11,11 @@ from .models import Calendario, Categoria, Curso, Estado, ProfesorCurso
 
 
 class AsignaturaFilterFormHelper(FormHelper):
-    '''
+    """
     Formulario para filtrar el listado de todas las asignaturas.
 
     Ver https://django-crispy-forms.readthedocs.io/en/latest/form_helper.html
-    '''
+    """
 
     form_class = 'form form-inline'
     form_id = 'asignatura-search-form'
@@ -43,11 +43,11 @@ class AsignaturaFilterFormHelper(FormHelper):
 
 
 class SolicitaForm(forms.ModelForm):
-    '''
+    """
     Formulario para solicitar un curso no reglado.
 
     Incluye el nombre, la categoría y el motivo de la solicitud.
-    '''
+    """
 
     class Meta:
         model = Curso
@@ -78,7 +78,7 @@ class SolicitaForm(forms.ModelForm):
         )
 
     def save(self, commit=True):
-        '''Guarda la solicitud de curso, y añade al solicitante como profesor.'''
+        """Guarda la solicitud de curso, y añade al solicitante como profesor."""
 
         # Añade la fecha de solicitud y cambia el estado del curso a Solicitado.
         self.instance.fecha_solicitud = datetime.now()

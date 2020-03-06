@@ -12,24 +12,24 @@ class AsignaturasTable(tables.Table):
     def render_enlace(self, record):
         if hasattr(record, 'curso'):
             return mark_safe(
-                '''
+                """
                 <a href={0} class='btn btn-info btn-sm' title='Ver ficha del curso'>
                   <span class='far fa-eye' aria-hidden='true' style='display: inline;'
                   ></span>&nbsp;&nbsp;Ver&nbsp;ficha
-                </a>'''.format(
+                </a>""".format(
                     reverse('curso-detail', args=[record.curso.id])
                 )
             )
 
         return mark_safe(
-            '''
+            """
             <a href={0}
                 class='btn btn-warning btn-sm'
                 title='Crear curso en la plataforma'
             >
                 <span class='fas fa-plus' aria-hidden='true' style='display: inline;'
                 ></span>&nbsp;Crear&nbsp;curso
-            </a>'''.format(
+            </a>""".format(
                 reverse('as-crear-curso', args=[record.id])
             )
         )
@@ -59,24 +59,24 @@ class PodTable(tables.Table):
 
         if hasattr(asig, 'curso'):
             return mark_safe(
-                '''
+                """
                 <a href={0} class='btn btn-info btn-sm' title='Ver ficha del curso'>
                   <span class='far fa-eye' aria-hidden='true' style='display: inline;'
                   ></span>&nbsp;&nbsp;Ver&nbsp;ficha
-                </a>'''.format(
+                </a>""".format(
                     reverse('curso-detail', args=[asig.curso.id])
                 )
             )
 
         return mark_safe(
-            '''
+            """
             <a href={0}
                 class='btn btn-warning btn-sm'
                 title='Crear curso en la plataforma'
             >
                 <span class='fas fa-plus' aria-hidden='true' style='display: inline;'
                 ></span>&nbsp;Crear&nbsp;curso
-            </a>'''.format(
+            </a>""".format(
                 reverse('as-crear-curso', args=[asig.id])
             )
         )
@@ -117,9 +117,9 @@ class CursoTable(tables.Table):
 
     def render_enlace(self, record):
         return mark_safe(
-            '''<a href={0} class='btn btn-info btn-sm' title='Ver ficha del curso'>
+            """<a href={0} class='btn btn-info btn-sm' title='Ver ficha del curso'>
                <span class='far fa-eye' aria-hidden='true'></span>&nbsp;Ver&nbsp;ficha
-            </a>'''.format(
+            </a>""".format(
                 reverse('curso-detail', args=[record.id])
             )
         )

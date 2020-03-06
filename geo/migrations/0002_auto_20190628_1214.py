@@ -5,14 +5,14 @@ from django.db import migrations, models
 
 
 def geo_post_migrate_signal(apps, schema_editor):
-    '''Emit the post-migrate signal during the migration.
+    """Emit the post-migrate signal during the migration.
 
     Permissions are not actually created during or after an individual migration,
     but are triggered by a post-migrate signal which is sent after the
     `python manage.py migrate` command completes successfully.
 
     This is necessary because this permission is used in the next migration.
-    '''
+    """
     geo_config = django_apps.get_app_config('geo')
     models.signals.post_migrate.send(
         sender=geo_config, app_config=geo_config, verbosity=2, interactive=False, using=schema_editor.connection.alias

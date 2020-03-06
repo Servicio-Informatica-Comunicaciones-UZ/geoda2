@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [('geo', '0003_auto_20190628_1220')]
 
-    sql = '''CREATE VIEW "MoodleProfesores" AS
+    sql = """CREATE VIEW "MoodleProfesores" AS
     SELECT
         "pc"."curso_id" AS "cursoId",
         "u"."username" AS "username",
@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
         AND "c"."plataforma_id" = 1
         AND "u"."email" IS NOT NULL
     ;
-    '''
+    """
 
     reverse_sql = 'DROP VIEW MoodleProfesores;'
 

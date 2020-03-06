@@ -30,10 +30,10 @@ from .wsclient import WSClient
 
 
 class ChecksMixin(UserPassesTestMixin):
-    '''Proporciona comprobaciones para autorizar o no una acción a un usuario.'''
+    """Proporciona comprobaciones para autorizar o no una acción a un usuario."""
 
     def es_pas_o_pdi(self):
-        '''Devuelve si el usuario es PAS o PDI de la UZ o de sus centros adscritos.'''
+        """Devuelve si el usuario es PAS o PDI de la UZ o de sus centros adscritos."""
         usuario_actual = self.request.user
         colectivos_del_usuario = json.loads(usuario_actual.colectivos) if usuario_actual.colectivos else []
         self.permission_denied_message = _(
@@ -49,22 +49,22 @@ class ChecksMixin(UserPassesTestMixin):
 
 
 class AyudaView(TemplateView):
-    '''Muestra la página de ayuda.'''
+    """Muestra la página de ayuda."""
 
     template_name = 'ayuda.html'
 
 
 class HomePageView(TemplateView):
-    '''Muestra la página principal.'''
+    """Muestra la página principal."""
 
     template_name = 'home.html'
 
 
 class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
-    '''Crea un nuevo Curso para una asignatura Sigma.
+    """Crea un nuevo Curso para una asignatura Sigma.
 
     Si la creación tiene éxito, el navegador es redirigido a la ficha del curso.
-    '''
+    """
 
     def get(self, request, *args, **kwargs):
         asignatura = get_object_or_404(Asignatura, id=kwargs['pk'])
@@ -94,11 +94,11 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
         return self.es_pas_o_pdi()
 
     def _anyadir_usuario_como_profesor(self, curso):
-        '''Añade al usuario que solicita el curso a la lista de profesores del curso.
+        """Añade al usuario que solicita el curso a la lista de profesores del curso.
 
         Esta tabla la usa un plugin de matriculación (enrolment) de Moodle
         de tipo «Base de datos externa».
-        '''
+        """
         profesor_curso = ProfesorCurso(curso=curso, profesor=self.request.user, fecha_alta=datetime.today())
         profesor_curso.save()
         messages.warning(
@@ -111,7 +111,7 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
 
     @staticmethod
     def _cargar_asignatura_en_curso(asignatura):
-        '''Crea una nueva instancia de Curso con los datos de la asignatura indicada.'''
+        """Crea una nueva instancia de Curso con los datos de la asignatura indicada."""
         curso = Curso(
             nombre=asignatura.nombre_asignatura,
             fecha_solicitud=datetime.today(),
@@ -128,7 +128,7 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
 
 
 class ASTodasView(LoginRequiredMixin, ChecksMixin, PagedFilteredTableView):
-    '''Muestra todas las asignaturas, y permite crear curso de cualquiera de ellas.'''
+    """Muestra todas las asignaturas, y permite crear curso de cualquiera de ellas."""
 
     filter_class = AsignaturaListFilter
     model = Asignatura
@@ -145,7 +145,7 @@ class ASTodasView(LoginRequiredMixin, ChecksMixin, PagedFilteredTableView):
 
 
 class CalendarioUpdate(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, UpdateView):
-    '''Muestra un formulario para actualizar el año académico actual.'''
+    """Muestra un formulario para actualizar el año académico actual."""
 
     permission_required = 'geo.calendario'
     permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
@@ -193,7 +193,7 @@ class CalendarioUpdate(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessa
 
     @staticmethod
     def _crear_categoria(anyo, nombre, supercategoria_id):
-        '''Comprueba si existe la categoría, y la crea si es necesario.'''
+        """Comprueba si existe la categoría, y la crea si es necesario."""
         cat = get_object_or_None(Categoria, anyo_academico=anyo, nombre=nombre, supercategoria_id=supercategoria_id)
         if not cat:
             cat = Categoria(plataforma_id=1, anyo_academico=anyo, nombre=nombre, supercategoria_id=supercategoria_id)
@@ -204,14 +204,14 @@ class CalendarioUpdate(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessa
 
 
 class CursoDetailView(LoginRequiredMixin, DetailView):
-    '''Muestra información detallada de un curso.'''
+    """Muestra información detallada de un curso."""
 
     model = Curso
     template_name = 'curso/detail.html'
 
 
 class CursosPendientesView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
-    '''Muestra los cursos no reglados pendientes de aprobación.'''
+    """Muestra los cursos no reglados pendientes de aprobación."""
 
     permission_required = 'geo.cursos_pendientes'
     permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
@@ -223,7 +223,7 @@ class CursosPendientesView(LoginRequiredMixin, PermissionRequiredMixin, ListView
 
 
 class MisAsignaturasView(LoginRequiredMixin, ChecksMixin, SingleTableView):
-    '''Muestra las asignaturas del usuario, según el POD, y permite crear cursos.'''
+    """Muestra las asignaturas del usuario, según el POD, y permite crear cursos."""
 
     table_class = PodTable
     template_name = 'pod/mis-asignaturas.html'
@@ -237,7 +237,7 @@ class MisAsignaturasView(LoginRequiredMixin, ChecksMixin, SingleTableView):
 
 
 class MisCursosView(LoginRequiredMixin, SingleTableView):
-    '''Muestra los cursos creados por el usuario.'''
+    """Muestra los cursos creados por el usuario."""
 
     table_class = CursoTable
     template_name = 'curso/mis-cursos.html'
@@ -255,7 +255,7 @@ class MisCursosView(LoginRequiredMixin, SingleTableView):
 
 
 class ResolverSolicitudCursoView(LoginRequiredMixin, PermissionRequiredMixin, RedirectView):
-    '''Autoriza o deniega una solicitud de curso.'''
+    """Autoriza o deniega una solicitud de curso."""
 
     permission_required = 'geo.cursos_pendientes'
     permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
@@ -293,7 +293,7 @@ class ResolverSolicitudCursoView(LoginRequiredMixin, PermissionRequiredMixin, Re
 
     @staticmethod
     def _notifica_resolucion(curso):
-        '''Envía un correo al solicitante del curso informando de la resolucíon.'''
+        """Envía un correo al solicitante del curso informando de la resolucíon."""
         send_templated_mail(
             template_name='resolucion',
             from_email=None,  # settings.DEFAULT_FROM_EMAIL
@@ -303,7 +303,7 @@ class ResolverSolicitudCursoView(LoginRequiredMixin, PermissionRequiredMixin, Re
 
 
 class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
-    '''Muestra un formulario para solicitar un curso no reglado.'''
+    """Muestra un formulario para solicitar un curso no reglado."""
 
     model = Curso
     template_name = 'curso/solicitar.html'
@@ -328,7 +328,7 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
 
     @staticmethod
     def _notifica_solicitud(curso):
-        '''Envía email a los miembros del grupo Gestores informando de la solicitud.'''
+        """Envía email a los miembros del grupo Gestores informando de la solicitud."""
         grupo_gestores = Group.objects.get(name='Gestores')
         gestores = grupo_gestores.user_set.all()
         destinatarios = list(map(lambda g: g.email, gestores))
@@ -341,7 +341,7 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
 
 
 class ForanoView(LoginRequiredMixin, ChecksMixin, View):
-    '''Crea una vinculacion de un usuario externo en Gestión de Identidades.'''
+    """Crea una vinculacion de un usuario externo en Gestión de Identidades."""
 
     def get(self, request, *args, **kwargs):
         return render(request, 'forano/vincular.html')
