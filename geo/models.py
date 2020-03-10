@@ -255,7 +255,11 @@ class Curso(models.Model):
 
     class Meta:
         db_table = 'curso'
-        permissions = [('cursos_pendientes', _('Puede ver el listado de cursos por aprobar.'))]
+        ordering = ('anyo_academico', 'nombre')
+        permissions = [
+            ('cursos_creados', _('Puede ver el listado de cursos creados.')),
+            ('cursos_pendientes', _('Puede ver el listado de cursos por aprobar.')),
+        ]
 
     def get_absolute_url(self):
         return reverse('curso-detail', args=[self.id])

@@ -35,6 +35,12 @@ class CustomUser(AbstractUser):
     departamento_id_nks = models.CharField(_('Cód. departamentos'), max_length=127, blank=True, null=True)
     colectivos = models.CharField(max_length=127, blank=True, null=True)
 
+    @property
+    def full_name(self):
+        """Devuelve el nombre completo (nombre y los dos apellidos)."""
+        full_name = '%s %s %s' % (self.first_name, self.last_name, self.last_name_2)
+        return full_name.strip()
+
     # Metodos sobrescritos
     def get_full_name(self):
         """Devuelve el nombre completo (nombre y los dos apellidos)."""

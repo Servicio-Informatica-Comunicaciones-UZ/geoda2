@@ -111,6 +111,40 @@ class PodTable(tables.Table):
         template_name = 'django_tables2/bootstrap4.html'
 
 
+class CursosCreadosTable(tables.Table):
+
+    enlace = tables.Column(empty_values=(), verbose_name='')
+    profesores = tables.ManyToManyColumn(transform=lambda u: u.full_name)
+
+    def render_enlace(self, record):
+        return mark_safe(
+            """<a href={0} class='btn btn-info btn-sm' title='Ver ficha del curso'>
+               <span class='far fa-eye' aria-hidden='true'></span>&nbsp;Ver&nbsp;ficha
+            </a>""".format(
+                reverse('curso-detail', args=[record.id])
+            )
+        )
+
+    class Meta:
+        attrs = {'class': 'table table-striped table-hover cabecera-azul'}
+        model = Curso
+        fields = ('nombre', 'profesores', 'enlace')
+        template_name = 'django_tables2/bootstrap4.html'
+
+
+class CursosPendientesTable(tables.Table):
+    profesores = tables.ManyToManyColumn(verbose_name='Solicitante', transform=lambda u: u.full_name)
+
+    def render_nombre(self, record):
+        return mark_safe(f'<a href={reverse("curso-detail", args=[record.id])}>{record.nombre}</a>')
+
+    class Meta:
+        attrs = {'class': 'table table-striped table-hover cabecera-azul'}
+        model = Curso
+        fields = ('fecha_solicitud', 'nombre', 'profesores')
+        template_name = 'django_tables2/bootstrap4.html'
+
+
 class CursoTable(tables.Table):
 
     enlace = tables.Column(empty_values=(), verbose_name='')

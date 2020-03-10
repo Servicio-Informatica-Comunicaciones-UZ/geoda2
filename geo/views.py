@@ -16,7 +16,7 @@ from django.urls import reverse_lazy
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views import View
-from django.views.generic import DetailView, ListView, RedirectView, TemplateView, UpdateView
+from django.views.generic import DetailView, RedirectView, TemplateView, UpdateView
 from django.views.generic.edit import CreateView
 from django_tables2.views import SingleTableView
 from templated_email import send_templated_mail
@@ -24,7 +24,7 @@ from templated_email import send_templated_mail
 from .filters import AsignaturaListFilter
 from .forms import SolicitaForm, AsignaturaFilterFormHelper
 from .models import Asignatura, Calendario, Categoria, Curso, Estado, Pod, ProfesorCurso
-from .tables import AsignaturasTable, CursoTable, PodTable
+from .tables import AsignaturasTable, CursosCreadosTable, CursosPendientesTable, CursoTable, PodTable
 from .utils import PagedFilteredTableView
 from .wsclient import WSClient
 
@@ -210,15 +210,36 @@ class CursoDetailView(LoginRequiredMixin, DetailView):
     template_name = 'curso/detail.html'
 
 
-class CursosPendientesView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+class CursosCreadosView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
+    """Muestra los cursos creados en un año dado."""
+
+    permission_required = 'geo.cursos_creados'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    paginate_by = 20
+    table_class = CursosCreadosTable
+    template_name = 'gestion/cursos-creados.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        anyo_academico = self.kwargs.get('anyo_academico') or Calendario.objects.get(slug='actual').anyo
+        context['curso'] = f'{anyo_academico}/{anyo_academico + 1}'
+        return context
+
+    def get_queryset(self):
+        anyo_academico = self.kwargs.get('anyo_academico') or Calendario.objects.get(slug='actual').anyo
+        return Curso.objects.filter(estado=3, anyo_academico=anyo_academico)  # Creados este año
+
+
+class CursosPendientesView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
     """Muestra los cursos no reglados pendientes de aprobación."""
 
     permission_required = 'geo.cursos_pendientes'
     permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
     context_object_name = 'cursos_pendientes'
-    paginate_by = 10
+    paginate_by = 20
     ordering = ['-fecha_solicitud']
     queryset = Curso.objects.filter(estado=1)  # Solicitado
+    table_class = CursosPendientesTable
     template_name = 'gestion/cursos-pendientes.html'
 
 

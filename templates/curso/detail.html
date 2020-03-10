@@ -78,7 +78,7 @@
       <td>
         <ul class="listado">
         {% for profesor in curso.profesores.all %}
-          <li>{{ profesor.get_full_name }} &lt;{{profesor.email}}&gt;</li>
+          <li>{{ profesor.full_name }} &lt;{{ profesor.email }}&gt;</li>
         {% endfor %}
         </ul>
       </td>

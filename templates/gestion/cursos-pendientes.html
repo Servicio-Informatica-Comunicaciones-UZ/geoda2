@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% load render_table from django_tables2 %}
 
 {% block title %}{% trans "Cursos pendientes de aprobación" %}{% endblock title %}
 
@@ -16,28 +17,11 @@
       {% trans "Puede entrar en cada uno de ellos para aprobar o denegar la solicitud." %}
     </div><br>
 
-    {% if cursos_pendientes %}
-      <table class="table table-striped table-hover" aria-describedby="pendientes">
-      <tr>
-        <th scope="col">{% trans "Fecha" %}</th>
-        <th scope="col">{% trans "Nombre del curso" %}</th>
-        <th scope="col">{% trans "Solicitante" %}</th>
-        <th scope="col">{% trans "Correo electrónico" %}</th>
-      </tr>
-      {% for curso in cursos_pendientes %}
-        <tr>
-          <td>{{ curso.fecha_solicitud }}</td>
-          <td><a href="{% url 'curso-detail' curso.id %}">{{ curso.nombre }}</a></td>
-          <td>{{ curso.profesores.first.get_full_name }}</td>
-          <td>{{ curso.profesores.first.email }}</td>
-        </tr>
-      {% endfor %}
-      </table>
-
-      {% include "partials/pagination.html" %}
-
+    {% if table.data|length > 0 %}
+      {% render_table table %}
     {% else %}
-        {% trans "En estos momentos no hay ningún curso pendiente de aprobación." %}
+      <p>{% trans "En estos momentos no hay ningún curso pendiente de aprobación." %}</p>
     {% endif %}
+
   </div>
 {% endblock content %}
