@@ -1,11 +1,11 @@
 {% block subject %}Resolución de su solicitud de curso «{{ curso.nombre }}»{% endblock %}
 {% block plain %}
 {% if curso.profesores.first.sexo == 'F' %}
-Estimada {{ curso.profesores.first.get_full_name }}:
+Estimada {{ curso.profesores.first.full_name }}:
 {% elif curso.profesores.first.sexo == 'M' %}
-Estimado {{ curso.profesores.first.get_full_name }}:
+Estimado {{ curso.profesores.first.full_name }}:
 {% else %}
-Estimad@ {{ curso.profesores.first.get_full_name }}:
+Estimad@ {{ curso.profesores.first.full_name }}:
 {% endif %}
 
 {% if curso.estado.nombre == 'Creado' %}
@@ -28,7 +28,7 @@ Atentamente,
     el equipo del Anillo Digital Docente
 
 
--- 
+--  
 Por favor, no responda este mensaje.  
 Para solicitar soporte, use Ayudica: <https://ayudica.unizar.es>
 {% endblock %}

@@ -38,14 +38,12 @@ class CustomUser(AbstractUser):
     @property
     def full_name(self):
         """Devuelve el nombre completo (nombre y los dos apellidos)."""
-        full_name = '%s %s %s' % (self.first_name, self.last_name, self.last_name_2)
-        return full_name.strip()
+        return ' '.join(part.strip() for part in (self.first_name, self.last_name, self.last_name_2) if part)
 
     # Metodos sobrescritos
     def get_full_name(self):
         """Devuelve el nombre completo (nombre y los dos apellidos)."""
-        full_name = '%s %s %s' % (self.first_name, self.last_name, self.last_name_2)
-        return full_name.strip()
+        return self.full_name
 
     # Métodos adicionales
     def __str__(self):
