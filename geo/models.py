@@ -312,3 +312,12 @@ class ProfesorCurso(models.Model):
 
     class Meta:
         db_table = 'profesor_curso'
+
+
+class RightsSupport(models.Model):
+    """Dummy auxiliary model in order to create global permissions not related to a model."""
+
+    class Meta:
+        managed = False  # No database table creation or deletion operations will be performed for this model.
+
+        permissions = (('matricular_plan', _('Puede matricular en un curso a todos los alumnos de un plan')),)

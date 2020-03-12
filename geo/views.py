@@ -243,6 +243,42 @@ class CursosPendientesView(LoginRequiredMixin, PermissionRequiredMixin, SingleTa
     template_name = 'gestion/cursos-pendientes.html'
 
 
+class MatricularPlanView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    """Matricula en un curso a todos los alumnos del plan indicado."""
+
+    permission_required = 'geo.matricular_plan'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+
+    def post(self, request, *args, **kwargs):
+        curso_id = request.POST.get('curso_id')
+        curso = get_object_or_404(Curso, pk=curso_id)
+        try:
+            plan_id_nk = int(request.POST.get('plan_id_nk'))
+        except ValueError:
+            messages.error(request, _('El código de plan indicado no es válido.'))
+            return redirect('curso-detail', curso_id)
+
+        asignaturas = Asignatura.objects.filter(anyo_academico=curso.anyo_academico, plan_id_nk=plan_id_nk)
+        cliente = WSClient()
+
+        try:
+            for asignatura in asignaturas:
+                cliente.automatricular(asignatura, curso, active=1)
+        except Exception as ex:
+            messages.error(request, 'ERROR: %s' % str(ex))
+            return redirect('curso-detail', curso_id)
+
+        messages.success(
+            request,
+            _(
+                f'Se ha matriculado en este curso a todos los alumnos del plan {plan_id_nk}'
+                ' ({asignaturas[0].nombre_estudio}, {asignaturas[0].nombre_centro}).'
+            ),
+        )
+
+        return redirect('curso-detail', curso_id)
+
+
 class MisAsignaturasView(LoginRequiredMixin, ChecksMixin, SingleTableView):
     """Muestra las asignaturas del usuario, según el POD, y permite crear cursos."""
 

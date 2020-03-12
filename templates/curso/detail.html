@@ -130,5 +130,41 @@
       </div>
     </form>
   {% endif %}
+
+  {% if curso.estado.nombre == "Creado" and not curso.asignatura_id and perms.geo.matricular_plan %}
+    <br />
+    <h2>{% trans "Matricular a todos los alumnos de un plan" %}</h2>
+    <hr />
+
+    <form action="{% url 'matricular-plan' %}" id="matricular-plan-form" method="post">  <!-- FIXME -->
+      {% csrf_token %}
+      <input type='hidden' id='curso_id' name='curso_id' value='{{ curso.id }}'>
+
+      <div id="div_plan_id_nk" class="form-group">
+      <label for="plan_id_nk" class="col-form-label requiredField">
+        {% trans 'Código del plan' %}<span class="asteriskField">*</span>
+      </label>
+      <div class="">
+        <input
+          type="text"
+          name="plan_id_nk"
+          maxlength="4"
+          class="textinput textInput form-control"
+          required
+          id="plan_id_nk"
+        />
+        <small id="hint_plan_id_nk" class="form-text text-muted"
+          >{% trans 'Puede consultar el código del plan en la <a href="https://estudios.unizar.es">web de estudios</a>.' %}</small
+        >
+      </div>
+    </div>
+
+    <div class="btn-group" role="group" aria-label="Botones">
+      <button class="btn btn-warning" type="submit" title="{% trans 'Matricular a todos los alumnos del plan' %}">
+        <span class="fas fa-check"></span> {% trans 'Matricular' %}
+      </button>
+    </div>
+    </form>
+  {% endif %}
 </div>
 {% endblock content %}

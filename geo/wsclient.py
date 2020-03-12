@@ -42,7 +42,7 @@ class WSClient:
         datos_recibidos = self._request_url('POST', 'core_course_create_courses', self.geo_token, payload)
         return datos_recibidos[0]
 
-    def automatricular(self, asignatura, curso):
+    def automatricular(self, asignatura, curso, active=0):
         """Crea un registro en la tabla `sigma` de la base de datos de Moodle.
 
         Esta tabla se usa para matricular automáticamente a los estudiantes
@@ -52,6 +52,7 @@ class WSClient:
         payload['curso_id_nk'] = curso.id_nk
         payload['asignatura_id_nk'] = asignatura.asignatura_id
         payload['cod_grupo_asignatura'] = asignatura.cod_grupo_asignatura
+        payload['active'] = active
         payload['plan_id_nk'] = asignatura.plan_id_nk
         payload['centro_id'] = asignatura.centro_id
         mensaje = self._request_url('POST', 'local_geodaws_matricula', self.geodaws_token, payload)
