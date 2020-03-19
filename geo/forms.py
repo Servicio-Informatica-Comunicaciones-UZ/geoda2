@@ -87,8 +87,8 @@ class SolicitaForm(forms.ModelForm):
         self.instance.plataforma_id = 1
         curso = super(SolicitaForm, self).save(commit=commit)
 
-        # Añadimos por omisión al profesor que solicita el curso
-        # a la lista de profesores del curso.
+        # Añadimos por omisión al profesor que solicita el curso a la lista de profesores del curso.
+        # Si el curso es autorizado, se le matriculará como profesor al crearse el curso en Moodle.
         profesor_curso = ProfesorCurso(curso=curso, profesor=self.user, fecha_alta=datetime.today())
         profesor_curso.save()
 

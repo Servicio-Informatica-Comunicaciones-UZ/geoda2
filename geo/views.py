@@ -83,7 +83,7 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
         datos_curso = curso.get_datos()
         datos_recibidos = cliente.crear_curso(datos_curso)
         curso.actualizar_tras_creacion(datos_recibidos)
-        self._anyadir_usuario_como_profesor(curso)
+        curso.anyadir_profesor(self.request.user)
         mensaje = cliente.automatricular(asignatura, curso)
         messages.info(request, mensaje)
         messages.success(request, _('Curso creado correctamente en Moodle.'))
@@ -92,22 +92,6 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
 
     def test_func(self):
         return self.es_pas_o_pdi()
-
-    def _anyadir_usuario_como_profesor(self, curso):
-        """Añade al usuario que solicita el curso a la lista de profesores del curso.
-
-        Esta tabla la usa un plugin de matriculación (enrolment) de Moodle
-        de tipo «Base de datos externa».
-        """
-        profesor_curso = ProfesorCurso(curso=curso, profesor=self.request.user, fecha_alta=datetime.today())
-        profesor_curso.save()
-        messages.warning(
-            self.request,
-            _(
-                'Para acceder como profesor al curso en la plataforma ADD, es posible '
-                'que tenga que cerrar la sesión en la plataforma y volver a entrar.'
-            ),
-        )
 
     @staticmethod
     def _cargar_asignatura_en_curso(asignatura):
@@ -339,6 +323,7 @@ class ResolverSolicitudCursoView(LoginRequiredMixin, PermissionRequiredMixin, Re
             cliente = WSClient()
             datos_recibidos = cliente.crear_curso(curso.get_datos())
             curso.actualizar_tras_creacion(datos_recibidos)
+            cliente.matricular_profesor(curso.profesores.first(), curso)
             messages.info(request, _(f'El curso «{curso.nombre}» ha sido autorizado y creado.'))
         else:
             curso.estado = Estado.objects.get(id=6)  # Denegado

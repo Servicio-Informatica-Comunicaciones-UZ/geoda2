@@ -1,7 +1,7 @@
 Gestión de la Enseñanza Online
 ==============================
 
-Aplicación para crear cursos en Moodle 3, desarrollada en Python 3 y Django 2.
+Aplicación para crear cursos en Moodle 3, desarrollada en Python 3 y Django 3.
 
 Descripción
 -----------
@@ -63,22 +63,22 @@ creada, el curso se creaba en la categoría «Miscelánea».
 En Geoda, al crear un curso se crea también la categoría correspondiente a la asignatura
 si no existía previamente, así como sus categorías superiores si fuera necesario.
 También se crea la categoría en la plataforma, mediante un _Web Service_
-(`core_course_create_categories`).
+(función `core_course_create_categories`).
 
 ### Creación de cursos
 
-Se crean en la plataforma por medio de un _Web Service_ (`core_course_create_courses`).
+Se crean en la plataforma por medio de un _Web Service_ (función `core_course_create_courses`).
 
 El servicio web devuelve el ID del curso creado, así como su URL.
-Este ID, junto con el creador del curso, se guarda en la tabla `profesor_curso`, y se
-se muestran también en la vista `MoodleProfesores`.
+Este ID, junto con el creador del curso, se guarda en la tabla `profesor_curso`.
 
-Moodle utiliza, en cada inicio de sesión, el tipo de matriculación «Base de Datos Externa»
-(contra la vista `MoodleProfesores`) para determinar si el usuario es profesor de algún
-curso, y en su caso matricularle.  Al creador del curso, al estar en esta BD, no se le
-puede quitar de profesor del curso.
+Se utiliza la función `core_user_enrol_users` para matricular al usuario como profesor
+del curso en Moodle.
 
-> TODO: Utilizar un WS para matricular al creador del curso y eliminar esta dependencia.
+Con GEO, Moodle utilizaba, en cada inicio de sesión, el tipo de matriculación «Base de Datos Externa»
+(contra la vista `MoodleProfesores`) para determinar si el usuario era profesor de algún
+curso, y en su caso matricularlo.  Al creador del curso, al estar en esta BD, no se le
+podía quitar de profesor del curso.
 
 ### Usuarios externos a la UZ
 
@@ -108,10 +108,15 @@ estudiantes matriculados en Sigm@.
 Instalación sobre contenedores Docker
 -------------------------------------
 
-1. Copiar o renombrar el fichero `.env-sample` a `.env`.
+El servidor Moodle debe tener instalado el plugin GeodaWS.
+Además, en Site administration → Plugins → Web services → External Services debe haber
+un servicio personalizado (geo) con las funciones necesarias (`core_course_create_categories`,
+`core_course_create_courses`, `core_user_get_users`, `enrol_manual_enrol_users`).
+
+1. Copiar o renombrar los ficheros `env/common.env-sample` y `env/geoda2.env-sample`.
 2. Configurar los ajustes de la base de datos, servidor de correo, la URL del sitio,
    _Single Sign On_ (SAML) y las direcciones de los _Web services_ de Moodle y de
-   Gestión de Identidades en el fichero `.env`.
+   Gestión de Identidades en los ficheros `.env`.
 3. Levantar los contenedores:
    `docker-compose up -d`
 4. Crear el usuario administrador:
@@ -120,8 +125,7 @@ Instalación sobre contenedores Docker
    docker-compose exec web ./manage.py createsuperuser
    ```
 
-5. Insertar un año en la tabla `calendario`.  Después se podrá cambiar al año académico
-   actual desde la interfaz web.
+5. Insertar el año académico actual en la tabla `calendario`.
 
     ```bash
     docker-compose exec db bash -c 'echo "INSERT INTO calendario(anyo, slug) VALUES (2018, '\''actual'\'');" | mysql -u ${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE}'

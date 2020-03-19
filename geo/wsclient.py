@@ -9,9 +9,9 @@ class WSClient:
 
     Véase:
 
-    - https://docs.moodle.org/37/en/Using_web_services
-    - https://docs.moodle.org/dev/Creating_a_web_service_client
-    - https://docs.moodle.org/dev/Web_service_API_functions
+    - <https://docs.moodle.org/37/en/Using_web_services>
+    - <https://docs.moodle.org/dev/Creating_a_web_service_client>
+    - <https://docs.moodle.org/dev/Web_service_API_functions>
     """
 
     geo_token = get_config('GEO_TOKEN')
@@ -58,15 +58,52 @@ class WSClient:
         mensaje = self._request_url('POST', 'local_geodaws_matricula', self.geodaws_token, payload)
         return mensaje
 
+    def buscar_usuario(self, usuario):
+        """Busca un usuario en Moodle."""
+        # Buscamos a un usuario con ese NIP (idnumber) y dirección de correo.
+        payload = {
+            'criteria[0][key]': 'idnumber',
+            'criteria[0][value]': usuario.username,
+            'criteria[1][key]': 'email',
+            'criteria[1][value]': usuario.email,
+        }
+        respuesta = self._request_url('POST', 'core_user_get_users', self.geo_token, payload)
+        usuarios_moodle = respuesta['users']
+        if usuarios_moodle:
+            usuario_moodle = usuarios_moodle[0]
+        else:
+            # Si no se encuentra, cogemos al primer usuario con ese NIP (idnumber).
+            payload = {'criteria[0][key]': 'idnumber', 'criteria[0][value]': usuario.username}
+            respuesta = self._request_url('POST', 'core_user_get_users', self.geo_token, payload)
+            usuarios_moodle = respuesta['users']
+            if usuarios_moodle:
+                usuario_moodle = usuarios_moodle[0]
+            else:
+                # TODO Si no existe en Moodle ningún usuario con ese NIP, ¿crear usuario?
+                raise Exception('Usuario no encontrado en Moodle.')
+
+        return usuario_moodle
+
+    def matricular_profesor(self, usuario, curso):
+        """Matricula a un usuario como profesor de un curso de Moodle"""
+        usuario_moodle = self.buscar_usuario(usuario)
+        payload = {
+            'enrolments[0][roleid]': 3,  # id del rol `editingteacher` en Moodle
+            'enrolments[0][userid]': usuario_moodle['id'],
+            'enrolments[0][courseid]': curso.id_nk,
+        }
+        mensaje = self._request_url('POST', 'enrol_manual_enrol_users', self.geo_token, payload)
+        return mensaje
+
     def _request_url(self, verb, wsfunction, token, data=None):
         """Envía una petición al Web Service."""
         if verb == 'POST':
             resp = requests.post(
-                f'{self.api_url}?wstoken={token}&wsfunction={wsfunction}' '&moodlewsrestformat=json', data=data
+                f'{self.api_url}?wstoken={token}&wsfunction={wsfunction}&moodlewsrestformat=json', data=data
             )
         elif verb == 'GET':
             resp = requests.get(
-                f'{self.api_url}?wstoken={token}&wsfunction={wsfunction}' '&moodlewsrestformat=json', params=data
+                f'{self.api_url}?wstoken={token}&wsfunction={wsfunction}&moodlewsrestformat=json', params=data
             )
         else:
             raise Exception('Método HTTP no soportado')

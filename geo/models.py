@@ -274,6 +274,13 @@ class Curso(models.Model):
         self.estado = Estado.objects.get(nombre='Creado')  # 3
         self.save()
 
+    def anyadir_profesor(self, usuario):
+        """Añade al usuario a la lista de profesores del curso y lo matricula en Moodle."""
+        cliente = WSClient()
+        cliente.matricular_profesor(usuario, self)
+        profesor_curso = ProfesorCurso(curso=self, profesor=usuario, fecha_alta=datetime.today())
+        profesor_curso.save()
+
     @property
     def curso_academico(self):
         """Devuelve el curso académivo. Vg: 2019/2020"""
