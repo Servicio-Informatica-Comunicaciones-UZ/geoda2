@@ -1,9 +1,9 @@
-from datetime import datetime
 from time import time
 
 from annoying.functions import get_config, get_object_or_None
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from .wsclient import WSClient
 
@@ -268,7 +268,7 @@ class Curso(models.Model):
         """Actualiza el modelo con los datos recibidos de Moodle al crear el curso."""
 
         self.id_nk = datos_recibidos['id']
-        self.fecha_creacion = datetime.today()
+        self.fecha_creacion = timezone.now()
         url_plataforma = get_config('URL_PLATAFORMA')
         self.url = f'{url_plataforma}/course/view.php?id={self.id_nk}'
         self.estado = Estado.objects.get(nombre='Creado')  # 3
@@ -278,7 +278,7 @@ class Curso(models.Model):
         """Añade al usuario a la lista de profesores del curso y lo matricula en Moodle."""
         cliente = WSClient()
         cliente.matricular_profesor(usuario, self)
-        profesor_curso = ProfesorCurso(curso=self, profesor=usuario, fecha_alta=datetime.today())
+        profesor_curso = ProfesorCurso(curso=self, profesor=usuario, fecha_alta=timezone.now())
         profesor_curso.save()
 
     @property

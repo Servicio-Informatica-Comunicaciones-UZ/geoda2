@@ -1,6 +1,5 @@
-from datetime import datetime
-
 from django import forms
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from crispy_forms.bootstrap import FormActions, InlineField
@@ -81,7 +80,7 @@ class SolicitaForm(forms.ModelForm):
         """Guarda la solicitud de curso, y añade al solicitante como profesor."""
 
         # Añade la fecha de solicitud y cambia el estado del curso a Solicitado.
-        self.instance.fecha_solicitud = datetime.now()
+        self.instance.fecha_solicitud = timezone.now()
         self.instance.estado = Estado(1)  # -> Solicitado
         self.instance.anyo_academico = Calendario.objects.get(slug='actual').anyo
         self.instance.plataforma_id = 1
@@ -89,7 +88,7 @@ class SolicitaForm(forms.ModelForm):
 
         # Añadimos por omisión al profesor que solicita el curso a la lista de profesores del curso.
         # Si el curso es autorizado, se le matriculará como profesor al crearse el curso en Moodle.
-        profesor_curso = ProfesorCurso(curso=curso, profesor=self.user, fecha_alta=datetime.today())
+        profesor_curso = ProfesorCurso(curso=curso, profesor=self.user, fecha_alta=timezone.now())
         profesor_curso.save()
 
         return curso

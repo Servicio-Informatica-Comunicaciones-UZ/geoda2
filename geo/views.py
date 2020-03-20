@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date
 import json
 from dateutil.relativedelta import relativedelta
 from requests import Session
@@ -13,6 +13,7 @@ from django.contrib.auth.models import Group
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views import View
@@ -23,7 +24,7 @@ from templated_email import send_templated_mail
 
 from .filters import AsignaturaListFilter
 from .forms import SolicitaForm, AsignaturaFilterFormHelper
-from .models import Asignatura, Calendario, Categoria, Curso, Estado, Pod, ProfesorCurso
+from .models import Asignatura, Calendario, Categoria, Curso, Estado, Pod
 from .tables import AsignaturasTable, CursosCreadosTable, CursosPendientesTable, CursoTable, PodTable
 from .utils import PagedFilteredTableView
 from .wsclient import WSClient
@@ -98,9 +99,9 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
         """Crea una nueva instancia de Curso con los datos de la asignatura indicada."""
         curso = Curso(
             nombre=asignatura.nombre_asignatura,
-            fecha_solicitud=datetime.today(),
+            fecha_solicitud=timezone.now(),
             # Las asignaturas Sigm@ se aprueban automáticamente, por el administrador.
-            fecha_autorizacion=datetime.today(),
+            fecha_autorizacion=timezone.now(),
             autorizador_id=1,
             plataforma_id=1,
             categoria=asignatura.get_categoria(),
@@ -308,7 +309,7 @@ class ResolverSolicitudCursoView(LoginRequiredMixin, PermissionRequiredMixin, Re
         id_recibido = request.POST.get('id')
         curso = get_object_or_404(Curso, pk=id_recibido)
         curso.autorizador = request.user
-        curso.fecha_autorizacion = datetime.now()
+        curso.fecha_autorizacion = timezone.now()
         curso.comentarios = request.POST.get('comentarios')
 
         if request.POST.get('decision') == 'autorizar':
