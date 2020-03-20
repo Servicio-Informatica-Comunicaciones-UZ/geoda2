@@ -68,10 +68,12 @@ También se crea la categoría en la plataforma, mediante un _Web Service_
 ### Creación de cursos
 
 Se crean en la plataforma por medio de un _Web Service_ (función `core_course_create_courses`).
+En la tabla `mdl_course` el campo `shortname` sigue el patrón `centro_plan_asignatura_grupo_año`,
+y el campo `idnumber` almacena el `id` en la tabla curso de Geoda. Para los no reglados
+el nombre corto es `NR_{idnumber}`.
+El servicio web devuelve el ID del curso creado, así como su URL, y se guardan en la tabla `curso`.
 
-El servicio web devuelve el ID del curso creado, así como su URL.
-Este ID, junto con el creador del curso, se guarda en la tabla `profesor_curso`.
-
+El creador del curso se guarda en la tabla `profesor_curso`.
 Se utiliza la función `core_user_enrol_users` para matricular al usuario como profesor
 del curso en Moodle.
 
@@ -80,28 +82,47 @@ Con GEO, Moodle utilizaba, en cada inicio de sesión, el tipo de matriculación 
 curso, y en su caso matricularlo.  Al creador del curso, al estar en esta BD, no se le
 podía quitar de profesor del curso.
 
-### Usuarios externos a la UZ
+### Usuarios
 
-Una pasarela noctura crea en Moodle los usuarios para los PDI/PAS activos.
+En Administración del Sitio → Extensiones → Identificación están habilitados 4 tipos de validación:
+
+- Cuentas manuales (administrador, miembros de RAMU)
+- LDAP (general)
+- Usar una base de datos externa (con Geo para los usuarios invitados)
+- Moodle Network (para que Mahara use los usuarios de Moodle)
+
+Una pasarela nocturna copia al servidor un fichero CSV con los datos de los PDI/PAS activos.
+Una tarea cron ejecuta el script en PHP `create_moodle_users` para crear los usuarios en Moodle.
+
+> TODO: La pasasela no debería pasar todos los usuarios, sino solamente los que tengan derecho
+> a usar el Moodle (PAS, PDI, ADS, EST matriculados, usuarios invitados, auditores externos).
+> Comprobar si este proceso actualiza su nombre, apellidos y correo en caso de cambio.
+> Hacer que este proceso compruebe las vinculaciones externas y desactive al usuario al finalizar la vinculación.
+
+#### Usuarios externos a la UZ
 
 Para que un usuario ajeno a la universidad pueda participar en un curso:
 
-1. El usuario debe autorregistrarse para obtener un Número de Identificación Personal (NIP).
-2. Un PDI/PAS debe, desde esta aplicación, establecer una vinculación en Gestión de Identidades de ese usuario con Moodle.
+1. El usuario debe autorregistrarse en Gestión de Identidades para obtener un Número de Identificación Personal (NIP).
+2. Un PDI/PAS debe, desde esta aplicación, establecer una vinculación en G.I. de ese usuario con Moodle.
 3. El docente debe matricular al usuario en el curso, con el rol apropiado.
 
-> TODO: Crear el usuario en Moodle mediante un WS, al hacer el paso 2.
-> Que la pasarela nocturna actualice su nombre, apellidos y correo en caso de cambio.
-> Que la pasarela nocturna desactive al usuario al finalizar la vinculación.
-> Desactivar la creación de usuarios al vuelo al iniciar sesión por primera vez.
+> TODO: Al hacer el paso 2, crear el usuario en Moodle mediante un WS, con el email de G.I.,
+> y desactivar la creación de usuarios al vuelo al iniciar sesión por primera vez.
+> TODO: Crear un código de vinculacion para el RAMU (¿sin caducidad?)
+
+Con GEO, el PDI invitaba al usuario externo, creándose en GEO un usuario con el rol `forano`.
+Los usuarios se creaban al vuelo cuando entraban por primera vez a Moodle, con autenticación contra una BD externa (la vista `MoodleUsers` de la BD de Geo).
+No se podían matricular hasta que entraban en la plataforma.
 
 ### Matriculación automática de alumnos
 
 Al crear un curso en Moodle, se usa un Web Service (plugin GeodaWS) para insertar un
 registro en la tabla `sigma`.
 
-Un script PHP usa esta tabla para matricular automáticamente en los cursos Moodle a los
-estudiantes matriculados en Sigm@.
+Una tarea cron ejecuta cada noche un script PHP (`cargasigma`) que usa esta tabla
+y el fichero `alumnos_asignaturas.dat` creado por una pasarela ETL (Pentaho Spoon) para
+matricular automáticamente en los cursos Moodle a los estudiantes matriculados en Sigm@.
 
 > TODO: Crear un plugin de _enrolment_, con su propio tipo de matriculación.
 
@@ -128,7 +149,7 @@ un servicio personalizado (geo) con las funciones necesarias (`core_course_creat
 5. Insertar el año académico actual en la tabla `calendario`.
 
     ```bash
-    docker-compose exec db bash -c 'echo "INSERT INTO calendario(anyo, slug) VALUES (2018, '\''actual'\'');" | mysql -u ${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE}'
+    docker-compose exec db bash -c 'echo "INSERT INTO calendario(anyo, slug) VALUES (2019, '\''actual'\'');" | mysql -u ${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE}'
     ```
 
 6. Entrar como administrador en la interfaz web, y añadir usuarios al grupo `Gestores` (incluyendo el superusuario).

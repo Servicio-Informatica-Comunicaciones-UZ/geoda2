@@ -79,7 +79,8 @@ class WSClient:
             if usuarios_moodle:
                 usuario_moodle = usuarios_moodle[0]
             else:
-                # TODO Si no existe en Moodle ningún usuario con ese NIP, ¿crear usuario?
+                # La tarea ETL `add_usuarios_y_matriculas` (Pentaho Spoon) copia un CSV con los usuarios al servidor
+                # y una tarea cron los crea, por lo que no se debería llegar aquí nunca.
                 raise Exception('Usuario no encontrado en Moodle.')
 
         return usuario_moodle
