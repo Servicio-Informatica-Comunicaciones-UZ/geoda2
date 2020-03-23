@@ -32,7 +32,7 @@ def add_permission_to_group(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [('geo', '0008_auto_20191212_1000')]
+    dependencies = [('geo', '0007_auto_20190909_0835')]
 
     operations = [
         migrations.AlterModelOptions(

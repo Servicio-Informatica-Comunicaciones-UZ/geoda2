@@ -148,7 +148,6 @@ class CursosPendientesTable(tables.Table):
 class CursoTable(tables.Table):
 
     enlace = tables.Column(empty_values=(), verbose_name='')
-    estado = tables.Column(accessor='estado__nombre', verbose_name=_('Estado'))
 
     def render_enlace(self, record):
         return mark_safe(

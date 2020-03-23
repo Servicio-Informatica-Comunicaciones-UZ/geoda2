@@ -29,7 +29,7 @@
 
     <tr>
       <th scope="row">{% trans "Estado" %}</th>
-      <td>{{ curso.estado.nombre }}</td>
+      <td>{{ curso.get_estado_display }}</td>
     </tr>
     <tr>
       <th scope="row">{% trans "Fecha de solicitud" %}</th>
@@ -85,7 +85,7 @@
     </tr>
   </table>
 
-  {% if curso.estado.nombre == "Solicitado" and perms.geo.cursos_pendientes %}
+  {% if curso.get_estado_display == 'Solicitado' and perms.geo.cursos_pendientes %}
     <br />
     <h2>{% trans "Resolver la solicitud" %}</h2>
     <hr />
@@ -131,7 +131,7 @@
     </form>
   {% endif %}
 
-  {% if curso.estado.nombre == "Creado" and not curso.asignatura_id and perms.geo.matricular_plan %}
+  {% if curso.get_estado_display == 'Creado' and not curso.asignatura_id and perms.geo.matricular_plan %}
     <br />
     <h2>{% trans "Matricular a todos los alumnos de un plan" %}</h2>
     <hr />

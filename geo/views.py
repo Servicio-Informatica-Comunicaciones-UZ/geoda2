@@ -1,12 +1,18 @@
-from datetime import date
+# standard library
 import json
+from datetime import date
+
+# third-party
+import zeep
+from annoying.functions import get_config, get_object_or_None
 from dateutil.relativedelta import relativedelta
+from django_tables2.views import SingleTableView
 from requests import Session
 from requests.auth import HTTPBasicAuth
 from requests.exceptions import ConnectionError as RequestConnectionError
-import zeep
+from templated_email import send_templated_mail
 
-from annoying.functions import get_config, get_object_or_None
+# Django
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import Group
@@ -19,12 +25,11 @@ from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import DetailView, RedirectView, TemplateView, UpdateView
 from django.views.generic.edit import CreateView
-from django_tables2.views import SingleTableView
-from templated_email import send_templated_mail
 
+# local Django
 from .filters import AsignaturaListFilter
 from .forms import SolicitaForm, AsignaturaFilterFormHelper
-from .models import Asignatura, Calendario, Categoria, Curso, Estado, Pod
+from .models import Asignatura, Calendario, Categoria, Curso, Pod
 from .tables import AsignaturasTable, CursosCreadosTable, CursosPendientesTable, CursoTable, PodTable
 from .utils import PagedFilteredTableView
 from .wsclient import WSClient
@@ -212,7 +217,7 @@ class CursosCreadosView(LoginRequiredMixin, PermissionRequiredMixin, SingleTable
 
     def get_queryset(self):
         anyo_academico = self.kwargs.get('anyo_academico') or Calendario.objects.get(slug='actual').anyo
-        return Curso.objects.filter(estado=3, anyo_academico=anyo_academico)  # Creados este año
+        return Curso.objects.filter(estado=Curso.Estado.CREADO, anyo_academico=anyo_academico)  # Creados este año
 
 
 class CursosPendientesView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
@@ -223,7 +228,7 @@ class CursosPendientesView(LoginRequiredMixin, PermissionRequiredMixin, SingleTa
     context_object_name = 'cursos_pendientes'
     paginate_by = 20
     ordering = ['-fecha_solicitud']
-    queryset = Curso.objects.filter(estado=1)  # Solicitado
+    queryset = Curso.objects.filter(estado=Curso.Estado.SOLICITADO)
     table_class = CursosPendientesTable
     template_name = 'gestion/cursos-pendientes.html'
 
@@ -313,7 +318,7 @@ class ResolverSolicitudCursoView(LoginRequiredMixin, PermissionRequiredMixin, Re
         curso.comentarios = request.POST.get('comentarios')
 
         if request.POST.get('decision') == 'autorizar':
-            curso.estado = Estado.objects.get(id=2)  # Autorizado
+            curso.estado = Curso.Estado.AUTORIZADO
             curso.save()
 
             # Comprobar si existe la categoría en la plataforma, y si no, crearla.
@@ -327,7 +332,7 @@ class ResolverSolicitudCursoView(LoginRequiredMixin, PermissionRequiredMixin, Re
             cliente.matricular_profesor(curso.profesores.first(), curso)
             messages.info(request, _(f'El curso «{curso.nombre}» ha sido autorizado y creado.'))
         else:
-            curso.estado = Estado.objects.get(id=6)  # Denegado
+            curso.estado = Curso.Estado.DENEGADO
             curso.save()
             messages.info(request, _(f'El curso «{curso.nombre}» ha sido denegado.'))
 

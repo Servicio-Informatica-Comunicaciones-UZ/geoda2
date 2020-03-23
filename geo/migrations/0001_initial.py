@@ -101,6 +101,20 @@ class Migration(migrations.Migration):
                 ('fecha_creacion', models.DateTimeField(blank=True, null=True, verbose_name='Fecha de creación')),
                 ('url', models.CharField(blank=True, max_length=200, null=True, verbose_name='URL')),
                 ('anyo_academico', models.IntegerField(blank=True, null=True, verbose_name='Año académico')),
+                (
+                    'estado',
+                    models.IntegerField(
+                        choices=[
+                            (1, 'Solicitado'),
+                            (2, 'Autorizado'),
+                            (3, 'Creado'),
+                            (4, 'Suspendido'),
+                            (5, 'Borrado'),
+                            (6, 'Denegado'),
+                        ],
+                        verbose_name='Estado',
+                    ),
+                ),
                 ('motivo_solicitud', models.TextField(blank=True, null=True, verbose_name='Motivo de la solicitud')),
                 ('comentarios', models.TextField(blank=True, null=True, verbose_name='Motivo de la denegación')),
                 (
@@ -134,14 +148,6 @@ class Migration(migrations.Migration):
             options={'db_table': 'curso'},
         ),
         migrations.CreateModel(
-            name='Estado',
-            fields=[
-                ('id', models.IntegerField(primary_key=True, serialize=False)),
-                ('nombre', models.CharField(blank=True, max_length=127, null=True)),
-            ],
-            options={'db_table': 'estado'},
-        ),
-        migrations.CreateModel(
             name='ProfesorCurso',
             fields=[
                 ('id', models.AutoField(primary_key=True, serialize=False)),
@@ -171,13 +177,6 @@ class Migration(migrations.Migration):
                 ('tipo_docencia', models.IntegerField()),
             ],
             options={'db_table': 'pod', 'index_together': {('nip', 'anyo_academico')}},
-        ),
-        migrations.AddField(
-            model_name='curso',
-            name='estado',
-            field=models.ForeignKey(
-                blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='geo.Estado'
-            ),
         ),
         migrations.AddField(
             model_name='curso',

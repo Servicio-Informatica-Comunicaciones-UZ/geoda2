@@ -1,10 +1,16 @@
+# standard library
 from time import time
 
+# third-party
 from annoying.functions import get_config, get_object_or_None
+
+# Django
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+
+# local Django
 from .wsclient import WSClient
 
 
@@ -116,7 +122,6 @@ class Categoria(models.Model):
 
     NO_REGLADAS = (
         'Biblioteca',
-        'C.U.D.',
         'CIRCE',
         'Coordinación',
         'CULM',
@@ -124,7 +129,6 @@ class Categoria(models.Model):
         'Cursos 2019-2020',
         'EPJ',
         'Formación',
-        'G9',
         'ICE',
         'Miscelánea',
         'POUZ',
@@ -216,16 +220,6 @@ class Categoria(models.Model):
         }
 
 
-class Estado(models.Model):
-    """Representa los diferentes estados en los que se puede encontrar un curso."""
-
-    id = models.IntegerField(primary_key=True)
-    nombre = models.CharField(max_length=127, blank=True, null=True)
-
-    class Meta:
-        db_table = 'estado'
-
-
 class Curso(models.Model):
     """Este modelo representa un curso en Moodle.
 
@@ -234,6 +228,16 @@ class Curso(models.Model):
     * correspondientes a una asignatura dada de alta en Sigma (de un estudio reglado)
     * no reglados
     """
+
+    class Estado(models.IntegerChoices):
+        """Representa los diferentes estados en los que se puede encontrar un curso."""
+
+        SOLICITADO = 1, _('Solicitado')
+        AUTORIZADO = 2, _('Autorizado')
+        CREADO = 3, _('Creado')
+        SUSPENDIDO = 4, _('Suspendido')
+        BORRADO = 5, _('Borrado')
+        DENEGADO = 6, _('Denegado')
 
     nombre = models.CharField(max_length=200)
     fecha_solicitud = models.DateTimeField(blank=True, null=True, verbose_name=_('Fecha de solicitud'))
@@ -248,7 +252,7 @@ class Curso(models.Model):
     asignatura = models.OneToOneField(
         Asignatura, blank=True, null=True, on_delete=models.PROTECT, verbose_name=_('Asignatura')
     )
-    estado = models.ForeignKey('Estado', models.PROTECT, blank=True, null=True)
+    estado = models.IntegerField(choices=Estado.choices, verbose_name=_('Estado'))
     motivo_solicitud = models.TextField(blank=True, null=True, verbose_name=_('Motivo de la solicitud'))
     comentarios = models.TextField(blank=True, null=True, verbose_name=_('Comentarios'))
     profesores = models.ManyToManyField('accounts.CustomUser', related_name='profesores', through='ProfesorCurso')
@@ -271,7 +275,7 @@ class Curso(models.Model):
         self.fecha_creacion = timezone.now()
         url_plataforma = get_config('URL_PLATAFORMA')
         self.url = f'{url_plataforma}/course/view.php?id={self.id_nk}'
-        self.estado = Estado.objects.get(nombre='Creado')  # 3
+        self.estado = Curso.Estado.CREADO
         self.save()
 
     def anyadir_profesor(self, usuario):

@@ -1,12 +1,15 @@
-from django import forms
-from django.utils import timezone
-from django.utils.translation import gettext_lazy as _
-
+# third-party
 from crispy_forms.bootstrap import FormActions, InlineField
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Div, Fieldset, Layout, Submit
 
-from .models import Calendario, Categoria, Curso, Estado, ProfesorCurso
+# Django
+from django import forms
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+
+# local Django
+from .models import Calendario, Categoria, Curso, ProfesorCurso
 
 
 class AsignaturaFilterFormHelper(FormHelper):
@@ -81,7 +84,7 @@ class SolicitaForm(forms.ModelForm):
 
         # Añade la fecha de solicitud y cambia el estado del curso a Solicitado.
         self.instance.fecha_solicitud = timezone.now()
-        self.instance.estado = Estado(1)  # -> Solicitado
+        self.instance.estado = Curso.Estado.SOLICITADO
         self.instance.anyo_academico = Calendario.objects.get(slug='actual').anyo
         self.instance.plataforma_id = 1
         curso = super(SolicitaForm, self).save(commit=commit)

@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
         JOIN "accounts_customuser" "u" ON "pc"."profesor_id" = "u"."id"
     WHERE
         "u"."is_active" = 1
-        AND "c"."estado_id" = 3
+        AND "c"."estado" = 3
         AND "c"."anyo_academico" > 2011
         AND (ISNULL("pc"."fecha_baja") OR ("pc"."fecha_baja" = ''))
         AND "c"."id_nk" IS NOT NULL
