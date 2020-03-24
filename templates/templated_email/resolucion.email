@@ -8,11 +8,11 @@ Estimado {{ curso.profesores.first.full_name }}:
 Estimad@ {{ curso.profesores.first.full_name }}:
 {% endif %}
 
-{% if curso.get_estado_display == 'Creado' %}
+{% if curso.estado == curso.Estado.CREADO.value %}
 El curso «{{ curso.nombre }}» que había solicitado ha sido *autorizado* y *creado*.
 
 Puede acceder directamente al curso en la página <{{ curso.url }}>.
-{% elif curso.get_estado_display == 'Denegado' %}
+{% elif curso.estado == curso.Estado.DENEGADO.value %}
 El curso «{{ curso.nombre }}» que había solicitado ha sido *denegado*.
 {% endif %}
 

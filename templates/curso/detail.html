@@ -85,7 +85,7 @@
     </tr>
   </table>
 
-  {% if curso.get_estado_display == 'Solicitado' and perms.geo.cursos_pendientes %}
+  {% if curso.estado == curso.Estado.SOLICITADO.value and perms.geo.cursos_pendientes %}
     <br />
     <h2>{% trans "Resolver la solicitud" %}</h2>
     <hr />
@@ -131,7 +131,7 @@
     </form>
   {% endif %}
 
-  {% if curso.get_estado_display == 'Creado' and not curso.asignatura_id and perms.geo.matricular_plan %}
+  {% if curso.estado == curso.Estado.CREADO.value and not curso.asignatura_id and perms.geo.matricular_plan %}
     <br />
     <h2>{% trans "Matricular a todos los alumnos de un plan" %}</h2>
     <hr />
