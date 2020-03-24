@@ -10,6 +10,7 @@ class AsignaturaListFilter(django_filters.FilterSet):
         fields = {
             'nombre_estudio': ['icontains'],
             'nombre_centro': ['icontains'],
+            'plan_id_nk': ['exact'],
             'asignatura_id': ['exact'],
             'nombre_asignatura': ['icontains'],
             'cod_grupo_asignatura': ['exact'],

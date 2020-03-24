@@ -31,6 +31,7 @@ class AsignaturaFilterFormHelper(FormHelper):
                 Div(
                     InlineField('nombre_estudio__icontains', wrapper_class='col-4'),
                     InlineField('nombre_centro__icontains', wrapper_class='col-4'),
+                    InlineField('plan_id_nk', wrapper_class='col-4'),
                     InlineField('asignatura_id', wrapper_class='col-4'),
                     InlineField('nombre_asignatura__icontains', wrapper_class='col-4'),
                     InlineField('cod_grupo_asignatura', wrapper_class='col-4'),
