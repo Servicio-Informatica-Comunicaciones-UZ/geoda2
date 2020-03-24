@@ -27,10 +27,10 @@ from django.views.generic import DetailView, RedirectView, TemplateView, UpdateV
 from django.views.generic.edit import CreateView
 
 # local Django
-from .filters import AsignaturaListFilter
-from .forms import SolicitaForm, AsignaturaFilterFormHelper
+from .filters import AsignaturaListFilter, CursoFilter
+from .forms import AsignaturaFilterFormHelper, CursoFilterFormHelper, SolicitaForm
 from .models import Asignatura, Calendario, Categoria, Curso, Pod
-from .tables import AsignaturasTable, CursosCreadosTable, CursosPendientesTable, CursoTable, PodTable
+from .tables import AsignaturasTable, CursosTodosTable, CursosPendientesTable, CursoTable, PodTable
 from .utils import PagedFilteredTableView
 from .wsclient import WSClient
 
@@ -200,14 +200,17 @@ class CursoDetailView(LoginRequiredMixin, DetailView):
     template_name = 'curso/detail.html'
 
 
-class CursosCreadosView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
-    """Muestra los cursos creados en un año dado."""
+class CursosTodosView(LoginRequiredMixin, PermissionRequiredMixin, PagedFilteredTableView):
+    """Muestra todos los cursos de un año dado, permitiendo filtrar por su estado."""
 
-    permission_required = 'geo.cursos_creados'
+    filter_class = CursoFilter
+    formhelper_class = CursoFilterFormHelper
+    model = Curso
+    permission_required = 'geo.cursos_todos'
     permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
     paginate_by = 20
-    table_class = CursosCreadosTable
-    template_name = 'gestion/cursos-creados.html'
+    table_class = CursosTodosTable
+    template_name = 'gestion/cursos-todos.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -217,7 +220,7 @@ class CursosCreadosView(LoginRequiredMixin, PermissionRequiredMixin, SingleTable
 
     def get_queryset(self):
         anyo_academico = self.kwargs.get('anyo_academico') or Calendario.objects.get(slug='actual').anyo
-        return Curso.objects.filter(estado=Curso.Estado.CREADO, anyo_academico=anyo_academico)  # Creados este año
+        return Curso.objects.filter(anyo_academico=anyo_academico)
 
 
 class CursosPendientesView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):

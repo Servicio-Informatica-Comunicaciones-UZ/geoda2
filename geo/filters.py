@@ -1,5 +1,5 @@
 import django_filters
-from .models import Asignatura
+from .models import Asignatura, Curso
 
 
 class AsignaturaListFilter(django_filters.FilterSet):
@@ -16,3 +16,12 @@ class AsignaturaListFilter(django_filters.FilterSet):
             'cod_grupo_asignatura': ['exact'],
         }
         order_by = ['asignatura_id']
+
+
+class CursoFilter(django_filters.FilterSet):
+    """Filtro para buscar cursos por su nombre y/o estado."""
+
+    class Meta:
+        model = Curso
+        fields = {'nombre': ['icontains'], 'estado': ['exact']}
+        order_by = ['nombre']

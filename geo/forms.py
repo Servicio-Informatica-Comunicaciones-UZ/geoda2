@@ -45,6 +45,35 @@ class AsignaturaFilterFormHelper(FormHelper):
     )
 
 
+class CursoFilterFormHelper(FormHelper):
+    """
+    Formulario para filtrar el listado de todos los cursos.
+
+    Ver https://django-crispy-forms.readthedocs.io/en/latest/form_helper.html
+    """
+
+    form_class = 'form form-inline'
+    form_id = 'curso-search-form'
+    form_method = 'GET'
+    form_tag = True
+    html5_required = True
+    layout = Layout(
+        Div(
+            Fieldset(
+                "<span class='fa fa-search'></span> " + str(_('Buscar curso')),
+                Div(
+                    InlineField('nombre__icontains', wrapper_class='col-6'),
+                    InlineField('estado', wrapper_class='col-6'),
+                    css_class='row',
+                ),
+                css_class='col-10 border p-3',
+            ),
+            FormActions(Submit('submit', _('Filtrar')), css_class='col-2 text-right align-self-center'),
+            css_class='row',
+        )
+    )
+
+
 class SolicitaForm(forms.ModelForm):
     """
     Formulario para solicitar un curso no reglado.

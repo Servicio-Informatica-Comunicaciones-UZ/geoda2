@@ -111,7 +111,7 @@ class PodTable(tables.Table):
         template_name = 'django_tables2/bootstrap4.html'
 
 
-class CursosCreadosTable(tables.Table):
+class CursosTodosTable(tables.Table):
 
     enlace = tables.Column(empty_values=(), verbose_name='')
     profesores = tables.ManyToManyColumn(transform=lambda u: u.full_name)
@@ -128,7 +128,8 @@ class CursosCreadosTable(tables.Table):
     class Meta:
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}
         model = Curso
-        fields = ('nombre', 'profesores', 'enlace')
+        fields = ('nombre', 'profesores', 'estado', 'enlace')
+        empty_text = _("No hay ningún curso que satisfaga los criterios de búsqueda.")
         template_name = 'django_tables2/bootstrap4.html'
 
 

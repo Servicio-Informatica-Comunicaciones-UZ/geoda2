@@ -261,7 +261,7 @@ class Curso(models.Model):
         db_table = 'curso'
         ordering = ('anyo_academico', 'nombre')
         permissions = [
-            ('cursos_creados', _('Puede ver el listado de cursos creados.')),
+            ('cursos_todos', _('Puede ver el listado de todos los cursos.')),
             ('cursos_pendientes', _('Puede ver el listado de cursos por aprobar.')),
         ]
 

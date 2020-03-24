@@ -26,8 +26,8 @@ def add_permission_to_group(apps, schema_editor):
 
     gestores = Group.objects.get(name='Gestores')
 
-    cursos_creados = Permission.objects.get(codename='cursos_creados')
-    gestores.permissions.add(cursos_creados)
+    cursos_todos = Permission.objects.get(codename='cursos_todos')
+    gestores.permissions.add(cursos_todos)
 
 
 class Migration(migrations.Migration):
@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ('anyo_academico', 'nombre'),
                 'permissions': [
-                    ('cursos_creados', 'Puede ver el listado de cursos creados.'),
+                    ('cursos_todos', 'Puede ver el listado de todos los cursos.'),
                     ('cursos_pendientes', 'Puede ver el listado de cursos por aprobar.'),
                 ],
             },
