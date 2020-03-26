@@ -90,11 +90,13 @@ class Pod(models.Model):
     apellido1 = models.CharField(max_length=32, blank=True, null=True, verbose_name='Primer apellido')
     apellido2 = models.CharField(max_length=32, blank=True, null=True, verbose_name='Segundo apellido')
     nombre = models.CharField(max_length=32, blank=True, null=True, verbose_name='Nombre')
-    tipo_docencia = models.IntegerField()
+    tipo_docencia = models.IntegerField(_("Tipo de docencia"))
 
     class Meta:
         db_table = 'pod'
         index_together = ['nip', 'anyo_academico']
+        verbose_name = 'registro del Plan de Ordenación Docente'
+        verbose_name_plural = 'registros del Plan de Ordenación Docente'
 
     def __str__(self):
         return '{0} {1} {2} {3}'.format(self.anyo_academico, self.plan_id_nk, self.asignatura_id, self.nip)
@@ -323,6 +325,8 @@ class ProfesorCurso(models.Model):
 
     class Meta:
         db_table = 'profesor_curso'
+        verbose_name = _('asignación profesor-curso')
+        verbose_name_plural = _('asignaciones profesor-curso')
 
 
 class RightsSupport(models.Model):
