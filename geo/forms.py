@@ -96,10 +96,14 @@ class SolicitaForm(forms.ModelForm):
         self.fields['nombre'].help_text = _(
             'Nombre del curso. No se podrá cambiar, ' 'así que debe ser descriptivo y diferenciable de otros.'
         )
+
+        anyo_academico = Calendario.objects.get(slug='actual').anyo
+        cat_anyo = Categoria.objects.get(anyo_academico=anyo_academico, supercategoria_id__isnull=True)
         self.fields['categoria'].widget.choices = (
             Categoria.objects.filter(centro_id=None)
-            .filter(anyo_academico=Calendario.objects.get(slug='actual').anyo)
-            .exclude(supercategoria_id=None)
+            .filter(anyo_academico=anyo_academico)
+            .exclude(id=cat_anyo.id)
+            .exclude(supercategoria_id=cat_anyo.id)
             .values_list('id', 'nombre')
             .order_by('nombre')
             .all()

@@ -128,7 +128,6 @@ class Categoria(models.Model):
         'Coordinación',
         'CULM',
         'Curso P.A.S.',
-        'Cursos 2019-2020',
         'EPJ',
         'Formación',
         'ICE',
@@ -154,6 +153,12 @@ class Categoria(models.Model):
         db_table = 'categoria'
         unique_together = (('anyo_academico', 'centro_id', 'plan_id_nk'),)
         verbose_name = _('categoría')
+
+    def __str__(self):
+        return f'{self.anyo_academico} {self.get_centro_id_display()} {self.nombre}'
+
+    def get_centro_id_display(self):
+        return self.centro_id or '—'
 
     @classmethod
     def crear_desde_asignatura(cls, asignatura):
