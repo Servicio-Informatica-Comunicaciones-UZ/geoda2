@@ -154,6 +154,9 @@ un servicio personalizado (geo) con las funciones necesarias (`core_course_creat
 
 6. Entrar como administrador en la interfaz web, y añadir usuarios al grupo `Gestores` (incluyendo el superusuario).
 
+7. Activar a los usuarios gestores el atributo `is_staff` para que puedan acceder
+   a la interfaz de administración.
+
 Instalación sobre hierro
 ------------------------
 
@@ -225,6 +228,9 @@ pipenv [--python 3.7] install [--dev]
 
     `INSERT INTO calendario(anyo, slug) VALUES (2019, 'actual');`
 6. Añadir usuarios al grupo `Gestores` (incluyendo el superusuario).
+
+7. Activar a los usuarios gestores el atributo `is_staff` para que puedan acceder
+   a la interfaz de administración.
 
 ### Servidor web para desarrollo
 

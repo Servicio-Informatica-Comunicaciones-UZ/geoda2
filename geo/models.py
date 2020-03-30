@@ -281,6 +281,7 @@ class Curso(models.Model):
         permissions = [
             ('cursos_todos', _('Puede ver el listado de todos los cursos.')),
             ('cursos_pendientes', _('Puede ver el listado de cursos por aprobar.')),
+            ('curso_administrar', _('Puede acceder a la interfaz de administración de Curso')),
         ]
 
     def get_absolute_url(self):

@@ -67,11 +67,11 @@
     </tr>
     <tr>
       <th scope="row">{% trans "Motivo de la solicitud" %}</th>
-      <td>{{ curso.motivo_solicitud | default_if_none:"—" }}</td>
+      <td>{{ curso.motivo_solicitud | default_if_none:"—" | linebreaks }}</td>
     </tr>
     <tr>
       <th scope="row">{% trans "Comentarios" %}</th>
-      <td>{{ curso.comentarios | default_if_none:"—" }}</td>
+      <td>{{ curso.comentarios | default_if_none:"—" | linebreaks }}</td>
     </tr>
     <tr>
       <th scope="row">{% trans "Profesorado" %}</th>
@@ -86,6 +86,13 @@
   </table>
 
   {% if curso.estado == curso.Estado.SOLICITADO.value and perms.geo.cursos_pendientes %}
+
+    {% if perms.geo.curso_administrar %}
+      <a href="{% url 'admin:geo_curso_change' curso.id %}" class="btn btn-info">
+        <span class="fas fa-pencil-alt" aria-hidden="true"></span> {% trans "Modificar curso" %}
+      </a><br />
+    {% endif %}
+
     <br />
     <h2>{% trans "Resolver la solicitud" %}</h2>
     <hr />

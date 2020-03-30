@@ -10,7 +10,8 @@
 {% block branding %}
 <h1 id="site-name">
     <a href="http://www.unizar.es"><span class="icon-logoUZ" style="font-size: 150%; color: white;"></span></a>
-    <a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a>
+    <a href="{{ site_url }}" style="font-weight: 500;">Geoda</a>
+    <small><a href="{% url 'admin:index' %}" style="color: white;">{{ _('Administration') }}</a></small>
 </h1>
 {% endblock %}
 
