@@ -27,10 +27,10 @@ from django.views.generic import DetailView, RedirectView, TemplateView, UpdateV
 from django.views.generic.edit import CreateView
 
 # local Django
-from .filters import AsignaturaListFilter, CursoFilter
-from .forms import AsignaturaFilterFormHelper, CursoFilterFormHelper, SolicitaForm
-from .models import Asignatura, Calendario, Categoria, Curso, Pod
-from .tables import AsignaturasTable, CursosTodosTable, CursosPendientesTable, CursoTable, PodTable
+from .filters import AsignaturaListFilter, CursoFilter, ForanoFilter
+from .forms import AsignaturaFilterFormHelper, CursoFilterFormHelper, CursoSolicitarForm, ForanoFilterFormHelper
+from .models import Asignatura, Calendario, Categoria, Curso, Forano, Pod
+from .tables import AsignaturasTable, CursosTodosTable, CursosPendientesTable, CursoTable, ForanoTodosTable, PodTable
 from .utils import PagedFilteredTableView
 from .wsclient import WSClient
 
@@ -360,11 +360,11 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
     template_name = 'curso/solicitar.html'
 
     def get(self, request, *args, **kwargs):
-        formulario = SolicitaForm(user=self.request.user)
+        formulario = CursoSolicitarForm(user=self.request.user)
         return render(request, self.template_name, {'form': formulario})
 
     def post(self, request, *args, **kwargs):
-        formulario = SolicitaForm(data=request.POST, user=self.request.user)
+        formulario = CursoSolicitarForm(data=request.POST, user=self.request.user)
         if formulario.is_valid():
             curso = formulario.save()
             messages.success(request, _(f'La solicitud ha sido recibida. Se le avisará cuando se resuelva.'))
@@ -391,50 +391,138 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
         )
 
 
-class ForanoView(LoginRequiredMixin, ChecksMixin, View):
-    """Crea una vinculacion de un usuario externo en Gestión de Identidades."""
+class ForanoDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
+    """Muestra información detallada de una solicitud de vinculación."""
 
-    def get(self, request, *args, **kwargs):
-        return render(request, 'forano/vincular.html')
+    model = Forano
+    permission_required = 'geo.forano'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    template_name = 'gestion/forano_detail.html'
+
+
+class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
+    """
+    Muestra un formulario para solicitar que se añada un NIP
+    al grupo de vinculación «Usuarios invitados a Moodle».
+    """
+
+    model = Forano
+    fields = ('nip', 'motivo_solicitud')
+    required = ('nip', 'motivo_solicitud')
+    template_name = 'forano/solicitar.html'
 
     def post(self, request, *args, **kwargs):
-        nip = request.POST.get('nip')
-        wsdl = get_config('WSDL_VINCULACIONES')
-        session = Session()
-        session.auth = HTTPBasicAuth(get_config('USER_VINCULACIONES'), get_config('PASS_VINCULACIONES'))
+        form = self.get_form()
+        if form.is_valid():
+            forano = form.save(False)
+            forano.fecha_solicitud = timezone.now()
+            forano.estado = Forano.Estado.SOLICITADO
+            forano.solicitante = self.request.user
+            forano.save(True)
+            messages.success(request, _(f'La solicitud ha sido recibida. Se le avisará cuando se resuelva.'))
+            self._notifica_solicitud(forano)
 
-        try:
-            client = zeep.Client(wsdl=wsdl, transport=zeep.transports.Transport(session=session))
-        except RequestConnectionError:
-            messages.error(request, 'No fue posible conectarse al WS de Identidades.')
-            return redirect('vincular-forano')
-        except Exception as ex:
-            messages.error(request, 'ERROR: %s' % str(ex))
-            return redirect('vincular-forano')
+            return redirect('mis-cursos')
 
-        response = client.service.creaVinculacion(
-            f'{nip}',  # nip
-            '53',  # codVinculacion Usuarios invitados a Moodle
-            date.today().isoformat(),  # fechaInicio
-            (date.today() + relativedelta(years=1)).isoformat(),  # fechaFin
-            request.user.username,  # nipResponsable
-        )
-
-        if response.aviso:
-            messages.warning(request, response.descripcionAviso)
-
-        if response.error:
-            messages.error(request, response.descripcionResultado)
-        else:
-            messages.success(
-                request,
-                _(
-                    f'El NIP «{nip}» ha sido vinculado a Moodle.  Es posible que usted'
-                    ' no vea al invitado entre los usuarios de la plataforma hasta que'
-                    ' el invitado acceda a la plataforma la primera vez.'
-                ),
-            )
-        return redirect('vincular-forano')
+        return render(request, self.template_name, {'form': form})
 
     def test_func(self):
         return self.es_pas_o_pdi()
+
+    @staticmethod
+    def _notifica_solicitud(forano):
+        """Envía email a los miembros del grupo Gestores informando de la solicitud."""
+        grupo_gestores = Group.objects.get(name='Gestores')
+        gestores = grupo_gestores.user_set.all()
+        destinatarios = list(map(lambda g: g.email, gestores))
+        send_templated_mail(
+            template_name='solicitud_forano',
+            from_email=None,  # settings.DEFAULT_FROM_EMAIL
+            recipient_list=destinatarios,
+            context={'forano': forano, 'site_url': get_config('SITE_URL')},
+        )
+
+
+class ForanoTodosView(LoginRequiredMixin, PermissionRequiredMixin, PagedFilteredTableView):
+    """Muestra todas las solicitudes de vinculación, permitiendo filtrar por su estado."""
+
+    filter_class = ForanoFilter
+    formhelper_class = ForanoFilterFormHelper
+    model = Forano
+    permission_required = 'geo.forano'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    paginate_by = 20
+    table_class = ForanoTodosTable
+    template_name = 'gestion/forano_todos.html'
+
+
+class ForanoResolverView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    """Crea una vinculacion de un usuario externo en Gestión de Identidades."""
+
+    permission_required = 'geo.forano'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+
+    def post(self, request, *args, **kwargs):
+        id_recibido = request.POST.get('id')
+        forano = get_object_or_404(Forano, pk=id_recibido)
+        forano.autorizador = request.user
+        forano.fecha_autorizacion = timezone.now()
+        forano.comentarios = request.POST.get('comentarios')
+
+        if request.POST.get('decision') == 'denegar':
+            forano.estado = Forano.Estado.DENEGADO
+            forano.save()
+            messages.info(request, _(f'El usuario externo «{forano.nip}» ha sido denegado.'))
+            self._notifica_resolucion(forano)
+        else:
+            forano.estado = Forano.Estado.AUTORIZADO
+            forano.save()
+
+            wsdl = get_config('WSDL_VINCULACIONES')
+            session = Session()
+            session.auth = HTTPBasicAuth(get_config('USER_VINCULACIONES'), get_config('PASS_VINCULACIONES'))
+
+            try:
+                client = zeep.Client(wsdl=wsdl, transport=zeep.transports.Transport(session=session))
+            except RequestConnectionError:
+                messages.error(request, 'No fue posible conectarse al WS de Identidades.')
+                return redirect('forano-todos')
+            except Exception as ex:
+                messages.error(request, 'ERROR: %s' % str(ex))
+                return redirect('forano-todos')
+
+            response = client.service.creaVinculacion(
+                f'{forano.nip}',  # nip
+                '53',  # codVinculacion Usuarios invitados a Moodle
+                date.today().isoformat(),  # fechaInicio
+                (date.today() + relativedelta(years=1)).isoformat(),  # fechaFin
+                forano.solicitante.username,  # nipResponsable
+            )
+
+            if response.aviso:
+                messages.warning(request, response.descripcionAviso)
+
+            if response.error:
+                messages.error(request, response.descripcionResultado)
+            else:
+                messages.success(
+                    request,
+                    _(
+                        f'El NIP «{forano.nip}» ha sido vinculado a Moodle.  Es posible que usted'
+                        ' no vea al invitado entre los usuarios de la plataforma hasta que'
+                        ' el invitado acceda a la plataforma por primera vez.'
+                    ),
+                )
+                self._notifica_resolucion(forano)
+
+        return redirect('forano-todos')
+
+    @staticmethod
+    def _notifica_resolucion(forano):
+        """Envía un correo al solicitante del usuario-externo informando de la resolucíon."""
+        send_templated_mail(
+            template_name='resolucion_forano',
+            from_email=None,  # settings.DEFAULT_FROM_EMAIL
+            recipient_list=[forano.solicitante.email],
+            context={'forano': forano},
+        )

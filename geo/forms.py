@@ -74,7 +74,7 @@ class CursoFilterFormHelper(FormHelper):
     )
 
 
-class SolicitaForm(forms.ModelForm):
+class CursoSolicitarForm(forms.ModelForm):
     """
     Formulario para solicitar un curso no reglado.
 
@@ -88,14 +88,10 @@ class SolicitaForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
-        super(SolicitaForm, self).__init__(*args, **kwargs)
+        super(CursoSolicitarForm, self).__init__(*args, **kwargs)
 
         for field in self.Meta.required:
             self.fields[field].required = True
-
-        self.fields['nombre'].help_text = _(
-            'Nombre del curso. No se podrá cambiar, ' 'así que debe ser descriptivo y diferenciable de otros.'
-        )
 
         anyo_academico = Calendario.objects.get(slug='actual').anyo
         cat_anyo = Categoria.objects.get(anyo_academico=anyo_academico, supercategoria_id__isnull=True)
@@ -108,10 +104,6 @@ class SolicitaForm(forms.ModelForm):
             .order_by('nombre')
             .all()
         )
-        self.fields['motivo_solicitud'].help_text = _(
-            'Explique la razón de solicitarlo como no reglado, '
-            'justificación de su creación y público al que va dirigido.'
-        )
 
     def save(self, commit=True):
         """Guarda la solicitud de curso, y añade al solicitante como profesor."""
@@ -121,7 +113,7 @@ class SolicitaForm(forms.ModelForm):
         self.instance.estado = Curso.Estado.SOLICITADO
         self.instance.anyo_academico = Calendario.objects.get(slug='actual').anyo
         self.instance.plataforma_id = 1
-        curso = super(SolicitaForm, self).save(commit=commit)
+        curso = super(CursoSolicitarForm, self).save(commit=commit)
 
         # Añadimos por omisión al profesor que solicita el curso a la lista de profesores del curso.
         # Si el curso es autorizado, se le matriculará como profesor al crearse el curso en Moodle.
@@ -129,3 +121,32 @@ class SolicitaForm(forms.ModelForm):
         profesor_curso.save()
 
         return curso
+
+
+class ForanoFilterFormHelper(FormHelper):
+    """
+    Formulario para filtrar el listado de todos los foranos.
+
+    Ver https://django-crispy-forms.readthedocs.io/en/latest/form_helper.html
+    """
+
+    form_class = 'form form-inline'
+    form_id = 'forano-search-form'
+    form_method = 'GET'
+    form_tag = True
+    html5_required = True
+    layout = Layout(
+        Div(
+            Fieldset(
+                "<span class='fa fa-search'></span> " + str(_('Buscar solicitud de vinculación')),
+                Div(
+                    InlineField('nip', wrapper_class='col-6'),
+                    InlineField('estado', wrapper_class='col-6'),
+                    css_class='row',
+                ),
+                css_class='col-10 border p-3',
+            ),
+            FormActions(Submit('submit', _('Filtrar')), css_class='col-2 text-right align-self-center'),
+            css_class='row',
+        )
+    )

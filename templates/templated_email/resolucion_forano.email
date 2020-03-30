@@ -1,0 +1,30 @@
+{% block subject %}Resolución de su solicitud de vinculación de «{{ curso.nombre }}»{% endblock %}
+{% block plain %}
+{% if forano.solicitante.sexo == 'F' %}
+Estimada {{ forano.solicitante.full_name }}:
+{% elif forano.solicitante.sexo == 'M' %}
+Estimado {{ forano.solicitante.full_name }}:
+{% else %}
+Estimad@ {{ forano.solicitante.full_name }}:
+{% endif %}
+
+{% if forano.estado == forano.Estado.CREADO.value %}
+La vinculación para el usuario «{{ forano.nip }}» que había solicitado ha sido *autorizada* y *creada*.
+{% elif forano.estado == forano.Estado.DENEGADO.value %}
+La vinculación para el usuario «{{ forano.nip }}» que había solicitado ha sido *denegada*.
+{% endif %}
+
+{% if forano.comentarios %}
+== Comentarios ==
+{{ forano.comentarios }}
+{% endif %}
+
+
+Atentamente,  
+    el equipo del Anillo Digital Docente
+
+
+--  
+Por favor, no responda este mensaje.  
+Para solicitar soporte, use Ayudica: <https://ayudica.unizar.es>
+{% endblock %}

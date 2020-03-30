@@ -98,6 +98,9 @@
                   <a class="dropdown-item" href="{% url 'cursos-todos' %}">
                     <span class="far fa-thumbs-up"></span>&nbsp; {% trans "Todos los cursos" %}
                   </a>
+                  <a class="dropdown-item" href="{% url 'forano-todos' %}">
+                    <span class="far fa-thumbs-up"></span>&nbsp; {% trans "Vinculaciones" %}
+                  </a>
                   <a class="dropdown-item" href="{% url 'calendario' 'actual' %}">
                     <span class="far fa-calendar-alt"></span>&nbsp; {% trans "Año académico actual" %}
                   </a>
@@ -106,7 +109,7 @@
             {% endif %}
 
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'vincular-forano' %}">
+              <a class="nav-link" href="{% url 'forano-solicitar' %}">
                 <span class="fas fa-user-plus"></span>&nbsp; {% trans "Invitar" %}
               </a>
             </li>

@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from .models import Asignatura, Curso, Pod
+from .models import Asignatura, Curso, Forano, Pod
 
 
 class AsignaturasTable(tables.Table):
@@ -163,4 +163,23 @@ class CursoTable(tables.Table):
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}
         model = Curso
         fields = ('nombre', 'fecha_solicitud', 'fecha_autorizacion', 'estado', 'enlace')
+        template_name = 'django_tables2/bootstrap4.html'
+
+
+class ForanoTodosTable(tables.Table):
+
+    enlace = tables.Column(empty_values=(), verbose_name='')
+
+    def render_enlace(self, record):
+        return mark_safe(
+            f"<a href={ reverse('forano-detail', args=[record.id]) } class='btn btn-info btn-sm' title='Ver'> \
+               <span class='far fa-eye' aria-hidden='true'></span>&nbsp;Ver \
+            </a>"
+        )
+
+    class Meta:
+        attrs = {'class': 'table table-striped table-hover cabecera-azul'}
+        model = Forano
+        fields = ('fecha_solicitud', 'solicitante.full_name', 'nip', 'estado', 'enlace')
+        empty_text = _("No hay ningún usuario externo que satisfaga los criterios de búsqueda.")
         template_name = 'django_tables2/bootstrap4.html'

@@ -246,7 +246,10 @@ class Curso(models.Model):
         BORRADO = 5, _('Borrado')
         DENEGADO = 6, _('Denegado')
 
-    nombre = models.CharField(max_length=200)
+    nombre = models.CharField(
+        max_length=200,
+        help_text=_('Nombre del curso. No se puede cambiar, así que debe ser descriptivo y diferenciable de otros.'),
+    )
     fecha_solicitud = models.DateTimeField(blank=True, null=True, verbose_name=_('Fecha de solicitud'))
     fecha_autorizacion = models.DateTimeField(blank=True, null=True, verbose_name=_('Fecha de autorización'))
     autorizador = models.ForeignKey('accounts.CustomUser', models.PROTECT, blank=True, null=True)
@@ -260,7 +263,15 @@ class Curso(models.Model):
         Asignatura, blank=True, null=True, on_delete=models.PROTECT, verbose_name=_('Asignatura')
     )
     estado = models.IntegerField(choices=Estado.choices, verbose_name=_('Estado'))
-    motivo_solicitud = models.TextField(blank=True, null=True, verbose_name=_('Motivo de la solicitud'))
+    motivo_solicitud = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Motivo de la solicitud'),
+        help_text=_(
+            'Razón por la que se solicita el curso como no reglado, '
+            'justificación de su creación y público al que va dirigido.'
+        ),
+    )
     comentarios = models.TextField(blank=True, null=True, verbose_name=_('Comentarios'))
     profesores = models.ManyToManyField('accounts.CustomUser', related_name='profesores', through='ProfesorCurso')
 
@@ -317,6 +328,49 @@ class Curso(models.Model):
             # Así es un poco mayor que la fecha de creación en la plataforma.
             'startdate': int(time() + 60),
         }
+
+
+class Forano(models.Model):
+    """Usuario invitado, que no es profesor, PAS ni estudiante de la Universidad."""
+
+    class Estado(models.IntegerChoices):
+        """Representa los estados en los que se puede encontrar una solicitud de vinculación."""
+
+        SOLICITADO = 1, _('Solicitado')
+        DENEGADO = 2, _('Denegado')
+        AUTORIZADO = 3, _('Autorizado')
+
+    nip = models.CharField(
+        max_length=10,
+        verbose_name='NIP a vincular',
+        help_text=_('Número de Identificación Personal del usuario a vincular.'),
+    )
+    fecha_solicitud = models.DateTimeField(blank=True, null=True, verbose_name=_('Fecha de solicitud'))
+    fecha_autorizacion = models.DateTimeField(blank=True, null=True, verbose_name=_('Fecha de autorización'))
+    estado = models.IntegerField(choices=Estado.choices, verbose_name=_('Estado'))
+    motivo_solicitud = models.TextField(
+        verbose_name=_('Motivación de la solicitud'),
+        help_text=_(
+            'Quién es el usuario externo, motivos por los que solicita que su vinculación a Moodle, '
+            'así como el curso en el que participaría.'
+        ),
+    )
+    comentarios = models.TextField(blank=True, null=True, verbose_name=_('Comentarios'))
+    autorizador = models.ForeignKey(
+        'accounts.CustomUser', models.PROTECT, blank=True, null=True, related_name='foranos_resueltos'
+    )
+    # curso = models.ForeignKey(Curso, models.PROTECT, blank=True, null=True, verbose_name=_('Curso'))
+    solicitante = models.ForeignKey(
+        'accounts.CustomUser', models.PROTECT, blank=True, null=True, related_name='foranos_solicitados'
+    )
+
+    class Meta:
+        db_table = 'forano'
+        ordering = ('fecha_solicitud',)
+        permissions = [('forano', _('Puede ver y resolver las solicitudes de vinculación.'))]
+
+    def get_absolute_url(self):
+        return reverse('forano-detail', args=[self.id])
 
 
 class ProfesorCurso(models.Model):

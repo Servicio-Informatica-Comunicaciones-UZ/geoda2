@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags i18n %}
+
+{% block title %}{% trans "Invitar a un usuario externo" %}{% endblock title %}
+
+{% block content %}
+
+<div class="container-blanco">
+  <h1>{% trans "Invitar a un usuario externo" %}</h1>
+  <hr />
+  <br />
+
+  <div class="alert-info alert fade-in">
+    <span class="fas fa-info-circle"></span>
+    {% blocktrans %}
+    <p>Para que un usuario externo a la Universidad de Zaragoza pueda acceder a un curso de Moodle, debe:</p>
+    <ol>
+      <li>
+        <strong>Tener un NIP (identificador de usuario)</strong><br />
+        Si el usuario nunca ha estado vinculado a la UZ, puede obtener un NIP visitando la
+        <a href="https://identidad.unizar.es/autoregistro" target="_blank" rel="noopener noreferrer"
+          >página de autorregistro</a
+        >
+        <span class="fas fa-link" style="float: none; font-size: 100%;"></span>.
+      </li>
+      <li>
+        <strong>Estar vinculado a Moodle en el Sistema de Gestión de Identidades</strong><br />
+        Una vez que disponga de un NIP, el usuario debe comunicárselo a usted, para que solicite
+        su vinculación desde esta página. Usted se responsabiliza de dicha vinculación,
+        que será válida durante un año.
+      </li>
+    </ol>
+    <p>
+      Es posible que usted no vea al invitado entre los usuarios de la plataforma hasta que el invitado acceda a la
+      plataforma la primera vez. Contacte con el usuario y pídale que entre en Moodle.
+    </p>
+    {% endblocktrans %}
+  </div>
+  <br />
+
+  <form action="{% url 'forano-solicitar' %}" id="solicitar-form" method="post">
+    {% csrf_token %}
+    {{ form | crispy }}
+
+    <div class="btn-group" role="group" aria-label="Botones">
+      <a href="{% url 'mis-cursos' %}" class="btn btn-info">
+        <span class="fas fa-times"></span> {% trans 'Cancelar' %}
+      </a>
+      <button class="btn btn-warning" type="submit" title="{% trans 'Solicitar vinculación de usuario externo' %}">
+        <span class="fas fa-check"></span> {% trans 'Solicitar vinculación' %}
+      </button>
+    </div>
+  </form>
+
+{% endblock content %}
