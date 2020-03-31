@@ -128,7 +128,7 @@ class ASTodasView(LoginRequiredMixin, ChecksMixin, PagedFilteredTableView):
 
     def get_queryset(self):
         anyo_academico = Calendario.objects.get(slug='actual').anyo
-        return Asignatura.objects.filter(anyo_academico=anyo_academico)
+        return Asignatura.objects.filter(anyo_academico=anyo_academico).select_related('curso')
 
     def test_func(self):
         return self.es_pas_o_pdi()
@@ -220,7 +220,7 @@ class CursosTodosView(LoginRequiredMixin, PermissionRequiredMixin, PagedFiltered
 
     def get_queryset(self):
         anyo_academico = self.kwargs.get('anyo_academico') or Calendario.objects.get(slug='actual').anyo
-        return Curso.objects.filter(anyo_academico=anyo_academico)
+        return Curso.objects.filter(anyo_academico=anyo_academico).prefetch_related('profesores')
 
 
 class CursosPendientesView(LoginRequiredMixin, PermissionRequiredMixin, SingleTableView):
@@ -231,7 +231,7 @@ class CursosPendientesView(LoginRequiredMixin, PermissionRequiredMixin, SingleTa
     context_object_name = 'cursos_pendientes'
     paginate_by = 20
     ordering = ['-fecha_solicitud']
-    queryset = Curso.objects.filter(estado=Curso.Estado.SOLICITADO)
+    queryset = Curso.objects.filter(estado=Curso.Estado.SOLICITADO).prefetch_related('profesores')
     table_class = CursosPendientesTable
     template_name = 'gestion/cursos-pendientes.html'
 
@@ -452,6 +452,7 @@ class ForanoTodosView(LoginRequiredMixin, PermissionRequiredMixin, PagedFiltered
     permission_required = 'geo.forano'
     permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
     paginate_by = 20
+    queryset = Forano.objects.select_related('solicitante')
     table_class = ForanoTodosTable
     template_name = 'gestion/forano_todos.html'
 
