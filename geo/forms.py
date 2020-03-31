@@ -1,7 +1,7 @@
 # third-party
 from crispy_forms.bootstrap import FormActions, InlineField
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Div, Fieldset, Layout, Submit
+from crispy_forms.layout import ButtonHolder, Div, Fieldset, Layout, Submit
 
 # Django
 from django import forms
@@ -58,19 +58,21 @@ class CursoFilterFormHelper(FormHelper):
     form_tag = True
     html5_required = True
     layout = Layout(
-        Div(
-            Fieldset(
-                "<span class='fa fa-search'></span> " + str(_('Buscar curso')),
-                Div(
-                    InlineField('nombre__icontains', wrapper_class='col-6'),
-                    InlineField('estado', wrapper_class='col-6'),
-                    css_class='row',
-                ),
-                css_class='col-10 border p-3',
+        Fieldset(
+            "<span class='fa fa-search'></span> " + str(_('Buscar curso')),
+            Div(
+                InlineField('nombre__icontains', wrapper_class='col-6'),
+                InlineField('estado', wrapper_class='col-6'),
+                css_class='row',
             ),
-            FormActions(Submit('submit', _('Filtrar')), css_class='col-2 text-right align-self-center'),
-            css_class='row',
-        )
+            Div(
+                InlineField('profesores__first_name__icontains', wrapper_class='col-6'),
+                InlineField('profesores__last_name__icontains', wrapper_class='col-6'),
+                css_class='row',
+            ),
+            css_class='col-10 border p-3',
+        ),
+        ButtonHolder(Submit('submit', _('Filtrar')), css_class='col-2 text-center'),
     )
 
 

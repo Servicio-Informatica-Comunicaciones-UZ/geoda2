@@ -23,7 +23,12 @@ class CursoFilter(django_filters.FilterSet):
 
     class Meta:
         model = Curso
-        fields = {'nombre': ['icontains'], 'estado': ['exact']}
+        fields = {
+            'nombre': ['icontains'],
+            'estado': ['exact'],
+            'profesores__first_name': ['icontains'],
+            'profesores__last_name': ['icontains'],
+        }
         order_by = ['nombre']
 
 
