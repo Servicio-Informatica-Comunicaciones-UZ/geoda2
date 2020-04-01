@@ -20,6 +20,7 @@ class CustomUserManager(UserManager):
 class CustomUser(AbstractUser):
     # Campos sobrescritos
     first_name = models.CharField(_('first name'), max_length=50, blank=True)  # era: max_length=30
+    last_name = models.CharField(_('primer apellido'), max_length=150, blank=True)  # Cambio verbose_name
     # Campos adicionales
     numero_documento = models.CharField(
         _('número de documento'), max_length=16, blank=True, null=True, help_text=_('DNI, NIE o pasaporte.')
