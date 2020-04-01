@@ -14,10 +14,11 @@ admin.site.register(ProfesorCurso)
 
 @admin.register(Curso)
 class CursoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'anyo_academico', 'nombre', 'id_nk', 'estado')
+    list_display = ('id', 'curso_academico', 'nombre', 'id_nk', 'estado')
     list_filter = ('anyo_academico', 'estado')
-    fields = ('nombre', 'categoria')
+    fields = ('nombre', 'categoria', 'estado', 'fecha_solicitud', 'motivo_solicitud', 'comentarios')
     ordering = ('estado', 'nombre')
+    readonly_fields = ('estado', 'fecha_solicitud', 'motivo_solicitud', 'comentarios')
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == 'categoria':
