@@ -26,6 +26,7 @@ class CursoFilter(django_filters.FilterSet):
         fields = {
             'nombre': ['icontains'],
             'estado': ['exact'],
+            'profesores__username': ['exact'],
             'profesores__first_name': ['icontains'],
             'profesores__last_name': ['icontains'],
         }

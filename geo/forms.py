@@ -61,13 +61,14 @@ class CursoFilterFormHelper(FormHelper):
         Fieldset(
             "<span class='fa fa-search'></span> " + str(_('Buscar curso')),
             Div(
-                InlineField('nombre__icontains', wrapper_class='col-6'),
-                InlineField('estado', wrapper_class='col-6'),
+                InlineField('nombre__icontains', wrapper_class='col-8'),
+                InlineField('estado', wrapper_class='col-4'),
                 css_class='row',
             ),
             Div(
-                InlineField('profesores__first_name__icontains', wrapper_class='col-6'),
-                InlineField('profesores__last_name__icontains', wrapper_class='col-6'),
+                InlineField('profesores__username', wrapper_class='col-4'),
+                InlineField('profesores__first_name__icontains', wrapper_class='col-4'),
+                InlineField('profesores__last_name__icontains', wrapper_class='col-4'),
                 css_class='row',
             ),
             css_class='col-10 border p-3',

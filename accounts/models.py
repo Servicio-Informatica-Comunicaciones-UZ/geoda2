@@ -18,9 +18,10 @@ class CustomUserManager(UserManager):
 
 
 class CustomUser(AbstractUser):
+    AbstractUser._meta.get_field('username').verbose_name = _('NIP')  # Cambio verbose_name
+    AbstractUser._meta.get_field('last_name').verbose_name = _('primer apellido')  # Cambio verbose_name
     # Campos sobrescritos
     first_name = models.CharField(_('first name'), max_length=50, blank=True)  # era: max_length=30
-    last_name = models.CharField(_('primer apellido'), max_length=150, blank=True)  # Cambio verbose_name
     # Campos adicionales
     numero_documento = models.CharField(
         _('número de documento'), max_length=16, blank=True, null=True, help_text=_('DNI, NIE o pasaporte.')
