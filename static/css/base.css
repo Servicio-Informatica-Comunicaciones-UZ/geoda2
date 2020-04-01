@@ -188,3 +188,7 @@ h1 > small {
     line-height: 0.5;
     border-radius: 0.2rem;
 }
+
+.margin-bottom-1 {
+    margin-bottom: 1em;
+}

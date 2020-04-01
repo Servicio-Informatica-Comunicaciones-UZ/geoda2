@@ -25,23 +25,23 @@ class AsignaturaFilterFormHelper(FormHelper):
     form_tag = True
     html5_required = True
     layout = Layout(
-        Div(
-            Fieldset(
-                "<span class='fa fa-search'></span> " + str(_('Buscar asignatura')),
-                Div(
-                    InlineField('nombre_estudio__icontains', wrapper_class='col-4'),
-                    InlineField('nombre_centro__icontains', wrapper_class='col-4'),
-                    InlineField('plan_id_nk', wrapper_class='col-4'),
-                    InlineField('asignatura_id', wrapper_class='col-4'),
-                    InlineField('nombre_asignatura__icontains', wrapper_class='col-4'),
-                    InlineField('cod_grupo_asignatura', wrapper_class='col-4'),
-                    css_class='row',
-                ),
-                css_class='col-10 border p-3',
+        Fieldset(
+            "<span class='fa fa-search'></span> " + str(_('Buscar asignatura')),
+            Div(
+                InlineField('nombre_estudio__icontains', wrapper_class='col-4'),
+                InlineField('nombre_centro__icontains', wrapper_class='col-4'),
+                InlineField('plan_id_nk', wrapper_class='col-4'),
+                css_class='row margin-bottom-1',
             ),
-            FormActions(Submit('submit', _('Filtrar')), css_class='col-2 text-right align-self-center'),
-            css_class='row',
-        )
+            Div(
+                InlineField('asignatura_id', wrapper_class='col-4'),
+                InlineField('nombre_asignatura__icontains', wrapper_class='col-4'),
+                InlineField('cod_grupo_asignatura', wrapper_class='col-4'),
+                css_class='row',
+            ),
+            css_class='col-10 border p-3',
+        ),
+        ButtonHolder(Submit('submit', _('Filtrar')), css_class='col-2 text-center'),
     )
 
 
@@ -63,7 +63,7 @@ class CursoFilterFormHelper(FormHelper):
             Div(
                 InlineField('nombre__icontains', wrapper_class='col-8'),
                 InlineField('estado', wrapper_class='col-4'),
-                css_class='row',
+                css_class='row margin-bottom-1',
             ),
             Div(
                 InlineField('profesores__username', wrapper_class='col-4'),
