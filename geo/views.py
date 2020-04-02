@@ -24,7 +24,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import DetailView, RedirectView, TemplateView, UpdateView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, DeleteView
 
 # local Django
 from .filters import AsignaturaListFilter, CursoFilter, ForanoFilter
@@ -43,7 +43,7 @@ class ChecksMixin(UserPassesTestMixin):
         usuario_actual = self.request.user
         colectivos_del_usuario = json.loads(usuario_actual.colectivos) if usuario_actual.colectivos else []
         self.permission_denied_message = _(
-            'Usted no es PAS ni PDI de la Universidad de Zaragoza' ' o de sus centros adscritos.'
+            'Usted no es PAS ni PDI de la Universidad de Zaragoza o de sus centros adscritos.'
         )
 
         return any(col_autorizado in colectivos_del_usuario for col_autorizado in ['PAS', 'ADS', 'PDI'])
@@ -112,6 +112,7 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
             categoria=asignatura.get_categoria(),
             anyo_academico=asignatura.anyo_academico,
             asignatura_id=asignatura.id,
+            estado=Curso.Estado.AUTORIZADO,  # Las asignaturas regladas son aprobadas automáticamente
         )
         curso.save()
         return curso
@@ -191,6 +192,27 @@ class CalendarioUpdate(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessa
         if not cat.id_nk:
             cat.crear_en_plataforma()
         return cat
+
+
+class CursoDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    model = Curso
+    permission_required = 'geo.curso_delete'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+    success_url = reverse_lazy('cursos-todos')
+    template_name = 'gestion/curso_confirm_delete.html'
+
+    def post(self, request, *args, **kwargs):
+        curso = self.get_object()
+        if curso.id_nk:
+            respuesta = curso.borrar_en_plataforma()
+
+            if respuesta and respuesta.get('warnings'):
+                for advertencia in respuesta['warnings']:
+                    messages.error(request, _('ERROR al borrar el curso en Moodle: ') + advertencia.get('message'))
+                return redirect('curso-detail', curso.id)
+
+        messages.success(request, _(f"El curso «{curso.nombre}» ha sido borrado con éxito."))
+        return super().post(request, *args, **kwargs)
 
 
 class CursoDetailView(LoginRequiredMixin, DetailView):

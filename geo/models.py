@@ -281,7 +281,8 @@ class Curso(models.Model):
         permissions = [
             ('cursos_todos', _('Puede ver el listado de todos los cursos.')),
             ('cursos_pendientes', _('Puede ver el listado de cursos por aprobar.')),
-            ('curso_administrar', _('Puede acceder a la interfaz de administración de Curso')),
+            ('curso_administrar', _('Puede acceder a la interfaz de administración de Curso.')),
+            ('curso_delete', _('Puede eliminar cursos.')),
         ]
 
     def get_absolute_url(self):
@@ -303,6 +304,11 @@ class Curso(models.Model):
         cliente.matricular_profesor(usuario, self)
         profesor_curso = ProfesorCurso(curso=self, profesor=usuario, fecha_alta=timezone.now())
         profesor_curso.save()
+
+    def borrar_en_plataforma(self):
+        """Borra el curso en Moodle."""
+        cliente = WSClient()
+        return cliente.borrar_curso(curso=self)
 
     @property
     def curso_academico(self):
@@ -378,7 +384,7 @@ class ProfesorCurso(models.Model):
     """Vinculación entre un curso y la persona que lo creó/solicitó."""
 
     id = models.AutoField(primary_key=True)
-    curso = models.ForeignKey('Curso', models.PROTECT)
+    curso = models.ForeignKey('Curso', models.CASCADE)
     profesor = models.ForeignKey('accounts.CustomUser', models.PROTECT)
     fecha_alta = models.DateTimeField(blank=True, null=True, verbose_name=_('Fecha de alta'))
     fecha_baja = models.DateTimeField(blank=True, null=True, verbose_name=_('Fecha de baja'))

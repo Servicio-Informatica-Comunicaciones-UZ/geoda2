@@ -58,6 +58,12 @@ class WSClient:
         mensaje = self._request_url('POST', 'local_geodaws_matricula', self.geodaws_token, payload)
         return mensaje
 
+    def borrar_curso(self, curso):
+        """Borra un curso en Moodle."""
+        payload = {'courseids[0]': curso.id_nk}
+        respuesta = self._request_url('POST', 'core_course_delete_courses', self.geo_token, payload)
+        return respuesta
+
     def buscar_usuario(self, usuario):
         """Busca un usuario en Moodle."""
         # Buscamos a un usuario con ese NIP (idnumber) y dirección de correo.
@@ -79,8 +85,10 @@ class WSClient:
             if usuarios_moodle:
                 usuario_moodle = usuarios_moodle[0]
             else:
-                # La tarea ETL `add_usuarios_y_matriculas` (Pentaho Spoon) copia un CSV con los usuarios al servidor
-                # y una tarea cron los crea, por lo que no se debería llegar aquí nunca.
+                # La tarea ETL `add_usuarios_y_matriculas` (Pentaho Spoon)
+                # copia un fichero CSV con los usuarios al servidor
+                # y una tarea cron los crea, por lo que no se debería llegar aquí nunca,
+                # salvo que se trate de un profesor creado ese mismo día.
                 raise Exception('Usuario no encontrado en Moodle.')
 
         return usuario_moodle

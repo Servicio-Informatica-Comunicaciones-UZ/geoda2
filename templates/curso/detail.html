@@ -173,5 +173,23 @@
     </div>
     </form>
   {% endif %}
+
+  {% if perms.geo.curso_delete %}
+    <br /><br />
+    <h2>{% trans "Eliminar el curso" %}</h2>
+    <hr />
+
+    <p>
+    {% blocktrans %}
+      En caso de que el curso haya sido creado por error, se puede eliminar (tanto en GEO como en Moodle).
+    {% endblocktrans %}
+    </p>
+
+    <a href="{% url 'curso-delete' curso.id %}" aria-label="{% trans 'Eliminar' %}" class='btn btn-warning' role="button">
+      <span aria-hidden="true" class="fas fa-trash-alt" title="{% trans 'Eliminar' %}"></span> {% trans 'Eliminar' %}
+    </a>
+
+  {% endif %}
+
 </div>
 {% endblock content %}
