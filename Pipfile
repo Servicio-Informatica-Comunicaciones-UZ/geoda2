@@ -5,6 +5,8 @@ verify_ssl = true
 
 [dev-packages]
 pylint = "*"
+black = "*"
+pre-commit = "*"
 
 [packages]
 django = "==3.0.4"  # Remember to re-generate `requirements.txt`
@@ -24,3 +26,6 @@ zeep = "*"
 
 [requires]
 python_version = "3.7"
+
+[pipenv]
+allow_prereleases = true
