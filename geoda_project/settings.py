@@ -201,11 +201,11 @@ SOCIAL_AUTH_PIPELINE = (
     # "social_core.pipeline.mail.mail_validation",
     # "social_core.pipeline.social_auth.associate_by_email",
     "social_core.pipeline.user.create_user",
-    # Actualizar con los datos de Gestión de Identidades
-    "accounts.pipeline.get_identidad",
     "social_core.pipeline.social_auth.associate_user",
     "social_core.pipeline.social_auth.load_extra_data",
     "social_core.pipeline.user.user_details",
+    # Actualizar con los datos de Gestión de Identidades
+    "accounts.pipeline.get_identidad",
 )
 
 SOCIAL_AUTH_URL_NAMESPACE = "social"
