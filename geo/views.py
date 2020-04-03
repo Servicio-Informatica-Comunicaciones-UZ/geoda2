@@ -14,6 +14,7 @@ from templated_email import send_templated_mail
 
 # Django
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import Group
 from django.contrib.messages.views import SuccessMessageMixin
@@ -28,7 +29,14 @@ from django.views.generic.edit import CreateView, DeleteView
 
 # local Django
 from .filters import AsignaturaListFilter, CursoFilter, ForanoFilter
-from .forms import AsignaturaFilterFormHelper, CursoFilterFormHelper, CursoSolicitarForm, ForanoFilterFormHelper
+from .forms import (
+    AsignaturaFilterFormHelper,
+    CursoFilterFormHelper,
+    CursoSolicitarForm,
+    ForanoFilterFormHelper,
+    MatricularPlanForm,
+    ProfesorCursoAddForm,
+)
 from .models import Asignatura, Calendario, Categoria, Curso, Forano, Pod
 from .tables import AsignaturasTable, CursosTodosTable, CursosPendientesTable, CursoTable, ForanoTodosTable, PodTable
 from .utils import PagedFilteredTableView
@@ -220,6 +228,23 @@ class CursoDetailView(LoginRequiredMixin, DetailView):
 
     model = Curso
     template_name = 'curso/detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        curso_id = self.get_object().id
+
+        mp_form = MatricularPlanForm()
+        # Inicializo aquí el valor de `curso_id` en el formulario.
+        # No lo paso como un diccionario al crear el formulario, porque entonces
+        # `is_bound` sería True, y el campo `nip` se marcaría como `is_invalid`.
+        mp_form.fields['curso_id'].initial = curso_id
+        context['mp_form'] = mp_form
+
+        pc_form = ProfesorCursoAddForm()
+        pc_form.fields['curso_id'].initial = curso_id
+        context['pc_form'] = pc_form
+
+        return context
 
 
 class CursosTodosView(LoginRequiredMixin, PermissionRequiredMixin, PagedFilteredTableView):
@@ -549,3 +574,26 @@ class ForanoResolverView(LoginRequiredMixin, PermissionRequiredMixin, View):
             recipient_list=[forano.solicitante.email],
             context={'forano': forano},
         )
+
+
+class ProfesorCursoAnyadirView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    """Crea una asignación profesor-curso."""
+
+    permission_required = 'geo.anyadir_profesorcurso'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+
+    def post(self, request, *args, **kwargs):
+        curso_id = request.POST.get('curso_id')
+        curso = get_object_or_404(Curso, pk=curso_id)
+
+        User = get_user_model()
+        nip = request.POST.get('nip')
+        profesor = get_object_or_None(User, username=nip)
+
+        if not profesor:
+            profesor = User.crear_usuario(request, nip)
+
+        curso.anyadir_profesor(profesor)
+        messages.success(request, _('Se ha añadido el profesor al curso.'))
+
+        return redirect('curso-detail', curso_id)

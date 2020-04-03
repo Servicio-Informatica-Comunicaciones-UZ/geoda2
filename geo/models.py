@@ -302,8 +302,7 @@ class Curso(models.Model):
         """Añade al usuario a la lista de profesores del curso y lo matricula en Moodle."""
         cliente = WSClient()
         cliente.matricular_profesor(usuario, self)
-        profesor_curso = ProfesorCurso(curso=self, profesor=usuario, fecha_alta=timezone.now())
-        profesor_curso.save()
+        return ProfesorCurso.objects.create(curso=self, profesor=usuario, fecha_alta=timezone.now())
 
     def borrar_en_plataforma(self):
         """Borra el curso en Moodle."""
@@ -393,6 +392,10 @@ class ProfesorCurso(models.Model):
         db_table = 'profesor_curso'
         verbose_name = _('asignación profesor-curso')
         verbose_name_plural = _('asignaciones profesor-curso')
+
+        permissions = [
+            ('anyadir_profesorcurso', _('Puede añadir un profesor a un curso.')),
+        ]
 
 
 class RightsSupport(models.Model):

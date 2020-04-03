@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load crispy_forms_tags i18n %}
 
 {% block title %}{% trans "Detalles del curso" %}{% endblock title %}
 
@@ -143,35 +143,19 @@
     <h2>{% trans "Matricular a todos los alumnos de un plan" %}</h2>
     <hr />
 
-    <form action="{% url 'matricular-plan' %}" id="matricular-plan-form" method="post">  <!-- FIXME -->
-      {% csrf_token %}
-      <input type='hidden' id='curso_id' name='curso_id' value='{{ curso.id }}'>
+    {% crispy mp_form %}
 
-      <div id="div_plan_id_nk" class="form-group">
-      <label for="plan_id_nk" class="col-form-label requiredField">
-        {% trans 'Código del plan' %}<span class="asteriskField">*</span>
-      </label>
-      <div class="">
-        <input
-          type="text"
-          name="plan_id_nk"
-          maxlength="4"
-          class="textinput textInput form-control"
-          required
-          id="plan_id_nk"
-        />
-        <small id="hint_plan_id_nk" class="form-text text-muted"
-          >{% trans 'Puede consultar el código del plan en la <a href="https://estudios.unizar.es">web de estudios</a>.' %}</small
-        >
-      </div>
-    </div>
+    <small id="hint_plan_id_nk" class="form-text text-muted">
+      {% trans 'Puede consultar el código del plan en la <a href="https://estudios.unizar.es">web de estudios</a>.' %}
+    </small>
+  {% endif %}
 
-    <div class="btn-group" role="group" aria-label="Botones">
-      <button class="btn btn-warning" type="submit" title="{% trans 'Matricular a todos los alumnos del plan' %}">
-        <span class="fas fa-check"></span> {% trans 'Matricular' %}
-      </button>
-    </div>
-    </form>
+  {% if curso.estado == curso.Estado.CREADO.value and perms.geo.anyadir_profesorcurso %}
+    <br /><br />
+    <h2>{% trans "Añadir un profesor al curso" %}</h2>
+    <hr />
+
+    {% crispy pc_form %}
   {% endif %}
 
   {% if perms.geo.curso_delete %}
@@ -185,8 +169,8 @@
     {% endblocktrans %}
     </p>
 
-    <a href="{% url 'curso-delete' curso.id %}" aria-label="{% trans 'Eliminar' %}" class='btn btn-warning' role="button">
-      <span aria-hidden="true" class="fas fa-trash-alt" title="{% trans 'Eliminar' %}"></span> {% trans 'Eliminar' %}
+    <a href="{% url 'curso-delete' curso.id %}" aria-label="{% trans 'Eliminar' %}" class='btn btn-warning' role="button" %}>
+      <span aria-hidden="true" class="fas fa-trash-alt"></span> {% trans 'Eliminar' %}
     </a>
 
   {% endif %}

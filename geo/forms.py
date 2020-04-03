@@ -1,5 +1,5 @@
 # third-party
-from crispy_forms.bootstrap import FormActions, InlineField
+from crispy_forms.bootstrap import FormActions, InlineField, StrictButton
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import ButtonHolder, Div, Fieldset, Layout, Submit
 
@@ -153,3 +153,76 @@ class ForanoFilterFormHelper(FormHelper):
             css_class='row',
         )
     )
+
+
+class MatricularPlanForm(forms.Form):
+    """Formulario para matricular en un curso a todos los matriculados en un plan."""
+
+    curso_id = forms.IntegerField(widget=forms.HiddenInput())
+    plan_id_nk = forms.IntegerField(
+        help_text=_(
+            'Puede consultar el código del plan en la <a href="https://estudios.unizar.es">web de estudios</a>.'
+        ),
+        label=_('Código del plan'),
+        min_value=0,
+        max_value=9999,
+        required=True,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+
+        self.helper.form_action = 'matricular-plan'
+        self.helper.form_class = 'form-inline'
+        self.helper.field_template = 'bootstrap4/layout/inline_field.html'
+        self.helper.layout = Layout(
+            'curso_id',
+            'plan_id_nk',
+            ButtonHolder(
+                StrictButton(
+                    f"<span class='fas fa-user-graduate'></span> {_('Matricular')}",
+                    title=_('Matricular en este curso a todos los alumnos de alguna de las asignaturas del plan'),
+                    css_class='btn btn-warning',
+                    type='submit',
+                ),
+                css_class='margin-left-1',
+            ),
+        )
+
+
+class ProfesorCursoAddForm(forms.Form):
+    """Formulario para añadir un profesor a un curso."""
+
+    curso_id = forms.IntegerField(widget=forms.HiddenInput())
+    nip = forms.IntegerField(
+        # help_text=_('Número de Identificación Personal del profesor'),
+        label=_('NIP del nuevo profesor'),
+        min_value=0,
+        max_value=999999,
+        required=True,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+
+        self.helper.form_action = 'pc-anyadir'
+        self.helper.form_class = 'form-inline'
+        # self.helper.wrapper_class = 'col-7'
+        # self.helper.label_class = 'margin-right-1'
+        # self.helper.field_class = 'margin-right-1'
+        self.helper.field_template = 'bootstrap4/layout/inline_field.html'
+        self.helper.layout = Layout(
+            'curso_id',
+            'nip',
+            ButtonHolder(
+                StrictButton(
+                    f"<span class='fas fa-user-plus'></span> {_('Añadir')}",
+                    css_class='btn btn-warning',
+                    title=_('Añadir al titular de este NIP como profesor del curso'),
+                    type='submit',
+                ),
+                css_class='margin-left-1',
+            ),
+        )

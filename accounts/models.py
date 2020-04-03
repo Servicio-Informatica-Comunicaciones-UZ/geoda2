@@ -1,8 +1,18 @@
+# standard library
 import json
 
+# third-party
+from social_django.models import UserSocialAuth
+from social_django.utils import load_strategy
+
+# Django
 from django.contrib.auth.models import AbstractUser, UserManager
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+# local Django
+from .pipeline import get_identidad
 
 
 class CustomUserManager(UserManager):
@@ -66,6 +76,25 @@ class CustomUser(AbstractUser):
         """Devuelve si el usuario está autorizado a usar esta aplicación."""
         colectivos_del_usuario = json.loads(self.colectivos) if self.colectivos else []
         return self.is_superuser or any(col in colectivos_del_usuario for col in ['ADS', 'PAS', 'PDI'])
+
+    @classmethod
+    def crear_usuario(cls, request, nip):
+        """Crea un registro de usuario con el NIP indicado y los datos de Gestión de Identidades."""
+
+        usuario = cls.objects.create_user(username=nip)
+        try:
+            get_identidad(load_strategy(request), None, usuario)
+        except Exception as ex:
+            # Si Gestión de Identidades devuelve un error, borramos el usuario
+            # y finalizamos mostrando el mensaje de error.
+            usuario.delete()
+            raise ValidationError('ERROR: ' + str(ex))
+
+        # HACK - Indicamos que la autenticación es vía Single Sign On con SAML.
+        usuario_social = UserSocialAuth(uid=f'lord:{usuario.username}', provider='saml', user=usuario)
+        usuario_social.save()
+
+        return usuario
 
     # Custom Manager
     objects = CustomUserManager()
