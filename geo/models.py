@@ -285,6 +285,9 @@ class Curso(models.Model):
             ('curso_delete', _('Puede eliminar cursos.')),
         ]
 
+    def __str__(self):
+        return f'{self.nombre}'
+
     def get_absolute_url(self):
         return reverse('curso-detail', args=[self.id])
 
@@ -395,6 +398,7 @@ class ProfesorCurso(models.Model):
 
         permissions = [
             ('anyadir_profesorcurso', _('Puede añadir un profesor a un curso.')),
+            ('pc_anular', _('Puede dar de baja a un profesor de un curso.')),
         ]
 
 

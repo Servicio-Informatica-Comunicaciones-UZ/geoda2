@@ -77,8 +77,16 @@
       <th scope="row">{% trans "Profesorado" %}</th>
       <td>
         <ul class="listado">
-        {% for profesor in curso.profesores.all %}
-          <li>{{ profesor.full_name }} &lt;{{ profesor.email }}&gt;</li>
+        {% for asignacion in asignaciones %}
+          <li>
+            {{ asignacion.profesor.full_name }} &lt;{{ asignacion.profesor.email }}&gt;
+            {% if perms.geo.pc_anular %}
+              <a href={% url "pc-anular" asignacion.id %} class='btn btn-warning btn-xs' title='Dar de baja a este profesor en este curso'>
+                <span class='fas fa-user-times' aria-hidden='true' style='display: inline;'></span>
+                {% trans "Dar de baja" %}
+              </a>
+            {% endif %}
+          </li>
         {% endfor %}
         </ul>
       </td>

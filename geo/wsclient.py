@@ -1,7 +1,12 @@
+# standard library
 import json
 
+# third-party libraries
 import requests
 from annoying.functions import get_config
+
+# Django
+from django.utils import timezone
 
 
 class WSClient:
@@ -93,13 +98,36 @@ class WSClient:
 
         return usuario_moodle
 
+    def desmatricular(self, usuario, curso):
+        """Desmatricula a un usuario de un curso."""
+        usuario_moodle = self.buscar_usuario(usuario)
+        payload = {
+            'usuario_id_nk': usuario_moodle['id'],
+            'curso_id_nk': curso.id_nk,
+        }
+        ueids = self._request_url('GET', 'local_geodaws_get_user_enrolments', self.geodaws_token, payload)
+
+        respuestas = []
+        for ueid in ueids:
+            # Con `core_enrol_edit_user_enrolment` podríamos establecer una fecha de finalización,
+            # pero esta función fue deprecated en la versión 3.6, por lo que dejará de funcionar en el futuro.
+            # En su lugar se podría usar `core_enrol_submit_user_enrolment`,
+            # pero todavía no existía en la versión 3.5 LTS que es la que usamos.
+            respuesta = self._request_url(
+                'POST', 'core_enrol_unenrol_user_enrolment', self.geo_token, {'ueid': ueid['id']}
+            )
+            respuestas.append(respuesta)
+
+        return respuestas
+
     def matricular_profesor(self, usuario, curso):
-        """Matricula a un usuario como profesor de un curso de Moodle"""
+        """Matricula a un usuario como profesor de un curso de Moodle."""
         usuario_moodle = self.buscar_usuario(usuario)
         payload = {
             'enrolments[0][roleid]': 3,  # id del rol `editingteacher` en Moodle
             'enrolments[0][userid]': usuario_moodle['id'],
             'enrolments[0][courseid]': curso.id_nk,
+            'enrolments[0][timestart]': int(timezone.now().timestamp()),
         }
         mensaje = self._request_url('POST', 'enrol_manual_enrol_users', self.geo_token, payload)
         return mensaje

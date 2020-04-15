@@ -18,9 +18,11 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import Group
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
+from django.utils.formats import date_format
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views import View
@@ -37,7 +39,7 @@ from .forms import (
     MatricularPlanForm,
     ProfesorCursoAddForm,
 )
-from .models import Asignatura, Calendario, Categoria, Curso, Forano, Pod
+from .models import Asignatura, Calendario, Categoria, Curso, Forano, Pod, ProfesorCurso
 from .tables import AsignaturasTable, CursosTodosTable, CursosPendientesTable, CursoTable, ForanoTodosTable, PodTable
 from .utils import PagedFilteredTableView
 from .wsclient import WSClient
@@ -243,6 +245,10 @@ class CursoDetailView(LoginRequiredMixin, DetailView):
         pc_form = ProfesorCursoAddForm()
         pc_form.fields['curso_id'].initial = curso_id
         context['pc_form'] = pc_form
+
+        context['asignaciones'] = self.object.profesorcurso_set.filter(
+            Q(fecha_baja__gt=timezone.now()) | Q(fecha_baja=None)
+        ).select_related
 
         return context
 
@@ -574,6 +580,44 @@ class ForanoResolverView(LoginRequiredMixin, PermissionRequiredMixin, View):
             recipient_list=[forano.solicitante.email],
             context={'forano': forano},
         )
+
+
+class ProfesorCursoAnularView(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, UpdateView):
+    """Dar de baja una asignación profesor-curso."""
+
+    permission_required = 'geo.pc_anular'
+    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
+
+    model = ProfesorCurso
+    fields = ['fecha_baja']
+
+    success_message = (
+        'Ha establecido como fecha de baja el %(fecha_baja)s para %(tratamiento)s %(nombre_docente)s en este curso.'
+    )
+    template_name = 'gestion/profesorcurso_form.html'
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed. It should return an HttpResponse.
+        cliente = WSClient()
+        respuestas = cliente.desmatricular(self.object.profesor, self.object.curso)
+        for respuesta in respuestas:
+            for error in respuesta.get('errors'):
+                messages.error(self.request, _('ERROR al dar de baja en Moodle: ') + error.get('message'))
+
+        return super().form_valid(form)
+
+    def get_success_message(self, cleaned_data):
+        docente = self.object.profesor
+
+        return self.success_message % dict(
+            cleaned_data,
+            fecha_baja=date_format(self.object.fecha_baja),
+            tratamiento='la profesora' if docente.sexo == 'F' else 'el profesor',
+            nombre_docente=docente.full_name,
+        )
+
+    def get_success_url(self):
+        return reverse('curso-detail', args=[self.object.curso_id])
 
 
 class ProfesorCursoAnyadirView(LoginRequiredMixin, PermissionRequiredMixin, View):

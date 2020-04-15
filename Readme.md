@@ -53,7 +53,7 @@ curso académico > centro o departamento > plan de estudios
 
 En GEO (la versión anterior de esta aplicación), al empezar el año académico se creaban
 todas las posibles categorías mediante unas órdenes SQL.  A continuación había que
-crearlas en la plataforma, lanzando un comando de consola de Yii.
+crearlas en la plataforma, lanzando un comando de consola de Yii (`creaTodasCategoriasAdd`).
 
 De esta manera, se creaban muchas categorías que no se usaban, y que ralentizaban la
 plataforma.  Además había que repetir el proceso en varias ocasiones, porque la oferta
@@ -81,6 +81,9 @@ Con GEO, Moodle utilizaba, en cada inicio de sesión, el tipo de matriculación 
 (contra la vista `MoodleProfesores`) para determinar si el usuario era profesor de algún
 curso, y en su caso matricularlo.  Al creador del curso, al estar en esta BD, no se le
 podía quitar de profesor del curso.
+
+Posteriormente, los gestores pueden añadir o quitar profesores, para lo que se usan las
+funciones `enrol_manual_enrol_users` y `core_enrol_unenrol_user_enrolment`.
 
 ### Usuarios
 
@@ -132,7 +135,8 @@ Instalación sobre contenedores Docker
 El servidor Moodle debe tener instalado el plugin GeodaWS.
 Además, en Site administration → Plugins → Web services → External Services debe haber
 un servicio personalizado (geo) con las funciones necesarias (`core_course_create_categories`,
-`core_course_create_courses`, `core_user_get_users`, `enrol_manual_enrol_users`).
+`core_course_create_courses`, `core_user_get_users`, `enrol_manual_enrol_users`,
+`core_enrol_unenrol_user_enrolment`).
 
 1. Copiar o renombrar los ficheros `env/common.env-sample` y `env/geoda2.env-sample`.
 2. Configurar los ajustes de la base de datos, servidor de correo, la URL del sitio,

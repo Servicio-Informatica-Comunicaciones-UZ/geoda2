@@ -9,7 +9,6 @@ from .models import Asignatura, Calendario, Categoria, Curso, Pod, ProfesorCurso
 admin.site.register(Asignatura)
 admin.site.register(Categoria)
 admin.site.register(Pod)
-admin.site.register(ProfesorCurso)
 
 
 @admin.register(Curso)
@@ -26,6 +25,19 @@ class CursoAdmin(admin.ModelAdmin):
                 anyo_academico=Calendario.objects.get(slug='actual').anyo, nombre__in=Categoria.NO_REGLADAS
             )
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+
+@admin.register(ProfesorCurso)
+class ProfesorCursoAdmin(admin.ModelAdmin):
+    fields = ('profesor', 'curso', 'fecha_alta', 'fecha_baja')
+    model = ProfesorCurso
+    list_display = ('profesor', 'nombre_profesor', 'curso')
+    # list_filter = ('profesor', 'curso')
+    ordering = ('profesor', 'curso')
+    readonly_fields = ('profesor', 'curso', 'fecha_alta')
+
+    def nombre_profesor(self, obj):
+        return obj.profesor.full_name
 
 
 admin.site.site_header = _('Administración de Geoda')
