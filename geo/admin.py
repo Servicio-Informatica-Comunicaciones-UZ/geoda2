@@ -21,9 +21,10 @@ class CursoAdmin(admin.ModelAdmin):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == 'categoria':
+            nombres = Categoria.NO_REGLADAS + ('Varios',)
             kwargs['queryset'] = Categoria.objects.filter(
-                anyo_academico=Calendario.objects.get(slug='actual').anyo, nombre__in=Categoria.NO_REGLADAS
-            )
+                anyo_academico=Calendario.objects.get(slug='actual').anyo, nombre__in=nombres
+            ).order_by('nombre')
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
