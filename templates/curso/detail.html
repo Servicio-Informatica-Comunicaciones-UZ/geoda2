@@ -166,6 +166,29 @@
     {% crispy pc_form %}
   {% endif %}
 
+
+  {% if curso.estado == curso.Estado.CREADO.value and perms.geo.curso_historial %}
+    <br /><br />
+    <h2>{% trans "Historial de profesores del curso" %}</h2>
+    <hr />
+
+    <table class="table table-striped table-hover" aria-describedby="historial de profesores">
+      <tr>
+        <th>{% trans 'Profesor(a)' %}</th>
+        <th>{% trans 'Fecha de alta' %}</th>
+        <th>{% trans 'Fecha de baja' %}</th>
+      </tr>
+    {% for pc in curso.profesorcurso_set.all %}
+      <tr>
+        <td>{{ pc.profesor.full_name }}</td>
+        <td>{{ pc.fecha_alta | default_if_none:"—" }}</td>
+        <td>{{ pc.fecha_baja | default_if_none:"—" }}</td>
+      </tr>
+    {% endfor %}
+    </table>
+  {% endif %}
+
+
   {% if perms.geo.curso_delete %}
     <br /><br />
     <h2>{% trans "Eliminar el curso" %}</h2>

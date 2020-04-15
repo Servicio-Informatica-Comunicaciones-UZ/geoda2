@@ -283,6 +283,7 @@ class Curso(models.Model):
             ('cursos_pendientes', _('Puede ver el listado de cursos por aprobar.')),
             ('curso_administrar', _('Puede acceder a la interfaz de administración de Curso.')),
             ('curso_delete', _('Puede eliminar cursos.')),
+            ('curso_historial', _('Puede ver el histórico de profesores de un curso.')),
         ]
 
     def __str__(self):
@@ -393,6 +394,7 @@ class ProfesorCurso(models.Model):
 
     class Meta:
         db_table = 'profesor_curso'
+        ordering = ('curso_id', 'fecha_alta', 'fecha_baja')
         verbose_name = _('asignación profesor-curso')
         verbose_name_plural = _('asignaciones profesor-curso')
 
