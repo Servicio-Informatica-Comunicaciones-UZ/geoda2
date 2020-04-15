@@ -14,9 +14,9 @@
 
     <div class="alert-warning alert fade-in">
       {% alert_icon 'warning' %}
-      <p><b>{% blocktrans with nombre_curso=curso.nombre %}
+      <p><strong>{% blocktrans with nombre_curso=curso.nombre %}
         ¿Seguro que desea eliminar el curso «{{ nombre_curso }}»?
-        {% endblocktrans %}</b></p>
+        {% endblocktrans %}</strong></p>
 
       <p>
         {% trans "El curso, y todos sus materiales, se eliminará también de Moodle (si existe)." %}<br />

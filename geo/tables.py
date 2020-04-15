@@ -172,9 +172,9 @@ class ForanoTodosTable(tables.Table):
 
     def render_enlace(self, record):
         return mark_safe(
-            f"<a href={ reverse('forano-detail', args=[record.id]) } class='btn btn-info btn-sm' title='Ver'> \
-               <span class='far fa-eye' aria-hidden='true'></span>&nbsp;Ver \
-            </a>"
+            f"""<a href={reverse('forano-detail', args=[record.id])} class='btn btn-info btn-sm' title='Ver'>
+               <span class='far fa-eye' aria-hidden='true'></span>&nbsp;Ver
+            </a>"""
         )
 
     class Meta:

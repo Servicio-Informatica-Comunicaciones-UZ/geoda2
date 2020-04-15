@@ -24,8 +24,9 @@ def get_identidad(strategy, response, user, *args, **kwargs):
         client = zeep.Client(wsdl=wsdl, transport=zeep.transports.Transport(session=session))
     except RequestConnectionError:
         raise RequestConnectionError('No fue posible conectarse al WS de Identidades.')
-    except:  # noqa: E722
-        raise
+    except Exception as e:
+        print(e)
+        raise e
 
     response = client.service.obtenIdentidad(user.username)
     if response.aviso:

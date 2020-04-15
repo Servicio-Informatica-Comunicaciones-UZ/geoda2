@@ -174,9 +174,9 @@
 
     <table class="table table-striped table-hover" aria-describedby="historial de profesores">
       <tr>
-        <th>{% trans 'Profesor(a)' %}</th>
-        <th>{% trans 'Fecha de alta' %}</th>
-        <th>{% trans 'Fecha de baja' %}</th>
+        <th scope='col'>{% trans 'Profesor(a)' %}</th>
+        <th scope='col'>{% trans 'Fecha de alta' %}</th>
+        <th scope='col'>{% trans 'Fecha de baja' %}</th>
       </tr>
     {% for pc in curso.profesorcurso_set.all %}
       <tr>
