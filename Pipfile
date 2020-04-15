@@ -9,9 +9,9 @@ black = "*"
 pre-commit = "*"
 
 [packages]
-django = "==3.0.4"  # Remember to re-generate `requirements.txt`
+django = "==3.0.5"  # Remember to re-generate `requirements.txt`
 django-annoying = "*"
-django-crispy-forms = "==1.8.1"
+django-crispy-forms = "==1.9.0"
 django-debug-toolbar = "*"
 django-filter = "*"
 django-tables2 = "*"
