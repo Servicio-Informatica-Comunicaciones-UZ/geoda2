@@ -290,7 +290,7 @@ class Curso(models.Model):
         return f'{self.nombre}'
 
     def get_absolute_url(self):
-        return reverse('curso-detail', args=[self.id])
+        return reverse('curso_detail', args=[self.id])
 
     def actualizar_tras_creacion(self, datos_recibidos):
         """Actualiza el modelo con los datos recibidos de Moodle al crear el curso."""
@@ -380,7 +380,7 @@ class Forano(models.Model):
         permissions = [('forano', _('Puede ver y resolver las solicitudes de vinculación.'))]
 
     def get_absolute_url(self):
-        return reverse('forano-detail', args=[self.id])
+        return reverse('forano_detail', args=[self.id])
 
 
 class ProfesorCurso(models.Model):

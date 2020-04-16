@@ -17,7 +17,7 @@ class AsignaturasTable(tables.Table):
                   <span class='far fa-eye' aria-hidden='true' style='display: inline;'
                   ></span>&nbsp;&nbsp;Ver&nbsp;ficha
                 </a>""".format(
-                    reverse('curso-detail', args=[record.curso.id])
+                    reverse('curso_detail', args=[record.curso.id])
                 )
             )
 
@@ -30,7 +30,7 @@ class AsignaturasTable(tables.Table):
                 <span class='fas fa-plus' aria-hidden='true' style='display: inline;'
                 ></span>&nbsp;Crear&nbsp;curso
             </a>""".format(
-                reverse('as-crear-curso', args=[record.id])
+                reverse('as_crear_curso', args=[record.id])
             )
         )
 
@@ -65,20 +65,16 @@ class PodTable(tables.Table):
                   <span class='far fa-eye' aria-hidden='true' style='display: inline;'
                   ></span>&nbsp;&nbsp;Ver&nbsp;ficha
                 </a>""".format(
-                    reverse('curso-detail', args=[asig.curso.id])
+                    reverse('curso_detail', args=[asig.curso.id])
                 )
             )
 
         return mark_safe(
             """
-            <a href={0}
-                class='btn btn-warning btn-sm'
-                title='Crear curso en la plataforma'
-            >
-                <span class='fas fa-plus' aria-hidden='true' style='display: inline;'
-                ></span>&nbsp;Crear&nbsp;curso
+            <a href={0} class='btn btn-warning btn-sm' title='Crear curso en la plataforma'>
+                <span class='fas fa-plus' aria-hidden='true' style='display: inline;'></span>&nbsp;Crear&nbsp;curso
             </a>""".format(
-                reverse('as-crear-curso', args=[asig.id])
+                reverse('as_crear_curso', args=[asig.id])
             )
         )
 
@@ -121,7 +117,7 @@ class CursosTodosTable(tables.Table):
             """<a href={0} class='btn btn-info btn-sm' title='Ver ficha del curso'>
                <span class='far fa-eye' aria-hidden='true'></span>&nbsp;Ver&nbsp;ficha
             </a>""".format(
-                reverse('curso-detail', args=[record.id])
+                reverse('curso_detail', args=[record.id])
             )
         )
 
@@ -137,7 +133,7 @@ class CursosPendientesTable(tables.Table):
     profesores = tables.ManyToManyColumn(verbose_name='Solicitante', transform=lambda u: u.full_name)
 
     def render_nombre(self, record):
-        return mark_safe(f'<a href={reverse("curso-detail", args=[record.id])}>{record.nombre}</a>')
+        return mark_safe(f'<a href={reverse("curso_detail", args=[record.id])}>{record.nombre}</a>')
 
     class Meta:
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}
@@ -155,7 +151,7 @@ class CursoTable(tables.Table):
             """<a href={0} class='btn btn-info btn-sm' title='Ver ficha del curso'>
                <span class='far fa-eye' aria-hidden='true'></span>&nbsp;Ver&nbsp;ficha
             </a>""".format(
-                reverse('curso-detail', args=[record.id])
+                reverse('curso_detail', args=[record.id])
             )
         )
 
@@ -172,7 +168,7 @@ class ForanoTodosTable(tables.Table):
 
     def render_enlace(self, record):
         return mark_safe(
-            f"""<a href={reverse('forano-detail', args=[record.id])} class='btn btn-info btn-sm' title='Ver'>
+            f"""<a href={reverse('forano_detail', args=[record.id])} class='btn btn-info btn-sm' title='Ver'>
                <span class='far fa-eye' aria-hidden='true'></span>&nbsp;Ver
             </a>"""
         )

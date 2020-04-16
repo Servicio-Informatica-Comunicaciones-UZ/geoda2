@@ -81,7 +81,8 @@
           <li>
             {{ asignacion.profesor.full_name }} &lt;{{ asignacion.profesor.email }}&gt;
             {% if perms.geo.pc_anular %}
-              <a href={% url "pc-anular" asignacion.id %} class='btn btn-warning btn-xs' title='Dar de baja a este profesor en este curso'>
+              <a href={% url "pc_anular" asignacion.id %} class='btn btn-warning btn-xs'
+                title='Dar de baja a este profesor en este curso'>
                 <span class='fas fa-user-times' aria-hidden='true' style='display: inline;'></span>
                 {% trans "Dar de baja" %}
               </a>
@@ -104,7 +105,7 @@
     <br />
     <h2>{% trans "Resolver la solicitud" %}</h2>
     <hr />
-    <form action="{% url 'resolver-solicitud' %}" id="resolver-form" method="post">
+    <form action="{% url 'curso_resolver' %}" id="resolver-form" method="post">
       {% csrf_token %}
       <input type='hidden' id='id' name='id' value='{{ curso.id }}'>
       <div><strong>{% trans "Decisión" %}</strong></div>
@@ -136,7 +137,7 @@
 
       <br style="clear: both;" />
       <div class="btn-group" role="group" aria-label="Botones">
-        <a href="{% url 'cursos-pendientes' %}" class="btn btn-info">
+        <a href="{% url 'curso_pendientes' %}" class="btn btn-info">
           <span class="fas fa-step-backward"></span> {% trans "Retroceder" %}
         </a>
         <button type="submit" class="btn btn-warning">
@@ -200,7 +201,7 @@
     {% endblocktrans %}
     </p>
 
-    <a href="{% url 'curso-delete' curso.id %}" aria-label="{% trans 'Eliminar' %}" class='btn btn-warning' role="button" %}>
+    <a href="{% url 'curso_delete' curso.id %}" aria-label="{% trans 'Eliminar' %}" class='btn btn-warning' role="button" %}>
       <span aria-hidden="true" class="fas fa-trash-alt"></span> {% trans 'Eliminar' %}
     </a>
 

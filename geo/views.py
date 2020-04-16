@@ -86,7 +86,7 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
         asignatura = get_object_or_404(Asignatura, id=kwargs['pk'])
         if hasattr(asignatura, 'curso'):
             messages.error(request, _('El curso ya estaba creado.'))
-            return redirect('curso-detail', asignatura.curso.id)
+            return redirect('curso_detail', asignatura.curso.id)
 
         curso = self._cargar_asignatura_en_curso(asignatura)
 
@@ -104,7 +104,7 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
         messages.info(request, mensaje)
         messages.success(request, _('Curso creado correctamente en Moodle.'))
 
-        return redirect('curso-detail', curso.id)
+        return redirect('curso_detail', curso.id)
 
     def test_func(self):
         return self.es_pas_o_pdi()
@@ -208,7 +208,7 @@ class CursoDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Curso
     permission_required = 'geo.curso_delete'
     permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
-    success_url = reverse_lazy('cursos-todos')
+    success_url = reverse_lazy('curso_todos')
     template_name = 'gestion/curso_confirm_delete.html'
 
     def post(self, request, *args, **kwargs):
@@ -219,7 +219,7 @@ class CursoDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
             if respuesta and respuesta.get('warnings'):
                 for advertencia in respuesta['warnings']:
                     messages.error(request, _('ERROR al borrar el curso en Moodle: ') + advertencia.get('message'))
-                return redirect('curso-detail', curso.id)
+                return redirect('curso_detail', curso.id)
 
         messages.success(request, _(f"El curso «{curso.nombre}» ha sido borrado con éxito."))
         return super().post(request, *args, **kwargs)
@@ -263,7 +263,7 @@ class CursosTodosView(LoginRequiredMixin, PermissionRequiredMixin, PagedFiltered
     permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
     paginate_by = 20
     table_class = CursosTodosTable
-    template_name = 'gestion/cursos-todos.html'
+    template_name = 'gestion/curso_todos.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -286,7 +286,7 @@ class CursosPendientesView(LoginRequiredMixin, PermissionRequiredMixin, SingleTa
     ordering = ['-fecha_solicitud']
     queryset = Curso.objects.filter(estado=Curso.Estado.SOLICITADO).prefetch_related('profesores')
     table_class = CursosPendientesTable
-    template_name = 'gestion/cursos-pendientes.html'
+    template_name = 'gestion/curso_pendientes.html'
 
 
 class MatricularPlanView(LoginRequiredMixin, PermissionRequiredMixin, View):
@@ -302,7 +302,7 @@ class MatricularPlanView(LoginRequiredMixin, PermissionRequiredMixin, View):
             plan_id_nk = int(request.POST.get('plan_id_nk'))
         except ValueError:
             messages.error(request, _('El código de plan indicado no es válido.'))
-            return redirect('curso-detail', curso_id)
+            return redirect('curso_detail', curso_id)
 
         asignaturas = Asignatura.objects.filter(anyo_academico=curso.anyo_academico, plan_id_nk=plan_id_nk)
         cliente = WSClient()
@@ -312,7 +312,7 @@ class MatricularPlanView(LoginRequiredMixin, PermissionRequiredMixin, View):
                 cliente.automatricular(asignatura, curso, active=1)
         except Exception as ex:
             messages.error(request, 'ERROR: %s' % str(ex))
-            return redirect('curso-detail', curso_id)
+            return redirect('curso_detail', curso_id)
 
         messages.success(
             request,
@@ -322,14 +322,14 @@ class MatricularPlanView(LoginRequiredMixin, PermissionRequiredMixin, View):
             ),
         )
 
-        return redirect('curso-detail', curso_id)
+        return redirect('curso_detail', curso_id)
 
 
 class MisAsignaturasView(LoginRequiredMixin, ChecksMixin, SingleTableView):
     """Muestra las asignaturas del usuario, según el POD, y permite crear cursos."""
 
     table_class = PodTable
-    template_name = 'pod/mis-asignaturas.html'
+    template_name = 'pod/mis_asignaturas.html'
 
     def get_queryset(self):
         anyo_academico = Calendario.objects.get(slug='actual').anyo
@@ -343,7 +343,7 @@ class MisCursosView(LoginRequiredMixin, SingleTableView):
     """Muestra los cursos creados por el usuario."""
 
     table_class = CursoTable
-    template_name = 'curso/mis-cursos.html'
+    template_name = 'curso/mis_cursos.html'
 
     def get_context_data(self, **kwargs):
         context = super(MisCursosView, self).get_context_data(**kwargs)
@@ -364,7 +364,7 @@ class ResolverSolicitudCursoView(LoginRequiredMixin, PermissionRequiredMixin, Re
     permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
 
     def get_redirect_url(self, *args, **kwargs):
-        return reverse_lazy('cursos-pendientes')
+        return reverse_lazy('curso_pendientes')
 
     def post(self, request, *args, **kwargs):
         id_recibido = request.POST.get('id')
@@ -423,7 +423,7 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
             messages.success(request, _(f'La solicitud ha sido recibida. Se le avisará cuando se resuelva.'))
             self._notifica_solicitud(curso)
 
-            return redirect('mis-cursos')
+            return redirect('mis_cursos')
 
         return render(request, self.template_name, {'form': formulario})
 
@@ -475,7 +475,7 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
             messages.success(request, _(f'La solicitud ha sido recibida. Se le avisará cuando se resuelva.'))
             self._notifica_solicitud(forano)
 
-            return redirect('mis-cursos')
+            return redirect('mis_cursos')
 
         return render(request, self.template_name, {'form': form})
 
@@ -540,10 +540,10 @@ class ForanoResolverView(LoginRequiredMixin, PermissionRequiredMixin, View):
                 client = zeep.Client(wsdl=wsdl, transport=zeep.transports.Transport(session=session))
             except RequestConnectionError:
                 messages.error(request, 'No fue posible conectarse al WS de Identidades.')
-                return redirect('forano-todos')
+                return redirect('forano_todos')
             except Exception as ex:
                 messages.error(request, 'ERROR: %s' % str(ex))
-                return redirect('forano-todos')
+                return redirect('forano_todos')
 
             response = client.service.creaVinculacion(
                 f'{forano.nip}',  # nip
@@ -569,7 +569,7 @@ class ForanoResolverView(LoginRequiredMixin, PermissionRequiredMixin, View):
                 )
                 self._notifica_resolucion(forano)
 
-        return redirect('forano-todos')
+        return redirect('forano_todos')
 
     @staticmethod
     def _notifica_resolucion(forano):
@@ -617,7 +617,7 @@ class ProfesorCursoAnularView(LoginRequiredMixin, PermissionRequiredMixin, Succe
         )
 
     def get_success_url(self):
-        return reverse('curso-detail', args=[self.object.curso_id])
+        return reverse('curso_detail', args=[self.object.curso_id])
 
 
 class ProfesorCursoAnyadirView(LoginRequiredMixin, PermissionRequiredMixin, View):
@@ -640,4 +640,4 @@ class ProfesorCursoAnyadirView(LoginRequiredMixin, PermissionRequiredMixin, View
         curso.anyadir_profesor(profesor)
         messages.success(request, _('Se ha añadido el profesor al curso.'))
 
-        return redirect('curso-detail', curso_id)
+        return redirect('curso_detail', curso_id)

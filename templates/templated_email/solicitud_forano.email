@@ -4,7 +4,7 @@
 la vinculación del usuario externo con NIP «{{ forano.nip }}».
 
 Puede examinar esta solicitud y aprobarla o denegarla en la página
- <{{ site_url }}{% url 'forano-detail' forano.id %}>.
+ <{{ site_url }}{% url 'forano_detail' forano.id %}>.
 
 
 --  

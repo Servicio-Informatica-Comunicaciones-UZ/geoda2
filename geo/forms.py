@@ -173,7 +173,7 @@ class MatricularPlanForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
 
-        self.helper.form_action = 'matricular-plan'
+        self.helper.form_action = 'matricular_plan'
         self.helper.form_class = 'form-inline'
         self.helper.field_template = 'bootstrap4/layout/inline_field.html'
         self.helper.layout = Layout(
@@ -207,7 +207,7 @@ class ProfesorCursoAddForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
 
-        self.helper.form_action = 'pc-anyadir'
+        self.helper.form_action = 'pc_anyadir'
         self.helper.form_class = 'form-inline'
         # self.helper.wrapper_class = 'col-7'
         # self.helper.label_class = 'margin-right-1'

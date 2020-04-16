@@ -52,7 +52,7 @@
     <br />
     <h2>{% trans "Resolver la solicitud" %}</h2>
     <hr />
-    <form action="{% url 'forano-resolver' %}" id="resolver-form" method="post">
+    <form action="{% url 'forano_resolver' %}" id="resolver-form" method="post">
       {% csrf_token %}
       <input type='hidden' id='id' name='id' value='{{ forano.id }}'>
       <div><strong>{% trans "Decisión" %}</strong></div>
@@ -83,7 +83,7 @@
 
       <br style="clear: both;" />
       <div class="btn-group" role="group" aria-label="Botones">
-        <a href="{% url 'forano-todos' %}" class="btn btn-info">
+        <a href="{% url 'forano_todos' %}" class="btn btn-info">
           <span class="fas fa-step-backward"></span> {% trans "Retroceder" %}
         </a>
         <button type="submit" class="btn btn-warning">

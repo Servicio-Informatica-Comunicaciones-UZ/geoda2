@@ -92,13 +92,13 @@
                   <span class="fas fa-cog"></span>&nbsp; {% trans "Gestión" %}
                 </a>
                 <div class="dropdown-menu" aria-labelledby="gestionMenu">
-                  <a class="dropdown-item" href="{% url 'cursos-pendientes' %}">
+                  <a class="dropdown-item" href="{% url 'curso_pendientes' %}">
                     <span class="far fa-thumbs-up"></span>&nbsp; {% trans "Cursos por aprobar" %}
                   </a>
-                  <a class="dropdown-item" href="{% url 'cursos-todos' %}">
+                  <a class="dropdown-item" href="{% url 'curso_todos' %}">
                     <span class="fas fa-th-list"></span>&nbsp; {% trans "Todos los cursos" %}
                   </a>
-                  <a class="dropdown-item" href="{% url 'forano-todos' %}">
+                  <a class="dropdown-item" href="{% url 'forano_todos' %}">
                     <span class="fas fa-user-check"></span>&nbsp; {% trans "Vinculaciones" %}
                   </a>
                   <a class="dropdown-item" href="{% url 'calendario' 'actual' %}">
@@ -109,7 +109,7 @@
             {% endif %}
 
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'forano-solicitar' %}">
+              <a class="nav-link" href="{% url 'forano_solicitar' %}">
                 <span class="fas fa-user-plus"></span>&nbsp; {% trans "Invitar" %}
               </a>
             </li>
@@ -126,14 +126,14 @@
                 <span class="fas fa-graduation-cap"></span>&nbsp; {% trans "Cursos" %}
               </a>
               <div class="dropdown-menu" aria-labelledby="cursoMenu">
-                <a class="dropdown-item" href="{% url 'mis-cursos' %}">
+                <a class="dropdown-item" href="{% url 'mis_cursos' %}">
                   <span class="fas fa-th-list"></span>&nbsp; {% trans "Mis cursos" %}
                 </a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="{% url 'mis-asignaturas' %}">
+                <a class="dropdown-item" href="{% url 'mis_asignaturas' %}">
                   <span class="fas fa-plus"></span>&nbsp; {% trans "Crear reglado" %}
                 </a>
-                <a class="dropdown-item" href="{% url 'curso-solicitar' %}">
+                <a class="dropdown-item" href="{% url 'curso_solicitar' %}">
                   <span class="far fa-envelope-open"></span>&nbsp; {% trans "Solicitar no reglado" %}
                 </a>
               </div>

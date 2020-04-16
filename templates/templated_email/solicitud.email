@@ -4,7 +4,7 @@
 «{{ curso.nombre }}»
 
 Puede examinar esta solicitud y aprobarla o denegarla en la página
- <{{ site_url }}{% url 'curso-detail' curso.id %}>.
+ <{{ site_url }}{% url 'curso_detail' curso.id %}>.
 
 
 --  

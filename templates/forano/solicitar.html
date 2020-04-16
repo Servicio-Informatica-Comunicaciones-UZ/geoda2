@@ -38,12 +38,12 @@
   </div>
   <br />
 
-  <form action="{% url 'forano-solicitar' %}" id="solicitar-form" method="post">
+  <form action="{% url 'forano_solicitar' %}" id="solicitar-form" method="post">
     {% csrf_token %}
     {{ form | crispy }}
 
     <div class="btn-group" role="group" aria-label="Botones">
-      <a href="{% url 'mis-cursos' %}" class="btn btn-info">
+      <a href="{% url 'mis_cursos' %}" class="btn btn-info">
         <span class="fas fa-times"></span> {% trans 'Cancelar' %}
       </a>
       <button class="btn btn-warning" type="submit" title="{% trans 'Solicitar vinculación de usuario externo' %}">
