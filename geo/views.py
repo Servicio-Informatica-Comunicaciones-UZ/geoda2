@@ -392,17 +392,17 @@ class ResolverSolicitudCursoView(LoginRequiredMixin, PermissionRequiredMixin, Re
             curso.save()
             messages.info(request, _(f'El curso «{curso.nombre}» ha sido denegado.'))
 
-        self._notifica_resolucion(curso)
+        self._notifica_resolucion(curso, request.build_absolute_uri('/')[:-1])
         return super().post(request, *args, **kwargs)
 
     @staticmethod
-    def _notifica_resolucion(curso):
+    def _notifica_resolucion(curso, site_url):
         """Envía un correo al solicitante del curso informando de la resolucíon."""
         send_templated_mail(
             template_name='resolucion',
             from_email=None,  # settings.DEFAULT_FROM_EMAIL
             recipient_list=[curso.profesores.first().email],
-            context={'curso': curso, 'site_url': get_config('SITE_URL')},
+            context={'curso': curso, 'site_url': site_url},
         )
 
 
@@ -421,7 +421,7 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
         if formulario.is_valid():
             curso = formulario.save()
             messages.success(request, _(f'La solicitud ha sido recibida. Se le avisará cuando se resuelva.'))
-            self._notifica_solicitud(curso)
+            self._notifica_solicitud(curso, request.build_absolute_uri('/')[:-1])
 
             return redirect('mis_cursos')
 
@@ -431,7 +431,7 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
         return self.es_pas_o_pdi()
 
     @staticmethod
-    def _notifica_solicitud(curso):
+    def _notifica_solicitud(curso, site_url):
         """Envía email a los miembros del grupo Gestores informando de la solicitud."""
         grupo_gestores = Group.objects.get(name='Gestores')
         gestores = grupo_gestores.user_set.all()
@@ -440,7 +440,7 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
             template_name='solicitud',
             from_email=None,  # settings.DEFAULT_FROM_EMAIL
             recipient_list=destinatarios,
-            context={'curso': curso, 'site_url': get_config('SITE_URL')},
+            context={'curso': curso, 'site_url': site_url},
         )
 
 
@@ -473,7 +473,7 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
             forano.solicitante = self.request.user
             forano.save(True)
             messages.success(request, _(f'La solicitud ha sido recibida. Se le avisará cuando se resuelva.'))
-            self._notifica_solicitud(forano)
+            self._notifica_solicitud(forano, request.build_absolute_uri('/')[:-1])
 
             return redirect('mis_cursos')
 
@@ -483,7 +483,7 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
         return self.es_pas_o_pdi()
 
     @staticmethod
-    def _notifica_solicitud(forano):
+    def _notifica_solicitud(forano, site_url):
         """Envía email a los miembros del grupo Gestores informando de la solicitud."""
         grupo_gestores = Group.objects.get(name='Gestores')
         gestores = grupo_gestores.user_set.all()
@@ -492,7 +492,7 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
             template_name='solicitud_forano',
             from_email=None,  # settings.DEFAULT_FROM_EMAIL
             recipient_list=destinatarios,
-            context={'forano': forano, 'site_url': get_config('SITE_URL')},
+            context={'forano': forano, 'site_url': site_url},
         )
 
 
