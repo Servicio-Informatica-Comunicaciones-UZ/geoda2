@@ -146,7 +146,7 @@ STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesSto
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 LOGIN_URL = "/login/saml/?idp=lord"
-LOGIN_REDIRECT_URL = "mis-cursos"
+LOGIN_REDIRECT_URL = "mis_cursos"
 LOGOUT_REDIRECT_URL = "home"
 
 
