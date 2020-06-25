@@ -130,10 +130,14 @@ class CursosTodosTable(tables.Table):
 
 
 class CursosPendientesTable(tables.Table):
-    profesores = tables.ManyToManyColumn(verbose_name='Solicitante', transform=lambda u: u.full_name)
+    profesores = tables.ManyToManyColumn(
+        verbose_name='Solicitante', transform=lambda u: u.full_name
+    )
 
     def render_nombre(self, record):
-        return mark_safe(f'<a href={reverse("curso_detail", args=[record.id])}>{record.nombre}</a>')
+        return mark_safe(
+            f'<a href={reverse("curso_detail", args=[record.id])}>{record.nombre}</a>'
+        )
 
     class Meta:
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}

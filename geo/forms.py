@@ -97,7 +97,9 @@ class CursoSolicitarForm(forms.ModelForm):
             self.fields[field].required = True
 
         anyo_academico = Calendario.objects.get(slug='actual').anyo
-        cat_anyo = Categoria.objects.get(anyo_academico=anyo_academico, supercategoria_id__isnull=True)
+        cat_anyo = Categoria.objects.get(
+            anyo_academico=anyo_academico, supercategoria_id__isnull=True
+        )
         self.fields['categoria'].widget.choices = (
             Categoria.objects.filter(centro_id=None)
             .filter(anyo_academico=anyo_academico)
@@ -149,7 +151,9 @@ class ForanoFilterFormHelper(FormHelper):
                 ),
                 css_class='col-10 border p-3',
             ),
-            FormActions(Submit('submit', _('Filtrar')), css_class='col-2 text-right align-self-center'),
+            FormActions(
+                Submit('submit', _('Filtrar')), css_class='col-2 text-right align-self-center'
+            ),
             css_class='row',
         )
     )
@@ -182,7 +186,9 @@ class MatricularPlanForm(forms.Form):
             ButtonHolder(
                 StrictButton(
                     f"<span class='fas fa-user-graduate'></span> {_('Matricular')}",
-                    title=_('Matricular en este curso a todos los alumnos de alguna de las asignaturas del plan'),
+                    title=_(
+                        'Matricular en este curso a todos los alumnos de alguna de las asignaturas del plan'
+                    ),
                     css_class='btn btn-warning',
                     type='submit',
                 ),

@@ -40,7 +40,11 @@ urlpatterns = [
     path('gestion/forano/resolver/', ForanoResolverView.as_view(), name='forano_resolver'),
     path('gestion/matricular-plan/', MatricularPlanView.as_view(), name='matricular_plan'),
     path('gestion/profesor-curso/', ProfesorCursoAnyadirView.as_view(), name='pc_anyadir'),
-    path('gestion/profesor-curso/<int:pk>/anular', ProfesorCursoAnularView.as_view(), name='pc_anular'),
+    path(
+        'gestion/profesor-curso/<int:pk>/anular',
+        ProfesorCursoAnularView.as_view(),
+        name='pc_anular',
+    ),
     path('pod/', MisAsignaturasView.as_view(), name='mis_asignaturas'),
     path('curso/<int:pk>/', CursoDetailView.as_view(), name='curso_detail'),
     path('curso/', MisCursosView.as_view(), name='mis_cursos'),

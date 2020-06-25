@@ -15,7 +15,14 @@ admin.site.register(Pod)
 class CursoAdmin(admin.ModelAdmin):
     list_display = ('id', 'curso_academico', 'nombre', 'id_nk', 'estado')
     list_filter = ('anyo_academico', 'estado')
-    fields = ('nombre', 'categoria', 'estado', 'fecha_solicitud', 'motivo_solicitud', 'comentarios')
+    fields = (
+        'nombre',
+        'categoria',
+        'estado',
+        'fecha_solicitud',
+        'motivo_solicitud',
+        'comentarios',
+    )
     ordering = ('estado', 'nombre')
     readonly_fields = ('estado', 'fecha_solicitud', 'motivo_solicitud', 'comentarios')
 

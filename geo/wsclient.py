@@ -32,7 +32,9 @@ class WSClient:
         payload = {}
         for clave, valor in datos_categoria.items():
             payload[f'categories[0][{clave}]'] = valor
-        datos_recibidos = self._request_url('POST', 'core_course_create_categories', self.geo_token, payload)
+        datos_recibidos = self._request_url(
+            'POST', 'core_course_create_categories', self.geo_token, payload
+        )
         return datos_recibidos[0]
 
     def crear_curso(self, datos_curso):
@@ -44,7 +46,9 @@ class WSClient:
         payload = {}
         for clave, valor in datos_curso.items():
             payload[f'courses[0][{clave}]'] = valor
-        datos_recibidos = self._request_url('POST', 'core_course_create_courses', self.geo_token, payload)
+        datos_recibidos = self._request_url(
+            'POST', 'core_course_create_courses', self.geo_token, payload
+        )
         return datos_recibidos[0]
 
     def automatricular(self, asignatura, curso, active=0):
@@ -66,7 +70,9 @@ class WSClient:
     def borrar_curso(self, curso):
         """Borra un curso en Moodle."""
         payload = {'courseids[0]': curso.id_nk}
-        respuesta = self._request_url('POST', 'core_course_delete_courses', self.geo_token, payload)
+        respuesta = self._request_url(
+            'POST', 'core_course_delete_courses', self.geo_token, payload
+        )
         return respuesta
 
     def buscar_usuario(self, usuario):
@@ -105,7 +111,9 @@ class WSClient:
             'usuario_id_nk': usuario_moodle['id'],
             'curso_id_nk': curso.id_nk,
         }
-        ueids = self._request_url('GET', 'local_geodaws_get_user_enrolments', self.geodaws_token, payload)
+        ueids = self._request_url(
+            'GET', 'local_geodaws_get_user_enrolments', self.geodaws_token, payload
+        )
 
         respuestas = []
         for ueid in ueids:
@@ -136,11 +144,13 @@ class WSClient:
         """Envía una petición al Web Service."""
         if verb == 'POST':
             resp = requests.post(
-                f'{self.api_url}?wstoken={token}&wsfunction={wsfunction}&moodlewsrestformat=json', data=data
+                f'{self.api_url}?wstoken={token}&wsfunction={wsfunction}&moodlewsrestformat=json',
+                data=data,
             )
         elif verb == 'GET':
             resp = requests.get(
-                f'{self.api_url}?wstoken={token}&wsfunction={wsfunction}&moodlewsrestformat=json', params=data
+                f'{self.api_url}?wstoken={token}&wsfunction={wsfunction}&moodlewsrestformat=json',
+                params=data,
             )
         else:
             raise Exception('Método HTTP no soportado')

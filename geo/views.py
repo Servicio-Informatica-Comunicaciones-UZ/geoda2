@@ -15,7 +15,11 @@ from templated_email import send_templated_mail
 # Django
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    UserPassesTestMixin,
+)
 from django.contrib.auth.models import Group
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
@@ -40,7 +44,14 @@ from .forms import (
     ProfesorCursoAddForm,
 )
 from .models import Asignatura, Calendario, Categoria, Curso, Forano, Pod, ProfesorCurso
-from .tables import AsignaturasTable, CursosTodosTable, CursosPendientesTable, CursoTable, ForanoTodosTable, PodTable
+from .tables import (
+    AsignaturasTable,
+    CursosTodosTable,
+    CursosPendientesTable,
+    CursoTable,
+    ForanoTodosTable,
+    PodTable,
+)
 from .utils import PagedFilteredTableView
 from .wsclient import WSClient
 
@@ -51,16 +62,22 @@ class ChecksMixin(UserPassesTestMixin):
     def es_pas_o_pdi(self):
         """Devuelve si el usuario es PAS o PDI de la UZ o de sus centros adscritos."""
         usuario_actual = self.request.user
-        colectivos_del_usuario = json.loads(usuario_actual.colectivos) if usuario_actual.colectivos else []
+        colectivos_del_usuario = (
+            json.loads(usuario_actual.colectivos) if usuario_actual.colectivos else []
+        )
         self.permission_denied_message = _(
             'Usted no es PAS ni PDI de la Universidad de Zaragoza o de sus centros adscritos.'
         )
 
-        return any(col_autorizado in colectivos_del_usuario for col_autorizado in ['PAS', 'ADS', 'PDI'])
+        return any(
+            col_autorizado in colectivos_del_usuario for col_autorizado in ['PAS', 'ADS', 'PDI']
+        )
 
     def test_func(self):
         raise NotImplementedError(
-            '{0} carece de la implementación del método test_func().'.format(self.__class__.__name__)
+            '{0} carece de la implementación del método test_func().'.format(
+                self.__class__.__name__
+            )
         )
 
 
@@ -145,7 +162,9 @@ class ASTodasView(LoginRequiredMixin, ChecksMixin, PagedFilteredTableView):
         return self.es_pas_o_pdi()
 
 
-class CalendarioUpdate(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, UpdateView):
+class CalendarioUpdate(
+    LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, UpdateView
+):
     """Muestra un formulario para actualizar el año académico actual."""
 
     permission_required = 'geo.calendario'
@@ -195,9 +214,16 @@ class CalendarioUpdate(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessa
     @staticmethod
     def _crear_categoria(anyo, nombre, supercategoria_id):
         """Comprueba si existe la categoría, y la crea si es necesario."""
-        cat = get_object_or_None(Categoria, anyo_academico=anyo, nombre=nombre, supercategoria_id=supercategoria_id)
+        cat = get_object_or_None(
+            Categoria, anyo_academico=anyo, nombre=nombre, supercategoria_id=supercategoria_id
+        )
         if not cat:
-            cat = Categoria(plataforma_id=1, anyo_academico=anyo, nombre=nombre, supercategoria_id=supercategoria_id)
+            cat = Categoria(
+                plataforma_id=1,
+                anyo_academico=anyo,
+                nombre=nombre,
+                supercategoria_id=supercategoria_id,
+            )
             cat.save()
         if not cat.id_nk:
             cat.crear_en_plataforma()
@@ -218,7 +244,10 @@ class CursoDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
 
             if respuesta and respuesta.get('warnings'):
                 for advertencia in respuesta['warnings']:
-                    messages.error(request, _('ERROR al borrar el curso en Moodle: ') + advertencia.get('message'))
+                    messages.error(
+                        request,
+                        _('ERROR al borrar el curso en Moodle: ') + advertencia.get('message'),
+                    )
                 return redirect('curso_detail', curso.id)
 
         messages.success(request, _(f"El curso «{curso.nombre}» ha sido borrado con éxito."))
@@ -267,12 +296,16 @@ class CursosTodosView(LoginRequiredMixin, PermissionRequiredMixin, PagedFiltered
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        anyo_academico = self.kwargs.get('anyo_academico') or Calendario.objects.get(slug='actual').anyo
+        anyo_academico = (
+            self.kwargs.get('anyo_academico') or Calendario.objects.get(slug='actual').anyo
+        )
         context['curso'] = f'{anyo_academico}/{anyo_academico + 1}'
         return context
 
     def get_queryset(self):
-        anyo_academico = self.kwargs.get('anyo_academico') or Calendario.objects.get(slug='actual').anyo
+        anyo_academico = (
+            self.kwargs.get('anyo_academico') or Calendario.objects.get(slug='actual').anyo
+        )
         return Curso.objects.filter(anyo_academico=anyo_academico).prefetch_related('profesores')
 
 
@@ -304,7 +337,9 @@ class MatricularPlanView(LoginRequiredMixin, PermissionRequiredMixin, View):
             messages.error(request, _('El código de plan indicado no es válido.'))
             return redirect('curso_detail', curso_id)
 
-        asignaturas = Asignatura.objects.filter(anyo_academico=curso.anyo_academico, plan_id_nk=plan_id_nk)
+        asignaturas = Asignatura.objects.filter(
+            anyo_academico=curso.anyo_academico, plan_id_nk=plan_id_nk
+        )
         cliente = WSClient()
 
         try:
@@ -353,7 +388,8 @@ class MisCursosView(LoginRequiredMixin, SingleTableView):
 
     def get_queryset(self):
         return Curso.objects.filter(
-            profesores=self.request.user.id, anyo_academico=Calendario.objects.get(slug='actual').anyo
+            profesores=self.request.user.id,
+            anyo_academico=Calendario.objects.get(slug='actual').anyo,
         )
 
 
@@ -420,7 +456,9 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
         formulario = CursoSolicitarForm(data=request.POST, user=self.request.user)
         if formulario.is_valid():
             curso = formulario.save()
-            messages.success(request, _(f'La solicitud ha sido recibida. Se le avisará cuando se resuelva.'))
+            messages.success(
+                request, _(f'La solicitud ha sido recibida. Se le avisará cuando se resuelva.')
+            )
             self._notifica_solicitud(curso, request.build_absolute_uri('/')[:-1])
 
             return redirect('mis_cursos')
@@ -472,7 +510,9 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
             forano.estado = Forano.Estado.SOLICITADO
             forano.solicitante = self.request.user
             forano.save(True)
-            messages.success(request, _(f'La solicitud ha sido recibida. Se le avisará cuando se resuelva.'))
+            messages.success(
+                request, _(f'La solicitud ha sido recibida. Se le avisará cuando se resuelva.')
+            )
             self._notifica_solicitud(forano, request.build_absolute_uri('/')[:-1])
 
             return redirect('mis_cursos')
@@ -534,10 +574,14 @@ class ForanoResolverView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
             wsdl = get_config('WSDL_VINCULACIONES')
             session = Session()
-            session.auth = HTTPBasicAuth(get_config('USER_VINCULACIONES'), get_config('PASS_VINCULACIONES'))
+            session.auth = HTTPBasicAuth(
+                get_config('USER_VINCULACIONES'), get_config('PASS_VINCULACIONES')
+            )
 
             try:
-                client = zeep.Client(wsdl=wsdl, transport=zeep.transports.Transport(session=session))
+                client = zeep.Client(
+                    wsdl=wsdl, transport=zeep.transports.Transport(session=session)
+                )
             except RequestConnectionError:
                 messages.error(request, 'No fue posible conectarse al WS de Identidades.')
                 return redirect('forano_todos')
@@ -582,7 +626,9 @@ class ForanoResolverView(LoginRequiredMixin, PermissionRequiredMixin, View):
         )
 
 
-class ProfesorCursoAnularView(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, UpdateView):
+class ProfesorCursoAnularView(
+    LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, UpdateView
+):
     """Dar de baja una asignación profesor-curso."""
 
     permission_required = 'geo.pc_anular'
@@ -592,7 +638,8 @@ class ProfesorCursoAnularView(LoginRequiredMixin, PermissionRequiredMixin, Succe
     fields = ['fecha_baja']
 
     success_message = (
-        'Ha establecido como fecha de baja el %(fecha_baja)s para %(tratamiento)s %(nombre_docente)s en este curso.'
+        'Ha establecido como fecha de baja el %(fecha_baja)s'
+        ' para %(tratamiento)s %(nombre_docente)s en este curso.'
     )
     template_name = 'gestion/profesorcurso_form.html'
 
@@ -602,7 +649,9 @@ class ProfesorCursoAnularView(LoginRequiredMixin, PermissionRequiredMixin, Succe
         respuestas = cliente.desmatricular(self.object.profesor, self.object.curso)
         for respuesta in respuestas:
             for error in respuesta.get('errors'):
-                messages.error(self.request, _('ERROR al dar de baja en Moodle: ') + error.get('message'))
+                messages.error(
+                    self.request, _('ERROR al dar de baja en Moodle: ') + error.get('message')
+                )
 
         return super().form_valid(form)
 

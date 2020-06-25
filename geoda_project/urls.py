@@ -32,9 +32,15 @@ urlpatterns = [
         RedirectView.as_view(url=staticfiles_storage.url('favicons/browserconfig.xml')),
         name='browserconfig',
     ),
-    path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('favicons/favicon.ico')), name='favicon'),
     path(
-        'robots.txt', TemplateView.as_view(template_name='robots.txt', content_type='text/plain'), name='robots_file'
+        'favicon.ico',
+        RedirectView.as_view(url=staticfiles_storage.url('favicons/favicon.ico')),
+        name='favicon',
+    ),
+    path(
+        'robots.txt',
+        TemplateView.as_view(template_name='robots.txt', content_type='text/plain'),
+        name='robots_file',
     ),
     path('', include('social_django.urls', namespace='social')),
     path('', include('geo.urls')),

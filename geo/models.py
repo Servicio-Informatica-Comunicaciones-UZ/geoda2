@@ -21,16 +21,30 @@ class Asignatura(models.Model):
     """
 
     plan_id_nk = models.IntegerField(blank=True, null=True, verbose_name=_('Cód. plan'))
-    nombre_estudio = models.CharField(max_length=254, blank=True, null=True, verbose_name=_('Estudio'))
+    nombre_estudio = models.CharField(
+        max_length=254, blank=True, null=True, verbose_name=_('Estudio')
+    )
     centro_id = models.IntegerField(blank=True, null=True, verbose_name=_('Cód. centro'))
-    nombre_centro = models.CharField(max_length=150, blank=True, null=True, verbose_name=_('Centro'))
-    tipo_estudio_id = models.IntegerField(blank=True, null=True, verbose_name=_('Cód. tipo estudio'))
-    nombre_tipo_estudio = models.CharField(max_length=30, blank=True, null=True, verbose_name=_('Tipo de estudio'))
+    nombre_centro = models.CharField(
+        max_length=150, blank=True, null=True, verbose_name=_('Centro')
+    )
+    tipo_estudio_id = models.IntegerField(
+        blank=True, null=True, verbose_name=_('Cód. tipo estudio')
+    )
+    nombre_tipo_estudio = models.CharField(
+        max_length=30, blank=True, null=True, verbose_name=_('Tipo de estudio')
+    )
     asignatura_id = models.IntegerField(blank=True, null=True, verbose_name=_('Cód. asignatura'))
-    nombre_asignatura = models.CharField(max_length=120, blank=True, null=True, verbose_name=_('Asignatura'))
+    nombre_asignatura = models.CharField(
+        max_length=120, blank=True, null=True, verbose_name=_('Asignatura')
+    )
     prela_cu = models.CharField(max_length=5, blank=True, null=True)
-    tipo_periodo = models.CharField(max_length=1, blank=True, null=True, verbose_name=_('Tipo de periodo'))
-    valor_periodo = models.CharField(max_length=2, blank=True, null=True, verbose_name=_('Periodo'))
+    tipo_periodo = models.CharField(
+        max_length=1, blank=True, null=True, verbose_name=_('Tipo de periodo')
+    )
+    valor_periodo = models.CharField(
+        max_length=2, blank=True, null=True, verbose_name=_('Periodo')
+    )
     cod_grupo_asignatura = models.IntegerField(blank=True, null=True, verbose_name=_('Grupo'))
     turno = models.CharField(max_length=1, blank=True, null=True)
     tipo_docencia = models.IntegerField(blank=True, null=True, verbose_name=_('Tipo de docencia'))
@@ -39,7 +53,9 @@ class Asignatura(models.Model):
 
     class Meta:
         db_table = 'asignatura'
-        unique_together = (('plan_id_nk', 'asignatura_id', 'cod_grupo_asignatura', 'centro_id', 'anyo_academico'),)
+        unique_together = (
+            ('plan_id_nk', 'asignatura_id', 'cod_grupo_asignatura', 'centro_id', 'anyo_academico'),
+        )
         verbose_name = _('asignatura SIGM@')
         verbose_name_plural = _('asignaturas SIGM@')
 
@@ -49,7 +65,10 @@ class Asignatura(models.Model):
         Si no existe previamente, se crea la categoría (y sus categorías superiores).
         """
         categoria = get_object_or_None(
-            Categoria, plan_id_nk=self.plan_id_nk, centro_id=self.centro_id, anyo_academico=self.anyo_academico
+            Categoria,
+            plan_id_nk=self.plan_id_nk,
+            centro_id=self.centro_id,
+            anyo_academico=self.anyo_academico,
         )
         if not categoria:
             categoria = Categoria.crear_desde_asignatura(self)
@@ -87,8 +106,12 @@ class Pod(models.Model):
     cod_grupo_asignatura = models.IntegerField(blank=True, null=True, verbose_name='Grupo')
     anyo_academico = models.IntegerField(blank=True, null=True, verbose_name='Año académico')
     nip = models.CharField(max_length=10, blank=True, null=True, verbose_name='NIP')
-    apellido1 = models.CharField(max_length=32, blank=True, null=True, verbose_name='Primer apellido')
-    apellido2 = models.CharField(max_length=32, blank=True, null=True, verbose_name='Segundo apellido')
+    apellido1 = models.CharField(
+        max_length=32, blank=True, null=True, verbose_name='Primer apellido'
+    )
+    apellido2 = models.CharField(
+        max_length=32, blank=True, null=True, verbose_name='Segundo apellido'
+    )
     nombre = models.CharField(max_length=32, blank=True, null=True, verbose_name='Nombre')
     tipo_docencia = models.IntegerField(_("Tipo de docencia"))
 
@@ -99,7 +122,9 @@ class Pod(models.Model):
         verbose_name_plural = 'registros del Plan de Ordenación Docente'
 
     def __str__(self):
-        return '{0} {1} {2} {3}'.format(self.anyo_academico, self.plan_id_nk, self.asignatura_id, self.nip)
+        return '{0} {1} {2} {3}'.format(
+            self.anyo_academico, self.plan_id_nk, self.asignatura_id, self.nip
+        )
 
     # Alternative: https://pypi.org/project/django-composite-foreignkey/
     def get_asignatura(self):
@@ -140,14 +165,20 @@ class Categoria(models.Model):
     )
 
     plataforma_id = models.IntegerField(blank=True, null=True, verbose_name=_('Cód. plataforma'))
-    id_nk = models.CharField(max_length=45, blank=True, null=True, verbose_name=_('Cód. en plataforma'))
+    id_nk = models.CharField(
+        max_length=45, blank=True, null=True, verbose_name=_('Cód. en plataforma')
+    )
     nombre = models.CharField(max_length=250, blank=True, null=True)
     supercategoria = models.ForeignKey(
         'self', models.PROTECT, blank=True, null=True, verbose_name=_('Categoría padre')
     )
-    centro_id = models.IntegerField(blank=True, null=True, verbose_name=_('Cód. centro'), db_index=True)
+    centro_id = models.IntegerField(
+        blank=True, null=True, verbose_name=_('Cód. centro'), db_index=True
+    )
     plan_id_nk = models.IntegerField(blank=True, null=True, verbose_name=_('Cód. plan'))
-    anyo_academico = models.IntegerField(blank=True, null=True, verbose_name=_('Año académico'), db_index=True)
+    anyo_academico = models.IntegerField(
+        blank=True, null=True, verbose_name=_('Año académico'), db_index=True
+    )
 
     class Meta:
         db_table = 'categoria'
@@ -164,7 +195,10 @@ class Categoria(models.Model):
     def crear_desde_asignatura(cls, asignatura):
         """Crea una categoría de plan de estudios para la asignatura indicada."""
         supercategoria = get_object_or_None(
-            Categoria, anyo_academico=asignatura.anyo_academico, centro_id=asignatura.centro_id, plan_id_nk=None
+            Categoria,
+            anyo_academico=asignatura.anyo_academico,
+            centro_id=asignatura.centro_id,
+            plan_id_nk=None,
         )
         if not supercategoria:
             supercategoria = Categoria.crear_de_centro(asignatura)
@@ -184,7 +218,12 @@ class Categoria(models.Model):
         )
         if not supercategoria:
             supercategoria = Categoria.crear_de_anyo(asignatura.anyo_academico)
-        return cls.crear(asignatura.anyo_academico, asignatura.nombre_centro, supercategoria.id, asignatura.centro_id)
+        return cls.crear(
+            asignatura.anyo_academico,
+            asignatura.nombre_centro,
+            supercategoria.id,
+            asignatura.centro_id,
+        )
 
     @classmethod
     def crear_de_anyo(cls, anyo):
@@ -192,7 +231,9 @@ class Categoria(models.Model):
         return cls.crear(anyo, f'Cursos {anyo}-{anyo + 1}')
 
     @classmethod
-    def crear(cls, anyo_academico, nombre, supercategoria_id=None, centro_id=None, plan_id_nk=None):
+    def crear(
+        cls, anyo_academico, nombre, supercategoria_id=None, centro_id=None, plan_id_nk=None
+    ):
         """Crea una categoría con los datos indicados, en la aplicación y en Moodle."""
         nueva_categoria = cls(
             plataforma_id=1,
@@ -248,16 +289,28 @@ class Curso(models.Model):
 
     nombre = models.CharField(
         max_length=200,
-        help_text=_('Nombre del curso. No se puede cambiar, así que debe ser descriptivo y diferenciable de otros.'),
+        help_text=_(
+            'Nombre del curso. No se puede cambiar, así que debe ser descriptivo y diferenciable de otros.'
+        ),
     )
-    fecha_solicitud = models.DateTimeField(blank=True, null=True, verbose_name=_('Fecha de solicitud'))
-    fecha_autorizacion = models.DateTimeField(blank=True, null=True, verbose_name=_('Fecha de autorización'))
+    fecha_solicitud = models.DateTimeField(
+        blank=True, null=True, verbose_name=_('Fecha de solicitud')
+    )
+    fecha_autorizacion = models.DateTimeField(
+        blank=True, null=True, verbose_name=_('Fecha de autorización')
+    )
     autorizador = models.ForeignKey('accounts.CustomUser', models.PROTECT, blank=True, null=True)
     plataforma_id = models.IntegerField(blank=True, null=True, verbose_name=_('Cód. plataforma'))
-    id_nk = models.CharField(max_length=45, blank=True, null=True, verbose_name=_('Código en plataforma'))
-    fecha_creacion = models.DateTimeField(blank=True, null=True, verbose_name=_('Fecha de creación'))
+    id_nk = models.CharField(
+        max_length=45, blank=True, null=True, verbose_name=_('Código en plataforma')
+    )
+    fecha_creacion = models.DateTimeField(
+        blank=True, null=True, verbose_name=_('Fecha de creación')
+    )
     url = models.CharField(max_length=200, blank=True, null=True, verbose_name=_('URL'))
-    categoria = models.ForeignKey(Categoria, models.PROTECT, blank=True, null=True, verbose_name=_('Categoría'))
+    categoria = models.ForeignKey(
+        Categoria, models.PROTECT, blank=True, null=True, verbose_name=_('Categoría')
+    )
     anyo_academico = models.IntegerField(blank=True, null=True, verbose_name=_('Año académico'))
     asignatura = models.OneToOneField(
         Asignatura, blank=True, null=True, on_delete=models.PROTECT, verbose_name=_('Asignatura')
@@ -273,7 +326,9 @@ class Curso(models.Model):
         ),
     )
     comentarios = models.TextField(blank=True, null=True, verbose_name=_('Comentarios'))
-    profesores = models.ManyToManyField('accounts.CustomUser', related_name='profesores', through='ProfesorCurso')
+    profesores = models.ManyToManyField(
+        'accounts.CustomUser', related_name='profesores', through='ProfesorCurso'
+    )
 
     class Meta:
         db_table = 'curso'
@@ -306,7 +361,9 @@ class Curso(models.Model):
         """Añade al usuario a la lista de profesores del curso y lo matricula en Moodle."""
         cliente = WSClient()
         cliente.matricular_profesor(usuario, self)
-        return ProfesorCurso.objects.create(curso=self, profesor=usuario, fecha_alta=timezone.now())
+        return ProfesorCurso.objects.create(
+            curso=self, profesor=usuario, fecha_alta=timezone.now()
+        )
 
     def borrar_en_plataforma(self):
         """Borra el curso en Moodle."""
@@ -355,8 +412,12 @@ class Forano(models.Model):
         verbose_name='NIP a vincular',
         help_text=_('Número de Identificación Personal del usuario a vincular.'),
     )
-    fecha_solicitud = models.DateTimeField(blank=True, null=True, verbose_name=_('Fecha de solicitud'))
-    fecha_autorizacion = models.DateTimeField(blank=True, null=True, verbose_name=_('Fecha de autorización'))
+    fecha_solicitud = models.DateTimeField(
+        blank=True, null=True, verbose_name=_('Fecha de solicitud')
+    )
+    fecha_autorizacion = models.DateTimeField(
+        blank=True, null=True, verbose_name=_('Fecha de autorización')
+    )
     estado = models.IntegerField(choices=Estado.choices, verbose_name=_('Estado'))
     motivo_solicitud = models.TextField(
         verbose_name=_('Motivación de la solicitud'),
@@ -367,11 +428,19 @@ class Forano(models.Model):
     )
     comentarios = models.TextField(blank=True, null=True, verbose_name=_('Comentarios'))
     autorizador = models.ForeignKey(
-        'accounts.CustomUser', models.PROTECT, blank=True, null=True, related_name='foranos_resueltos'
+        'accounts.CustomUser',
+        models.PROTECT,
+        blank=True,
+        null=True,
+        related_name='foranos_resueltos',
     )
     # curso = models.ForeignKey(Curso, models.PROTECT, blank=True, null=True, verbose_name=_('Curso'))
     solicitante = models.ForeignKey(
-        'accounts.CustomUser', models.PROTECT, blank=True, null=True, related_name='foranos_solicitados'
+        'accounts.CustomUser',
+        models.PROTECT,
+        blank=True,
+        null=True,
+        related_name='foranos_solicitados',
     )
 
     class Meta:
@@ -410,4 +479,6 @@ class RightsSupport(models.Model):
     class Meta:
         managed = False  # No database table creation or deletion operations will be performed for this model.
 
-        permissions = (('matricular_plan', _('Puede matricular en un curso a todos los alumnos de un plan')),)
+        permissions = (
+            ('matricular_plan', _('Puede matricular en un curso a todos los alumnos de un plan')),
+        )
