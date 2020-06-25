@@ -9,3 +9,7 @@
 !docker-entrypoint.sh
 !manage.py
 !requirements.txt
+.*
+!.coveragerc
+!.env
+!.pylintrc
