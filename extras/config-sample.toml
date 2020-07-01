@@ -1,0 +1,15 @@
+[moodle]
+geo_token = '1a70a11ace1e57ee57a5eca1adefe51a'
+api_url = 'https://maquina.dominio.red/ruta/webservice/rest/server.php'
+db_host = 'localhost'
+db_user = 'jim_hawkins'
+db_pass = 'treasure'
+db_name = 'hispaniola'
+db_port = 3306
+
+[gi]
+db_host = 'nassau.bahamas.org'
+db_user = 'jack_rackham'
+db_pass = 'calico'
+db_sid = 'RANGER'
+db_port = 1521

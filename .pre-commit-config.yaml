@@ -69,4 +69,4 @@ repos:
     rev: e233916fb2b4b9019b4a3cc0497994c7926fe36b
     hooks:
       - id: forbid-executables
-        exclude: manage.py|setup.py|docker-entrypoint.sh|mariadb-backup.sh
+        exclude: manage.py|setup.py|docker-entrypoint.sh|mariadb-backup.sh|email2nip.py
