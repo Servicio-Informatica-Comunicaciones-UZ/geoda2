@@ -85,6 +85,10 @@ podía quitar de profesor del curso.
 Posteriormente, los gestores pueden añadir o quitar profesores, para lo que se usan las
 funciones `enrol_manual_enrol_users` y `core_enrol_unenrol_user_enrolment`.
 
+Todos los que sean profesores de algún curso son alumnos del curso 49 («Apoyo Docente al ADD»).
+Para ello hay una vista (`ApoyoDocente`) de todos los que tienen algún rol profesor en algún
+curso, que se usa con el tipo de matriculación «Base de Datos Externa».
+
 ### Usuarios
 
 En Administración del Sitio → Extensiones → Identificación están habilitados 4 tipos de validación:
