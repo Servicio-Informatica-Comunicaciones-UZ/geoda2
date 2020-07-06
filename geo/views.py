@@ -179,14 +179,12 @@ class CalendarioUpdate(
         + '<br>\n<ul>\n<li>'
         + str(
             _(
-                'Mover los cursos de las categoría «Varios» del año anterior '
+                'Mover las categorías «Varios» y «Escuela de Doctorado» del año anterior '
                 'a la del año actual, tanto en GEO como en Moodle.'
             )
         )
         + '</li>\n<li>'
-        + str(_('Ídem con los cursos de la categoría «Escuela de Doctorado».'))
-        + '</li>\n<li>'
-        + str(_('Actualizar el año en las pasarelas de GEO ' '(carga de asignaturas y POD).'))
+        + str(_('Actualizar el año en las pasarelas de GEO (carga de asignaturas y POD).'))
         + '</li>\n</ul>\n'
         + str(_('<b>Contacte con los responsables de Moodle y GEO del SICUZ.</b>'))
     )
@@ -201,9 +199,7 @@ class CalendarioUpdate(
 
         # Crear categoría para el año académico. Vg: «Cursos 2019-2020»
         cat_anyo = self._crear_categoria(anyo, nombre_cat_anyo, None)
-        # Crear categorías «Varios», «Escuela de Doctorado» y «No reglada».
-        self._crear_categoria(anyo, 'Varios', cat_anyo.id)
-        self._crear_categoria(anyo, 'Escuela de Doctorado', cat_anyo.id)
+        # Crear categoría «No reglada».
         cat_nr = self._crear_categoria(anyo, 'No reglada', cat_anyo.id)
         # Crear las subcategorías de los estudios no reglados
         for nombre in Categoria.NO_REGLADAS:
