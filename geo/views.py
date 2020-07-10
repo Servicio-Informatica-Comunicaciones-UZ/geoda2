@@ -172,6 +172,19 @@ class CalendarioUpdate(
     model = Calendario
     fields = ('anyo',)
     template_name = 'gestion/calendario_form.html'
+
+    # Tras cambiar el año hay que mover en Moodle
+    # las categorías Varios (5047) y Escuela de Doctorado (5021).
+    # Se puede usar `moosh` para mover una categoría a otra.
+    # Example: Move the category with id 5 to be in the category with id 7:
+    # moosh category-move 5 7
+
+    # También hay que moverlas en Geoda:
+    # SELECT id, anyo_academico FROM categoria WHERE supercategoria_id IS NULL
+    #   ORDER BY anyo_academico DESC LIMIT 1;
+    # UPDATE categoria SET anyo_academico=<anyo>, supercategoria_id=<id> WHERE id_nk=5047;
+    # UPDATE categoria SET anyo_academico=<anyo>, supercategoria_id=<id> WHERE id_nk=5021;
+
     success_message = mark_safe(
         str(_('Se ha actualizado el curso académico actual.'))
         + '<br><br>\n'
