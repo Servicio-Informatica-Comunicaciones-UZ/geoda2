@@ -75,9 +75,9 @@ class WSClient:
         )
         return respuesta
 
-    def buscar_usuario(self, usuario):
-        """Busca un usuario en Moodle."""
-        # Buscamos a un usuario con ese NIP (idnumber) y dirección de correo.
+    def buscar_usuario_correo(self, usuario):
+        """Busca en Moodle el usuarioCorreo correspondiente al usuario de Geoda indicado."""
+        # Buscamos a un usuarioCorreo con ese NIP (idnumber) y dirección de correo.
         payload = {
             'criteria[0][key]': 'idnumber',
             'criteria[0][value]': usuario.username,
@@ -87,26 +87,54 @@ class WSClient:
         respuesta = self._request_url('POST', 'core_user_get_users', self.geo_token, payload)
         usuarios_moodle = respuesta['users']
         if usuarios_moodle:
-            usuario_moodle = usuarios_moodle[0]
-        else:
-            # Si no se encuentra, cogemos al primer usuario con ese NIP (idnumber).
-            payload = {'criteria[0][key]': 'idnumber', 'criteria[0][value]': usuario.username}
-            respuesta = self._request_url('POST', 'core_user_get_users', self.geo_token, payload)
-            usuarios_moodle = respuesta['users']
-            if usuarios_moodle:
+            if not usuarios_moodle[0]['username'].isnumeric():
                 usuario_moodle = usuarios_moodle[0]
-            else:
-                # La tarea ETL `add_usuarios_y_matriculas` (Pentaho Spoon)
-                # copia un fichero CSV con los usuarios al servidor
-                # y una tarea cron los crea, por lo que no se debería llegar aquí nunca,
-                # salvo que se trate de un profesor creado ese mismo día.
-                raise Exception('Usuario no encontrado en Moodle.')
+            elif len(usuarios_moodle) > 1:
+                usuario_moodle = usuarios_moodle[1]
 
-        return usuario_moodle
+            if usuario_moodle:
+                return usuario_moodle
+
+        # Si no se encuentra, cogemos al primer usuarioCorreo con ese NIP (idnumber),
+        # aunque no coincida el correo en Moodle con el de Geoda.
+        payload = {'criteria[0][key]': 'idnumber', 'criteria[0][value]': usuario.username}
+        respuesta = self._request_url('POST', 'core_user_get_users', self.geo_token, payload)
+        usuarios_moodle = respuesta['users']
+        if usuarios_moodle:
+            if not usuarios_moodle[0]['username'].isnumeric():
+                usuario_moodle = usuarios_moodle[0]
+            elif len(usuarios_moodle) > 1:
+                usuario_moodle = usuarios_moodle[1]
+
+            if usuario_moodle:
+                return usuario_moodle
+
+        # La tarea ETL `add_usuarios_y_matriculas` (Pentaho Spoon)
+        # copia un fichero CSV con los usuarios al servidor
+        # y una tarea cron los crea, por lo que no se debería llegar aquí nunca,
+        # salvo que se trate de un profesor creado ese mismo día.
+        raise Exception('Usuario no encontrado en Moodle.')
+
+    def buscar_usuario_nip(self, usuario):
+        """Busca en Moodle el usuarioNip correspondiente al usuario de Geoda indicado."""
+        payload = {
+            'criteria[0][key]': 'username',
+            'criteria[0][value]': usuario.username,
+        }
+        respuesta = self._request_url('POST', 'core_user_get_users', self.geo_token, payload)
+        usuarios_moodle = respuesta['users']
+        if usuarios_moodle:
+            return usuarios_moodle[0]
+
+        raise Exception('Usuario no encontrado en Moodle.')
 
     def desmatricular(self, usuario, curso):
         """Desmatricula a un usuario de un curso."""
-        usuario_moodle = self.buscar_usuario(usuario)
+        # Hasta el curso 2019-20 los profesores entraban en Moodle con su usuario de correo.
+        if curso.anyo_academico < 2020:
+            usuario_moodle = self.buscar_usuario_correo(usuario)
+        else:
+            usuario_moodle = self.buscar_usuario_nip(usuario)
         payload = {
             'usuario_id_nk': usuario_moodle['id'],
             'curso_id_nk': curso.id_nk,
@@ -130,7 +158,7 @@ class WSClient:
 
     def matricular_profesor(self, usuario, curso):
         """Matricula a un usuario como profesor de un curso de Moodle."""
-        usuario_moodle = self.buscar_usuario(usuario)
+        usuario_moodle = self.buscar_usuario_nip(usuario)
         payload = {
             'enrolments[0][roleid]': 3,  # id del rol `editingteacher` en Moodle
             'enrolments[0][userid]': usuario_moodle['id'],
