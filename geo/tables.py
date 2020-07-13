@@ -1,5 +1,7 @@
 import django_tables2 as tables
+from django.db.models import Q
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
@@ -110,7 +112,6 @@ class PodTable(tables.Table):
 class CursosTodosTable(tables.Table):
 
     enlace = tables.Column(empty_values=(), verbose_name='')
-    profesores = tables.ManyToManyColumn(transform=lambda u: u.full_name)
 
     def render_enlace(self, record):
         return mark_safe(
@@ -120,6 +121,13 @@ class CursosTodosTable(tables.Table):
                 reverse('curso_detail', args=[record.id])
             )
         )
+
+    def render_profesores(self, record):
+        asignaciones = record.profesorcurso_set.filter(
+            Q(fecha_baja__gt=timezone.now()) | Q(fecha_baja=None)
+        ).all()
+        profes = [a.profesor.full_name for a in asignaciones]
+        return ', '.join(profes)
 
     class Meta:
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}
