@@ -10,7 +10,7 @@ from .views import (
     CursosTodosView,
     CursosPendientesView,
     ForanoDetailView,
-    ForanoResolverView,
+    # ForanoResolverView,
     ForanoSolicitarView,
     ForanoTodosView,
     HomePageView,
@@ -37,7 +37,7 @@ urlpatterns = [
     path('gestion/curso/pendientes/', CursosPendientesView.as_view(), name='curso_pendientes'),
     path('gestion/forano/<int:pk>/', ForanoDetailView.as_view(), name='forano_detail'),
     path('gestion/forano/', ForanoTodosView.as_view(), name='forano_todos'),
-    path('gestion/forano/resolver/', ForanoResolverView.as_view(), name='forano_resolver'),
+    # path('gestion/forano/resolver/', ForanoResolverView.as_view(), name='forano_resolver'),
     path('gestion/matricular-plan/', MatricularPlanView.as_view(), name='matricular_plan'),
     path('gestion/profesor-curso/', ProfesorCursoAnyadirView.as_view(), name='pc_anyadir'),
     path(

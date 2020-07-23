@@ -146,7 +146,7 @@ class ForanoFilterFormHelper(FormHelper):
                 "<span class='fa fa-search'></span> " + str(_('Buscar solicitud de vinculación')),
                 Div(
                     InlineField('nip', wrapper_class='col-6'),
-                    InlineField('estado', wrapper_class='col-6'),
+                    # InlineField('estado', wrapper_class='col-6'),
                     css_class='row',
                 ),
                 css_class='col-10 border p-3',

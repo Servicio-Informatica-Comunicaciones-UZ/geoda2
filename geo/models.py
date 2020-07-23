@@ -422,8 +422,8 @@ class Forano(models.Model):
     motivo_solicitud = models.TextField(
         verbose_name=_('Motivación de la solicitud'),
         help_text=_(
-            'Quién es el usuario externo, motivos por los que solicita que su vinculación a Moodle, '
-            'así como el curso en el que participaría.'
+            'Quién es el usuario externo, motivos por los que solicita su vinculación a Moodle, '
+            'así como el curso en el que participaría y con qué rol.'
         ),
     )
     comentarios = models.TextField(blank=True, null=True, verbose_name=_('Comentarios'))
