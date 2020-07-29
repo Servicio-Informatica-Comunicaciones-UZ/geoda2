@@ -26,6 +26,10 @@
       <th scope="row">{% trans "Cód. asignatura Sigma" %}</th>
       <td>{{ curso.asignatura.asignatura_id | default_if_none:"—" }}</td>
     </tr>
+    <tr>
+      <th scope="row">{% trans "Grupo" %}</th>
+      <td>{{ curso.asignatura.cod_grupo_asignatura | default_if_none:"—" }}</td>
+    </tr>
 
     <tr>
       <th scope="row">{% trans "Estado" %}</th>
