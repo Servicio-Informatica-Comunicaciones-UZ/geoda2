@@ -41,8 +41,8 @@ JOIN add_geodb.Profile ON User.id=Profile.user_id
 WHERE id>1;
 
 -- SELECT DISTINCT username FROM accounts_customuser WHERE username RLIKE '^[0-9]*$';
-INSERT INTO geoda2.social_auth_usersocialauth (provider,uid,extra_data,user_id)
-SELECT 'saml', CONCAT('lord:', username), '{}', id
+INSERT INTO geoda2.social_auth_usersocialauth (provider,uid,extra_data,user_id,created,modified)
+SELECT 'saml', CONCAT('lord:', username), '{}', id, NOW(), NOW()
 FROM geoda2.accounts_customuser
 WHERE username RLIKE '^[0-9]*$';
 
