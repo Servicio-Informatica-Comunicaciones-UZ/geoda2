@@ -4,6 +4,7 @@ from .views import (
     ASCrearCursoView,
     ASTodasView,
     AyudaView,
+    CalendarioActualView,
     CalendarioUpdate,
     CursoDeleteView,
     CursoDetailView,
@@ -27,6 +28,7 @@ from .views import (
 urlpatterns = [
     path('', HomePageView.as_view(), name='home'),
     path('ayuda/', AyudaView.as_view(), name='ayuda'),
+    path('calendario/actual/', CalendarioActualView.as_view(), name='calendario_actual'),
     path('asignatura/<int:pk>/crear-curso/', ASCrearCursoView.as_view(), name='as_crear_curso'),
     path('asignatura/', ASTodasView.as_view(), name='as_todas'),
     path('gestion/calendario/<slug:slug>/', CalendarioUpdate.as_view(), name='calendario'),

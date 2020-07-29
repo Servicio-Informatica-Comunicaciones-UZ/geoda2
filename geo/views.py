@@ -23,6 +23,7 @@ from django.contrib.auth.mixins import (
 from django.contrib.auth.models import Group
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
@@ -160,6 +161,13 @@ class ASTodasView(LoginRequiredMixin, ChecksMixin, PagedFilteredTableView):
 
     def test_func(self):
         return self.es_pas_o_pdi()
+
+
+class CalendarioActualView(View):
+    """Devuelve el año académico actual."""
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse(Calendario.objects.get(slug='actual').anyo)
 
 
 class CalendarioUpdate(
