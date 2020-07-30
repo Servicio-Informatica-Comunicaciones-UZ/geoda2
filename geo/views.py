@@ -164,10 +164,11 @@ class ASTodasView(LoginRequiredMixin, ChecksMixin, PagedFilteredTableView):
 
 
 class CalendarioActualView(View):
-    """Devuelve el año académico actual."""
+    """Devuelve el año académico actual en formato JSON."""
 
     def get(self, request, *args, **kwargs):
-        return HttpResponse(Calendario.objects.get(slug='actual').anyo)
+        anyo_actual = Calendario.objects.get(slug='actual').anyo
+        return HttpResponse(f'{{"anyo": {anyo_actual}}}')
 
 
 class CalendarioUpdate(
