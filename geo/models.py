@@ -386,7 +386,9 @@ class Curso(models.Model):
         """
 
         return {
-            'fullname': f'{self.nombre} ({self.curso_academico})',
+            'fullname': f'{self.nombre} ({self.curso_academico})'
+            if self.asignatura
+            else f'{self.nombre}',  # A los cursos no reglados no se les añade el curso académico
             'shortname': self.asignatura.get_shortname() if self.asignatura else f'NR_{self.id}',
             'categoryid': self.categoria.id_nk,  # id de la categoría en Moodle
             'idnumber': self.id,
