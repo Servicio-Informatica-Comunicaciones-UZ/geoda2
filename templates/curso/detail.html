@@ -194,6 +194,30 @@
   {% endif %}
 
 
+  {% if curso.estado == curso.Estado.CREADO.value and puede_matricular %}
+    <br />
+    <h2>{% trans "Rematricular profesorado" %}</h2>
+    <hr />
+
+    <p>
+      {% blocktrans %}
+      En caso de que, accidentalmente, se haya desmatriculado en Moodle al profesorado,
+      puede volver a cargar en Moodle los datos de GEO.
+      {% endblocktrans %}
+    </p>
+
+    <form action="{% url 'curso_rematricular' %}" class="form-inline" id="rematricular-form" method="post">
+      {% csrf_token %}
+      <input type="hidden" id="curso_id" name="curso_id" value="{{ curso.id }}">
+      <div class="btn-group" role="group" aria-label="Botones">
+        <button class="btn btn-warning" title="{% trans 'Rematricular profesorado' %}" type="submit">
+          <span aria-hidden="true" class="fas fa-people-arrows"></span> {% trans 'Rematricular profesorado' %}
+        </button>
+      </div>
+    </form>
+  {% endif %}
+
+
   {% if perms.geo.curso_delete %}
     <br /><br />
     <h2>{% trans "Eliminar el curso" %}</h2>

@@ -74,6 +74,18 @@ class ChecksMixin(UserPassesTestMixin):
             col_autorizado in colectivos_del_usuario for col_autorizado in ['PAS', 'ADS', 'PDI']
         )
 
+    def es_profesor_del_curso(self, curso_id):
+        """Devuelve si el usuario actual es profesor del curso indicado."""
+        self.permission_denied_message = _('Usted no es profesor de este curso')
+        curso = get_object_or_404(Curso, pk=curso_id)
+        asignaciones = curso.profesorcurso_set.filter(
+            Q(fecha_baja__gt=timezone.now()) | Q(fecha_baja=None)
+        ).select_related('profesor')
+        profesores = [asignacion.profesor for asignacion in asignaciones]
+        usuario_actual = self.request.user
+
+        return usuario_actual in profesores
+
     def test_func(self):
         raise NotImplementedError(
             '{0} carece de la implementación del método test_func().'.format(
@@ -295,9 +307,38 @@ class CursoDetailView(LoginRequiredMixin, DetailView):
 
         context['asignaciones'] = self.object.profesorcurso_set.filter(
             Q(fecha_baja__gt=timezone.now()) | Q(fecha_baja=None)
-        ).select_related
+        ).select_related('profesor')
+        profesores = [asignacion.profesor for asignacion in context['asignaciones']]
+        es_profesor_del_curso = self.request.user in profesores
+        context['puede_matricular'] = es_profesor_del_curso or self.request.user.has_perm(
+            'geo.anyadir_profesorcurso'
+        )
 
         return context
+
+
+class CursoRematricularView(LoginRequiredMixin, ChecksMixin, View):
+    """Rematricula en un curso de Moodle al profesorado que consta en GEO."""
+
+    def post(self, request, *args, **kwargs):
+        curso_id = request.POST.get('curso_id')
+        curso = get_object_or_404(Curso, pk=curso_id)
+
+        asignaciones = curso.profesorcurso_set.filter(
+            Q(fecha_baja__gt=timezone.now()) | Q(fecha_baja=None)
+        ).select_related('profesor')
+
+        cliente = WSClient()
+        for asignacion in asignaciones:
+            cliente.matricular_profesor(asignacion.profesor, curso)
+
+        messages.success(request, _(f'Se ha vuelto a matricular al profesorado del curso.'))
+        return redirect('curso_detail', curso_id)
+
+    def test_func(self):
+        return self.es_profesor_del_curso(
+            self.request.POST.get('curso_id')
+        ) or self.request.user.has_perm('geo.anyadir_profesorcurso')
 
 
 class CursosTodosView(LoginRequiredMixin, PermissionRequiredMixin, PagedFilteredTableView):
