@@ -188,6 +188,6 @@ class ForanoTodosTable(tables.Table):
     class Meta:
         attrs = {'class': 'table table-striped table-hover cabecera-azul'}
         model = Forano
-        fields = ('fecha_solicitud', 'solicitante.full_name', 'nip', 'enlace')  # 'estado',
+        fields = ('fecha_solicitud', 'solicitante__full_name', 'nip', 'enlace')  # 'estado',
         empty_text = _("No hay ningún usuario externo que satisfaga los criterios de búsqueda.")
         template_name = 'django_tables2/bootstrap4.html'

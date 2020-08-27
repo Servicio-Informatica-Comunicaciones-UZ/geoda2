@@ -35,7 +35,7 @@ UPDATE add_geodb.User SET lastvisit_at=NULL WHERE lastvisit_at='0000-00-00 00:00
 
 -- No se han recogido los roles (admin, gestor, profesor, forano)
 INSERT INTO geoda2.accounts_customuser (id,username,password,email,date_joined,last_login,is_superuser,is_active,first_name,last_name,is_staff)
-SELECT id,username,password,email,create_at,lastvisit_at,superuser,status,firstname,lastname,0
+SELECT id,username,password,email,create_at,lastvisit_at,0,status,firstname,lastname,0
 FROM add_geodb.User
 JOIN add_geodb.Profile ON User.id=Profile.user_id
 WHERE id>1;
