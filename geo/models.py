@@ -411,8 +411,13 @@ class Forano(models.Model):
 
     nip = models.CharField(
         max_length=10,
-        verbose_name='NIP a vincular',
+        verbose_name=_('NIP a vincular'),
         help_text=_('Número de Identificación Personal del usuario a vincular.'),
+    )
+    nombre = models.CharField(
+        max_length=127,
+        verbose_name=_('Nombre y apellidos'),
+        help_text=_('Nombre y apellidos del usuario a vincular.'),
     )
     fecha_solicitud = models.DateTimeField(
         blank=True, null=True, verbose_name=_('Fecha de solicitud')

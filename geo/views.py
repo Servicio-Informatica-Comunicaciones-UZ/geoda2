@@ -557,8 +557,8 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
     """
 
     model = Forano
-    fields = ('nip', 'motivo_solicitud')
-    required = ('nip', 'motivo_solicitud')
+    fields = ('nip', 'nombre', 'motivo_solicitud')
+    required = ('nip', 'nombre', 'motivo_solicitud')
     template_name = 'forano/solicitar.html'
 
     def post(self, request, *args, **kwargs):

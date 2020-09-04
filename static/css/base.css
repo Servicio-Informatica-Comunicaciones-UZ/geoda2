@@ -200,3 +200,12 @@ h1 > small {
 .margin-right-1 {
     margin-right: 1em;
 }
+
+/* Help text in forms is too small and light */
+.text-muted {
+    color: #5c656d !important;
+}
+
+.form-text {
+    font-size: initial;
+}
