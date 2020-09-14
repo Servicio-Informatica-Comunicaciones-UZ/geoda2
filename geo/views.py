@@ -492,11 +492,15 @@ class ResolverSolicitudCursoView(LoginRequiredMixin, PermissionRequiredMixin, Re
 
     @staticmethod
     def _notifica_resolucion(curso, site_url):
-        """Envía un correo al solicitante del curso informando de la resolucíon."""
+        """Envía un correo al solicitante del curso y los gestores informando de la resolución."""
+        grupo_gestores = Group.objects.get(name='Gestores')
+        gestores = grupo_gestores.user_set.all()
+        correos_gestores = list(map(lambda g: g.email, gestores))
         send_templated_mail(
             template_name='resolucion',
             from_email=None,  # settings.DEFAULT_FROM_EMAIL
             recipient_list=[curso.profesores.first().email],
+            bcc=correos_gestores,
             context={'curso': curso, 'site_url': site_url},
         )
 
