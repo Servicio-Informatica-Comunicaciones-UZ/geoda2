@@ -359,11 +359,10 @@ class Curso(models.Model):
 
     def anyadir_profesor(self, usuario):
         """Añade al usuario a la lista de profesores del curso y lo matricula en Moodle."""
+        pc = ProfesorCurso.objects.create(curso=self, profesor=usuario, fecha_alta=timezone.now())
         cliente = WSClient()
         cliente.matricular_profesor(usuario, self)
-        return ProfesorCurso.objects.create(
-            curso=self, profesor=usuario, fecha_alta=timezone.now()
-        )
+        return pc
 
     def borrar_en_plataforma(self):
         """Borra el curso en Moodle."""
