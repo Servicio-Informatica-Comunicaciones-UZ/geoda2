@@ -294,6 +294,9 @@ class CursoDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
                     )
                 return redirect('curso_detail', curso.id)
 
+            for pc in curso.profesorcurso_set.all():
+                pc.delete()
+
         messages.success(request, _(f"El curso «{curso.nombre}» ha sido borrado con éxito."))
         return super().post(request, *args, **kwargs)
 
