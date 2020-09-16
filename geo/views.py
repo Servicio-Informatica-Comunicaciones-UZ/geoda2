@@ -118,6 +118,17 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
             messages.error(request, _('El curso ya estaba creado.'))
             return redirect('curso_detail', asignatura.curso.id)
 
+        usuario = self.request.user
+        if not usuario.email:
+            messages.error(
+                request,
+                _(
+                    'No se puede crear el curso porque usted no tiene definida '
+                    'ninguna dirección de correo electrónico en Gestión de Identidades.'
+                ),
+            )
+            return redirect('curso_detail', asignatura.curso.id)
+
         curso = self._cargar_asignatura_en_curso(asignatura)
 
         # Comprobar si existe la categoría en la plataforma, y si no, crearla.
@@ -129,7 +140,7 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
         datos_curso = curso.get_datos()
         datos_recibidos = cliente.crear_curso(datos_curso)
         curso.actualizar_tras_creacion(datos_recibidos)
-        curso.anyadir_profesor(self.request.user)
+        curso.anyadir_profesor(usuario)
         mensaje = cliente.automatricular(asignatura, curso)
         messages.info(request, mensaje)
         messages.success(request, _('Curso creado correctamente en Moodle.'))
@@ -512,6 +523,17 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
     template_name = 'curso/solicitar.html'
 
     def get(self, request, *args, **kwargs):
+        usuario = self.request.user
+        if not usuario.email:
+            messages.error(
+                request,
+                _(
+                    'Usted no puede solicitar cursos porque no tiene definida '
+                    'ninguna dirección de correo electrónico en Gestión de Identidades.'
+                ),
+            )
+            return redirect('mis_cursos')
+
         formulario = CursoSolicitarForm(user=self.request.user)
         return render(request, self.template_name, {'form': formulario})
 
