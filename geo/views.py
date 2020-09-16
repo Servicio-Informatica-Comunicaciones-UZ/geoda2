@@ -122,9 +122,12 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
         if not usuario.email:
             messages.error(
                 request,
-                _(
-                    'No se puede crear el curso porque usted no tiene definida '
-                    'ninguna dirección de correo electrónico en Gestión de Identidades.'
+                mark_safe(
+                    _(
+                        'No se puede crear el curso porque usted no tiene definida '
+                        'ninguna dirección de correo electrónico en '
+                        '<a href="https://identidad.unizar.es">Gestión de Identidades</a>.'
+                    )
                 ),
             )
             return redirect('curso_detail', asignatura.curso.id)
@@ -527,9 +530,12 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
         if not usuario.email:
             messages.error(
                 request,
-                _(
-                    'Usted no puede solicitar cursos porque no tiene definida '
-                    'ninguna dirección de correo electrónico en Gestión de Identidades.'
+                mark_safe(
+                    _(
+                        'Usted no puede solicitar cursos porque no tiene definida '
+                        'ninguna dirección de correo electrónico en '
+                        '<a href="https://identidad.unizar.es">Gestión de Identidades</a>.'
+                    )
                 ),
             )
             return redirect('mis_cursos')
