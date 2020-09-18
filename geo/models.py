@@ -5,6 +5,7 @@ from time import time
 from annoying.functions import get_config, get_object_or_None
 
 # Django
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -408,10 +409,10 @@ class Forano(models.Model):
         DENEGADO = 2, _('Denegado')
         AUTORIZADO = 3, _('Autorizado')
 
-    nip = models.CharField(
-        max_length=10,
+    nip = models.PositiveIntegerField(
         verbose_name=_('NIP a vincular'),
         help_text=_('Número de Identificación Personal del usuario a vincular.'),
+        validators=[MinValueValidator(100001), MaxValueValidator(999999)],
     )
     nombre = models.CharField(
         max_length=127,
