@@ -104,7 +104,7 @@ class CustomUser(AbstractUser):
             # Si Gestión de Identidades devuelve un error, borramos el usuario
             # y finalizamos mostrando el mensaje de error.
             usuario.delete()
-            raise ValidationError('ERROR: ' + str(ex))
+            raise ValidationError(ex)
 
         # HACK - Indicamos que la autenticación es vía Single Sign On con SAML.
         usuario_social = UserSocialAuth(

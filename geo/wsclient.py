@@ -158,7 +158,11 @@ class WSClient:
 
     def matricular_profesor(self, usuario, curso):
         """Matricula a un usuario como profesor de un curso de Moodle."""
-        usuario_moodle = self.buscar_usuario_nip(usuario)
+        try:
+            usuario_moodle = self.buscar_usuario_nip(usuario)
+        except Exception as ex:
+            raise ex
+
         payload = {
             'enrolments[0][roleid]': 3,  # id del rol `editingteacher` en Moodle
             'enrolments[0][userid]': usuario_moodle['id'],
