@@ -1,7 +1,8 @@
 {% block subject %}Solicitud de vinculación de un usuario externo ({{ forano.nip }}){% endblock %}
 {% block plain %}
 {{ forano.solicitante.full_name }} ha solicitado
-la vinculación del usuario externo con NIP «{{ forano.nip }}».
+la vinculación del usuario externo con NIP «{{ forano.nip }}»
+y dirección de correo electrónico «{{ forano.email }}».
 
 Motivación:
 {{ forano.motivo_solicitud }}

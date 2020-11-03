@@ -31,6 +31,10 @@
       <td>{{ forano.nombre }}</td>
     </tr>
     <tr>
+      <th scope="row">{% trans "Correo electrónico del usuario externo" %}</th>
+      <td>{{ forano.email | default_if_none:"—" }}</td>
+    </tr>
+    <tr>
       <th scope="row">{% trans "Motivación de la solicitud" %}</th>
       <td>{{ forano.motivo_solicitud | linebreaks }}</td>
     </tr>
