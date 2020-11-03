@@ -599,8 +599,8 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
     """
 
     model = Forano
-    fields = ('nip', 'nombre', 'motivo_solicitud')
-    required = ('nip', 'nombre', 'motivo_solicitud')
+    fields = ('nip', 'nombre', 'email', 'motivo_solicitud')
+    required = ('nip', 'nombre', 'email', 'motivo_solicitud')
     template_name = 'forano/solicitar.html'
 
     def post(self, request, *args, **kwargs):
@@ -643,6 +643,7 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
                 date.today().isoformat(),  # fechaInicio
                 (date.today() + relativedelta(years=1)).isoformat(),  # fechaFin (en 1 año)
                 self.request.user.username,  # nipResponsable
+                forano.email,  # correoPersonal
             )
 
             if response.aviso:

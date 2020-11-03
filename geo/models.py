@@ -419,6 +419,11 @@ class Forano(models.Model):
         verbose_name=_('Nombre y apellidos'),
         help_text=_('Nombre y apellidos del usuario a vincular.'),
     )
+    email = models.EmailField(
+        _('correo electrónico'),
+        help_text=_('Dirección de correo electrónico del usuario a vincular'),
+        null=True,
+    )
     fecha_solicitud = models.DateTimeField(
         blank=True, null=True, verbose_name=_('Fecha de solicitud')
     )
