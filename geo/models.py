@@ -294,13 +294,26 @@ class Curso(models.Model):
             'Nombre del curso. No se puede cambiar, así que debe ser descriptivo y diferenciable de otros.'
         ),
     )
+    solicitante = models.ForeignKey(
+        'accounts.CustomUser',
+        models.PROTECT,
+        blank=True,
+        null=True,
+        related_name='cursos_solicitados',
+    )
     fecha_solicitud = models.DateTimeField(
         blank=True, null=True, verbose_name=_('Fecha de solicitud')
     )
     fecha_autorizacion = models.DateTimeField(
         blank=True, null=True, verbose_name=_('Fecha de autorización')
     )
-    autorizador = models.ForeignKey('accounts.CustomUser', models.PROTECT, blank=True, null=True)
+    autorizador = models.ForeignKey(
+        'accounts.CustomUser',
+        models.PROTECT,
+        blank=True,
+        null=True,
+        related_name='cursos_autorizados',
+    )
     plataforma_id = models.IntegerField(blank=True, null=True, verbose_name=_('Cód. plataforma'))
     id_nk = models.CharField(
         max_length=45, blank=True, null=True, verbose_name=_('Código en plataforma')

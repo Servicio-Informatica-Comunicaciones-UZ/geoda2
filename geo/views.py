@@ -132,7 +132,7 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
             )
             return redirect('curso_detail', asignatura.curso.id)
 
-        curso = self._cargar_asignatura_en_curso(asignatura)
+        curso = self._cargar_asignatura_en_curso(asignatura, usuario)
 
         # Comprobar si existe la categoría en la plataforma, y si no, crearla.
         categoria = curso.categoria
@@ -161,10 +161,11 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
         return self.es_pas_o_pdi()
 
     @staticmethod
-    def _cargar_asignatura_en_curso(asignatura):
+    def _cargar_asignatura_en_curso(asignatura, usuario):
         """Crea una nueva instancia de Curso con los datos de la asignatura indicada."""
         curso = Curso(
             nombre=asignatura.nombre_asignatura,
+            solicitante=usuario,
             fecha_solicitud=timezone.now(),
             # Las asignaturas Sigm@ se aprueban automáticamente, por el administrador.
             fecha_autorizacion=timezone.now(),

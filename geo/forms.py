@@ -114,6 +114,7 @@ class CursoSolicitarForm(forms.ModelForm):
         """Guarda la solicitud de curso, y añade al solicitante como profesor."""
 
         # Añade la fecha de solicitud y cambia el estado del curso a Solicitado.
+        self.instance.solicitante = self.user
         self.instance.fecha_solicitud = timezone.now()
         self.instance.estado = Curso.Estado.SOLICITADO
         self.instance.anyo_academico = Calendario.objects.get(slug='actual').anyo
