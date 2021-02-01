@@ -155,6 +155,9 @@ class Categoria(models.Model):
         'CULM',
         'Curso P.A.S.',
         'EPJ',
+        # La Escuela de Doctorado tiene una categoría normal, con 1 curso por cada PD,
+        # y esta categoría NR para actividades de formación transversal y específica.
+        'Escuela de Doctorado',
         'Formación',
         'ICE',
         'Miscelánea',
