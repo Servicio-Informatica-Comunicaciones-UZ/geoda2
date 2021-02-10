@@ -452,7 +452,10 @@ class MisAsignaturasView(LoginRequiredMixin, ChecksMixin, SingleTableView):
 
     def get_queryset(self):
         anyo_academico = Calendario.objects.get(slug='actual').anyo
-        return Pod.objects.filter(nip=self.request.user.username, anyo_academico=anyo_academico)
+        pods = Pod.objects.filter(nip=self.request.user.username, anyo_academico=anyo_academico)
+        # Si llegara una asignación a una asignatura que no esté en la tabla `asignatura`, la omitimos.
+        pods = [pod for pod in pods if pod.get_asignatura()]
+        return pods
 
     def test_func(self):
         return self.es_pas_o_pdi()

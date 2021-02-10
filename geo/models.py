@@ -130,13 +130,16 @@ class Pod(models.Model):
     # Alternative: https://pypi.org/project/django-composite-foreignkey/
     def get_asignatura(self):
         """Devuelve el modelo Asignatura correspondiente a este registro."""
-        asig = Asignatura.objects.get(
-            anyo_academico=self.anyo_academico,
-            centro_id=self.centro_id,
-            plan_id_nk=self.plan_id_nk,
-            asignatura_id=self.asignatura_id,
-            cod_grupo_asignatura=self.cod_grupo_asignatura,
-        )
+        try:
+            asig = Asignatura.objects.get(
+                anyo_academico=self.anyo_academico,
+                centro_id=self.centro_id,
+                plan_id_nk=self.plan_id_nk,
+                asignatura_id=self.asignatura_id,
+                cod_grupo_asignatura=self.cod_grupo_asignatura,
+            )
+        except Asignatura.DoesNotExist:
+            return None
         return asig
 
 
