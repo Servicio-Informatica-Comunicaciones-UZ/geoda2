@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from .models import Asignatura, Curso, Forano, Pod
+from .models import Asignatura, Curso, Forano
 
 
 class AsignaturasTable(tables.Table):
@@ -51,62 +51,6 @@ class AsignaturasTable(tables.Table):
         empty_text = _('No hay ninguna asignatura que satisfaga los criterios de búsqueda.')
         template_name = 'django_tables2/bootstrap4.html'
         per_page = 20
-
-
-class PodTable(tables.Table):
-
-    enlace = tables.Column(empty_values=(), verbose_name='')
-
-    def render_enlace(self, record):
-        asig = record.get_asignatura()
-
-        if hasattr(asig, 'curso'):
-            return mark_safe(
-                """
-                <a href={0} class='btn btn-info btn-sm' title='Ver ficha del curso'>
-                  <span class='far fa-eye' aria-hidden='true' style='display: inline;'
-                  ></span>&nbsp;&nbsp;Ver&nbsp;ficha
-                </a>""".format(
-                    reverse('curso_detail', args=[asig.curso.id])
-                )
-            )
-
-        return mark_safe(
-            """
-            <a href={0} class='btn btn-warning btn-sm' title='Crear curso en la plataforma'>
-                <span class='fas fa-plus' aria-hidden='true' style='display: inline;'></span>&nbsp;Crear&nbsp;curso
-            </a>""".format(
-                reverse('as_crear_curso', args=[asig.id])
-            )
-        )
-
-    nombre_estudio = tables.Column(empty_values=(), verbose_name='Estudio')
-
-    def render_nombre_estudio(self, record):
-        return record.get_asignatura().nombre_estudio
-
-    nombre_centro = tables.Column(empty_values=(), verbose_name='Centro')
-
-    def render_nombre_centro(self, record):
-        return record.get_asignatura().nombre_centro
-
-    nombre_asignatura = tables.Column(empty_values=(), verbose_name='Asignatura')
-
-    def render_nombre_asignatura(self, record):
-        return record.get_asignatura().nombre_asignatura
-
-    class Meta:
-        attrs = {'class': 'table table-striped table-hover cabecera-azul'}
-        model = Pod
-        fields = (
-            'nombre_estudio',
-            'nombre_centro',
-            'asignatura_id',
-            'nombre_asignatura',
-            'cod_grupo_asignatura',
-            'enlace',
-        )
-        template_name = 'django_tables2/bootstrap4.html'
 
 
 class CursosTodosTable(tables.Table):

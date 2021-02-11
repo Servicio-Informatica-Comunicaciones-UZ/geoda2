@@ -51,7 +51,6 @@ from .tables import (
     CursosPendientesTable,
     CursoTable,
     ForanoTodosTable,
-    PodTable,
 )
 from .utils import PagedFilteredTableView
 from .wsclient import WSClient
@@ -447,15 +446,16 @@ class MatricularPlanView(LoginRequiredMixin, PermissionRequiredMixin, View):
 class MisAsignaturasView(LoginRequiredMixin, ChecksMixin, SingleTableView):
     """Muestra las asignaturas del usuario, según el POD, y permite crear cursos."""
 
-    table_class = PodTable
+    table_class = AsignaturasTable
     template_name = 'pod/mis_asignaturas.html'
 
     def get_queryset(self):
         anyo_academico = Calendario.objects.get(slug='actual').anyo
         pods = Pod.objects.filter(nip=self.request.user.username, anyo_academico=anyo_academico)
+        asignaturas = [pod.get_asignatura_or_None() for pod in pods]
         # Si llegara una asignación a una asignatura que no esté en la tabla `asignatura`, la omitimos.
-        pods = [pod for pod in pods if pod.get_asignatura()]
-        return pods
+        asignaturas = list(filter(None, asignaturas))
+        return asignaturas
 
     def test_func(self):
         return self.es_pas_o_pdi()

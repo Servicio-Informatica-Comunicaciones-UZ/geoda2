@@ -128,7 +128,7 @@ class Pod(models.Model):
         )
 
     # Alternative: https://pypi.org/project/django-composite-foreignkey/
-    def get_asignatura(self):
+    def get_asignatura_or_None(self):
         """Devuelve el modelo Asignatura correspondiente a este registro."""
         try:
             asig = Asignatura.objects.get(
