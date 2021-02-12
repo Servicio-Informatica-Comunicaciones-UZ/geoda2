@@ -123,7 +123,7 @@ class Pod(models.Model):
         verbose_name_plural = 'registros del Plan de Ordenación Docente'
 
     def __str__(self):
-        return '{0} {1} {2} {3}'.format(
+        return '{} {} {} {}'.format(
             self.anyo_academico, self.plan_id_nk, self.asignatura_id, self.nip
         )
 

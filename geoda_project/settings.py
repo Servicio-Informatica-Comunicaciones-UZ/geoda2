@@ -22,7 +22,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "o+^%z1pkglqpsxjhdaj_u)9pfpybx0l7ko$x!d=j+y0x8qn*c)")
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY", "o+^%z1pkglqpsxjhdaj_u)9pfpybx0l7ko$x!d=j+y0x8qn*c)"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", False) == "True"
@@ -115,7 +117,7 @@ DATABASES = {
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},  # noqa: E501
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
@@ -153,7 +155,10 @@ LOGOUT_REDIRECT_URL = "home"
 # ## SAML with Python Social Auth ## #
 # https://python-social-auth.readthedocs.io/en/latest/backends/saml.html
 
-AUTHENTICATION_BACKENDS = ("social_core.backends.saml.SAMLAuth", "django.contrib.auth.backends.ModelBackend")
+AUTHENTICATION_BACKENDS = (
+    "social_core.backends.saml.SAMLAuth",
+    "django.contrib.auth.backends.ModelBackend",
+)
 # When using PostgreSQL,
 # it’s recommended to use the built-in JSONB field to store the extracted extra_data.
 # To enable it define the setting:
@@ -165,7 +170,11 @@ SOCIAL_AUTH_SAML_SP_ENTITY_ID = os.environ.get(
 SOCIAL_AUTH_SAML_SP_PUBLIC_CERT = os.environ.get("SOCIAL_AUTH_SAML_SP_PUBLIC_CERT")
 SOCIAL_AUTH_SAML_SP_PRIVATE_KEY = os.environ.get("SOCIAL_AUTH_SAML_SP_PRIVATE_KEY")
 SOCIAL_AUTH_SAML_ORG_INFO = {
-    "en-US": {"name": "geoda2", "displayname": "Gestión de la Enseñanza Online", "url": f"{SITE_URL}"}
+    "en-US": {
+        "name": "geoda2",
+        "displayname": "Gestión de la Enseñanza Online",
+        "url": f"{SITE_URL}",
+    }
 }
 SOCIAL_AUTH_SAML_TECHNICAL_CONTACT = {
     "givenName": os.environ.get("SOCIAL_AUTH_SAML_TECHNICAL_CONTACT_NAME"),

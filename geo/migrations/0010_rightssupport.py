@@ -37,9 +37,21 @@ class Migration(migrations.Migration):
     operations = [
         migrations.CreateModel(
             name='RightsSupport',
-            fields=[('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID'))],
+            fields=[
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                    ),
+                )
+            ],
             options={
-                'permissions': (('matricular_plan', 'Puede matricular en un curso a todos los alumnos de un plan'),),
+                'permissions': (
+                    (
+                        'matricular_plan',
+                        'Puede matricular en un curso a todos los alumnos de un plan',
+                    ),
+                ),
                 'managed': False,
             },
         ),

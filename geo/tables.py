@@ -15,7 +15,7 @@ class AsignaturasTable(tables.Table):
         if hasattr(record, 'curso'):
             return mark_safe(
                 """
-                <a href={0} class='btn btn-info btn-sm' title='Ver ficha del curso'>
+                <a href={} class='btn btn-info btn-sm' title='Ver ficha del curso'>
                   <span class='far fa-eye' aria-hidden='true' style='display: inline;'
                   ></span>&nbsp;&nbsp;Ver&nbsp;ficha
                 </a>""".format(
@@ -25,7 +25,7 @@ class AsignaturasTable(tables.Table):
 
         return mark_safe(
             """
-            <a href={0}
+            <a href={}
                 class='btn btn-warning btn-sm'
                 title='Crear curso en la plataforma'
             >
@@ -59,7 +59,7 @@ class CursosTodosTable(tables.Table):
 
     def render_enlace(self, record):
         return mark_safe(
-            """<a href={0} class='btn btn-info btn-sm' title='Ver ficha del curso'>
+            """<a href={} class='btn btn-info btn-sm' title='Ver ficha del curso'>
                <span class='far fa-eye' aria-hidden='true'></span>&nbsp;Ver&nbsp;ficha
             </a>""".format(
                 reverse('curso_detail', args=[record.id])
@@ -104,7 +104,7 @@ class CursoTable(tables.Table):
 
     def render_enlace(self, record):
         return mark_safe(
-            """<a href={0} class='btn btn-info btn-sm' title='Ver ficha del curso'>
+            """<a href={} class='btn btn-info btn-sm' title='Ver ficha del curso'>
                <span class='far fa-eye' aria-hidden='true'></span>&nbsp;Ver&nbsp;ficha
             </a>""".format(
                 reverse('curso_detail', args=[record.id])

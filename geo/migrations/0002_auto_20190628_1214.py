@@ -15,7 +15,11 @@ def geo_post_migrate_signal(apps, schema_editor):
     """
     geo_config = django_apps.get_app_config('geo')
     models.signals.post_migrate.send(
-        sender=geo_config, app_config=geo_config, verbosity=2, interactive=False, using=schema_editor.connection.alias
+        sender=geo_config,
+        app_config=geo_config,
+        verbosity=2,
+        interactive=False,
+        using=schema_editor.connection.alias,
     )
 
 
@@ -26,7 +30,11 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='curso',
-            options={'permissions': [('cursos_pendientes', 'Puede ver el listado de cursos por aprobar.')]},
+            options={
+                'permissions': [
+                    ('cursos_pendientes', 'Puede ver el listado de cursos por aprobar.')
+                ]
+            },
         ),
         migrations.RunPython(geo_post_migrate_signal),
     ]

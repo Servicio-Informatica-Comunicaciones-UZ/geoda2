@@ -87,7 +87,7 @@ class ChecksMixin(UserPassesTestMixin):
 
     def test_func(self):
         raise NotImplementedError(
-            '{0} carece de la implementación del método test_func().'.format(
+            '{} carece de la implementación del método test_func().'.format(
                 self.__class__.__name__
             )
         )
@@ -356,7 +356,7 @@ class CursoRematricularView(LoginRequiredMixin, ChecksMixin, View):
         for asignacion in asignaciones:
             cliente.matricular_profesor(asignacion.profesor, curso)
 
-        messages.success(request, _(f'Se ha vuelto a matricular al profesorado del curso.'))
+        messages.success(request, _('Se ha vuelto a matricular al profesorado del curso.'))
         return redirect('curso_detail', curso_id)
 
     def test_func(self):
@@ -468,7 +468,7 @@ class MisCursosView(LoginRequiredMixin, SingleTableView):
     template_name = 'curso/mis_cursos.html'
 
     def get_context_data(self, **kwargs):
-        context = super(MisCursosView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         anyo_academico = Calendario.objects.get(slug='actual').anyo
         context['curso'] = f'{anyo_academico}/{anyo_academico + 1}'
         return context
@@ -562,7 +562,7 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
         if formulario.is_valid():
             curso = formulario.save()
             messages.success(
-                request, _(f'La solicitud ha sido recibida. Se le avisará cuando se resuelva.')
+                request, _('La solicitud ha sido recibida. Se le avisará cuando se resuelva.')
             )
             self._notifica_solicitud(curso, request.build_absolute_uri('/')[:-1])
 

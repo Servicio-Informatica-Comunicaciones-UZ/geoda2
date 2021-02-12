@@ -65,9 +65,15 @@ def main():
 
     # Establece conexión con la BD de Gestión de Identidades.
     gi_dsn = cx_Oracle.makedsn(
-        config['gi']['db_host'], config['gi']['db_port'], config['gi']['db_sid'],
+        config['gi']['db_host'],
+        config['gi']['db_port'],
+        config['gi']['db_sid'],
     )
-    gi_conn = cx_Oracle.connect(config['gi']['db_user'], config['gi']['db_pass'], gi_dsn,)
+    gi_conn = cx_Oracle.connect(
+        config['gi']['db_user'],
+        config['gi']['db_pass'],
+        gi_dsn,
+    )
     gi_cursor = gi_conn.cursor()
     # print('Database version:', gi_conn.version)
 

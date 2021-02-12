@@ -91,7 +91,7 @@ class CursoSolicitarForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
-        super(CursoSolicitarForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         for field in self.Meta.required:
             self.fields[field].required = True
@@ -119,7 +119,7 @@ class CursoSolicitarForm(forms.ModelForm):
         self.instance.estado = Curso.Estado.SOLICITADO
         self.instance.anyo_academico = Calendario.objects.get(slug='actual').anyo
         self.instance.plataforma_id = 1
-        curso = super(CursoSolicitarForm, self).save(commit=commit)
+        curso = super().save(commit=commit)
 
         # Añadimos por omisión al profesor que solicita el curso a la lista de profesores del curso.
         # Si el curso es autorizado, se le matriculará como profesor al crearse el curso en Moodle.

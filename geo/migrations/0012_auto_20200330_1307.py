@@ -45,7 +45,10 @@ class Migration(migrations.Migration):
                 'permissions': [
                     ('cursos_todos', 'Puede ver el listado de todos los cursos.'),
                     ('cursos_pendientes', 'Puede ver el listado de cursos por aprobar.'),
-                    ('curso_administrar', 'Puede acceder a la interfaz de administración de Curso'),
+                    (
+                        'curso_administrar',
+                        'Puede acceder a la interfaz de administración de Curso',
+                    ),
                 ],
             },
         ),

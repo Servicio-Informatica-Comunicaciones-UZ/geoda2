@@ -25,7 +25,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterModelOptions(
-            name='calendario', options={'permissions': [('calendario', 'Puede modificar el año académico actual.')]}
+            name='calendario',
+            options={'permissions': [('calendario', 'Puede modificar el año académico actual.')]},
         ),
         migrations.AddField(
             model_name='calendario',
@@ -33,12 +34,16 @@ class Migration(migrations.Migration):
             field=models.PositiveSmallIntegerField(default=2019, verbose_name='Año académico'),
         ),
         migrations.AddField(
-            model_name='calendario', name='slug', field=models.SlugField(default='actual', unique=True)
+            model_name='calendario',
+            name='slug',
+            field=models.SlugField(default='actual', unique=True),
         ),
         migrations.AlterField(
             model_name='calendario',
             name='id',
-            field=models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID'),
+            field=models.AutoField(
+                auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+            ),
         ),
         migrations.RunPython(migrate_permissions),
     ]

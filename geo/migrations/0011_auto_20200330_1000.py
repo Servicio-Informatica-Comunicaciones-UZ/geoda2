@@ -7,7 +7,10 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [migrations.swappable_dependency(settings.AUTH_USER_MODEL), ('geo', '0010_rightssupport')]
+    dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('geo', '0010_rightssupport'),
+    ]
 
     operations = [
         migrations.AlterModelOptions(
@@ -43,12 +46,19 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name='pod', name='tipo_docencia', field=models.IntegerField(verbose_name='Tipo de docencia')
+            model_name='pod',
+            name='tipo_docencia',
+            field=models.IntegerField(verbose_name='Tipo de docencia'),
         ),
         migrations.CreateModel(
             name='Forano',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                    ),
+                ),
                 (
                     'nip',
                     models.CharField(
@@ -57,15 +67,21 @@ class Migration(migrations.Migration):
                         verbose_name='NIP a vincular',
                     ),
                 ),
-                ('fecha_solicitud', models.DateTimeField(blank=True, null=True, verbose_name='Fecha de solicitud')),
+                (
+                    'fecha_solicitud',
+                    models.DateTimeField(blank=True, null=True, verbose_name='Fecha de solicitud'),
+                ),
                 (
                     'fecha_autorizacion',
-                    models.DateTimeField(blank=True, null=True, verbose_name='Fecha de autorización'),
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name='Fecha de autorización'
+                    ),
                 ),
                 (
                     'estado',
                     models.IntegerField(
-                        choices=[(1, 'Solicitado'), (2, 'Denegado'), (3, 'Autorizado')], verbose_name='Estado'
+                        choices=[(1, 'Solicitado'), (2, 'Denegado'), (3, 'Autorizado')],
+                        verbose_name='Estado',
                     ),
                 ),
                 (
@@ -75,7 +91,10 @@ class Migration(migrations.Migration):
                         verbose_name='Motivación de la solicitud',
                     ),
                 ),
-                ('comentarios', models.TextField(blank=True, null=True, verbose_name='Comentarios')),
+                (
+                    'comentarios',
+                    models.TextField(blank=True, null=True, verbose_name='Comentarios'),
+                ),
                 (
                     'autorizador',
                     models.ForeignKey(
@@ -100,7 +119,9 @@ class Migration(migrations.Migration):
             options={
                 'db_table': 'forano',
                 'ordering': ('fecha_solicitud',),
-                'permissions': [('forano', 'Puede ver y resolver las solicitudes de vinculación.')],
+                'permissions': [
+                    ('forano', 'Puede ver y resolver las solicitudes de vinculación.')
+                ],
             },
         ),
     ]
