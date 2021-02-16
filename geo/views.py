@@ -515,7 +515,17 @@ class ResolverSolicitudCursoView(LoginRequiredMixin, PermissionRequiredMixin, Re
             curso.save()
             messages.info(request, _(f'El curso «{curso.nombre}» ha sido denegado.'))
 
-        self._notifica_resolucion(curso, request.build_absolute_uri('/')[:-1])
+        try:
+            self._notifica_resolucion(curso, request.build_absolute_uri('/')[:-1])
+        except Exception as err:
+            messages.warning(
+                request,
+                _(
+                    'No se envió por correo electrónico la notificación de la resolución '
+                    f'sobre la solicitud de curso: {err}.'
+                ),
+            )
+
         return super().post(request, *args, **kwargs)
 
     @staticmethod
@@ -564,7 +574,15 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
             messages.success(
                 request, _('La solicitud ha sido recibida. Se le avisará cuando se resuelva.')
             )
-            self._notifica_solicitud(curso, request.build_absolute_uri('/')[:-1])
+            try:
+                self._notifica_solicitud(curso, request.build_absolute_uri('/')[:-1])
+            except Exception as err:  # smtplib.SMTPAuthenticationError etc
+                messages.warning(
+                    request,
+                    _(
+                        f'No se enviaron por correo las notificaciones de la solicitud de curso no reglado: {err}'
+                    ),
+                )
 
             return redirect('mis_cursos')
 
@@ -575,7 +593,7 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
 
     @staticmethod
     def _notifica_solicitud(curso, site_url):
-        """Envía email a los miembros del grupo Gestores informando de la solicitud."""
+        """Envía email a los miembros del grupo Gestores informando de la solicitud de curso no reglado."""
         grupo_gestores = Group.objects.get(name='Gestores')
         gestores = grupo_gestores.user_set.all()
         destinatarios = list(map(lambda g: g.email, gestores))
@@ -616,7 +634,16 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
             forano.solicitante = self.request.user
             forano.save(True)
 
-            self._notifica_solicitud(forano, request.build_absolute_uri('/')[:-1])
+            try:
+                self._notifica_solicitud(forano, request.build_absolute_uri('/')[:-1])
+            except Exception as err:
+                messages.warning(
+                    request,
+                    _(
+                        'No se enviaron las notificaciones de la solicitud de vinculación '
+                        f'por correo electrónico: {err}'
+                    ),
+                )
 
             # Establecemos la vinculación
             forano.autorizador = request.user  # Auto
@@ -674,7 +701,7 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
 
     @staticmethod
     def _notifica_solicitud(forano, site_url):
-        """Envía email a los miembros del grupo Gestores informando de la solicitud."""
+        """Envía email a los miembros del grupo Gestores informando de la solicitud de vinculación."""
         grupo_gestores = Group.objects.get(name='Gestores')
         gestores = grupo_gestores.user_set.all()
         destinatarios = list(map(lambda g: g.email, gestores))
