@@ -61,6 +61,8 @@ def get_identidad(strategy, response, user, *args, **kwargs):
     cods_vinculaciones = identidad.vinculaciones
     if any(cod_adscritos in cods_vinculaciones for cod_adscritos in (12, 13, 42)):
         colectivos.append('ADS')
+    if any(cod_adscritos in cods_vinculaciones for cod_adscritos in (25, 61)):
+        colectivos.append('INV')  # Investigadores sin contrato pero con docencia
     user.colectivos = json.dumps(colectivos)
 
     # user.save()
