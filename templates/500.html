@@ -21,10 +21,11 @@
     {% trans 'Indique también el día y hora exacta en que se ha producido.' %}
     </p>
 
-    <div class="alert alert-danger" role="alert">
-      {% alert_icon 'error' %}
-      {{ exception }}
-    </div>
+    {% comment %}
+    The default 500 view passes no variables to the `500.html` template
+    and is rendered with an empty `Context` to lessen the chance of additional errors.
+    {% endcomment %}
+
   </div>
 </div>
 {% endblock content %}

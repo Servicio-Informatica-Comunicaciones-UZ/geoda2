@@ -13,6 +13,11 @@
     <p><img src="{% static 'img/star_wars_lego_storm_trooper_parade.jpg' %}" alt="Tropas imperiales" /></p>
     <p>{% trans 'No está autorizado a realizar esta acción:' %}</p>
 
+    {% comment %}
+    The template context contains `exception`,
+    which is the string representation of the exception that triggered the view.
+    {% endcomment %}
+
     <div class="alert alert-danger" role="alert">
       {% alert_icon 'error' %}
       {{ exception }}
