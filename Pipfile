@@ -10,7 +10,7 @@ pre-commit = "*"
 pylint = "*"
 
 [packages]
-django = "==3.1.6"  # Remember to re-generate `requirements.txt`: `pipenv lock -r`
+django = "==3.1.8"  # Remember to re-generate `requirements.txt`: `pipenv lock -r`
 django-annoying = "*"
 django-crispy-forms = "*"
 django-debug-toolbar = "*"
