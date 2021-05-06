@@ -647,11 +647,6 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
                 )
 
             # Establecemos la vinculación
-            forano.autorizador = request.user  # Auto
-            forano.fecha_autorizacion = timezone.now()
-            forano.estado = Forano.Estado.AUTORIZADO
-            forano.save()
-
             wsdl = get_config('WSDL_VINCULACIONES')
             session = Session()
             session.auth = HTTPBasicAuth(
@@ -684,6 +679,11 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
             if response.error:
                 messages.error(request, response.descripcionResultado)
             else:
+                forano.autorizador = request.user  # Auto
+                forano.fecha_autorizacion = timezone.now()
+                forano.estado = Forano.Estado.AUTORIZADO
+                forano.save()
+
                 messages.success(
                     request,
                     _(
