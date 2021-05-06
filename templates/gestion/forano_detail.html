@@ -56,6 +56,7 @@
     </tr>
   </table>
 
+  {% comment %}
   {% if forano.estado == forano.Estado.SOLICITADO.value and perms.geo.foranos_pendientes %}
     <br />
     <h2>{% trans "Resolver la solicitud" %}</h2>
@@ -100,6 +101,7 @@
       </div>
     </form>
   {% endif %}
+  {% endcomment %}
 
 </div>
 {% endblock content %}
