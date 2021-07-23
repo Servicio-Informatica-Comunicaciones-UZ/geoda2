@@ -228,6 +228,13 @@ class CalendarioUpdate(
     # UPDATE categoria SET anyo_academico=<anyo>, supercategoria_id=<id> WHERE id_nk=5047;
     # UPDATE categoria SET anyo_academico=<anyo>, supercategoria_id=<id> WHERE id_nk=5021;
 
+    # NOTA: La Escuela de Doctorado tiene dos categorías:
+    #
+    # * una categoría directamente en Cursos 20xx-20yy,
+    #   con 1 curso por cada PD, que se pasa de un año al siguiente.
+    # * otra categoría dentro de No regladas,
+    #   para actividades de formación transversal y específica.
+
     success_message = mark_safe(
         str(_('Se ha actualizado el curso académico actual.'))
         + '<br><br>\n'
