@@ -228,6 +228,7 @@ pipenv [--python 3.7] install [--dev]
 
     ```bash
     pipenv shell
+    set -a; . env/common.env; ./env/geoda2.env; set +a
     ./manage.py migrate
     ./manage.py createsuperuser
     ```

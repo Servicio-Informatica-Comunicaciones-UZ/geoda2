@@ -188,15 +188,15 @@ SOCIAL_AUTH_SAML_SUPPORT_CONTACT = {
 IDP = os.environ.get("IDENTITY_PROVIDER")
 SOCIAL_AUTH_SAML_ENABLED_IDPS = {
     "lord": {
-        "entity_id": f"{IDP}/saml2/idp/metadata.php",
+        "entity_id": os.environ.get("IDP_ENTITY_ID"),
         "url": f"{IDP}/saml2/idp/SSOService.php",
         "slo_url": f"{IDP}/saml2/idp/SingleLogoutService.php",
         "x509cert": os.environ.get("X509CERT"),
-        "attr_user_permanent_id": "uid",
+        "attr_user_permanent_id": "urn:oid:0.9.2342.19200300.100.1.1",  # "uid",
         "attr_full_name": "cn",  # "urn:oid:2.5.4.3"
         "attr_first_name": "givenName",  # "urn:oid:2.5.4.42"
         "attr_last_name": "sn",  # "urn:oid:2.5.4.4"
-        "attr_username": "uid",  # "urn:oid:0.9.2342.19200300.100.1.1"
+        "attr_username": "urn:oid:0.9.2342.19200300.100.1.1",  # "uid",
         # "attr_email": "email",            # "urn:oid:0.9.2342.19200300.100.1.3"
     }
 }
