@@ -12,7 +12,7 @@
   <form action="{% url 'curso_delete' curso.id %}" method="post">
     {% csrf_token %}
 
-    <div class="alert-warning alert fade-in">
+    <div class="alert alert-warning fade show">
       {% alert_icon 'warning' %}
       <p><strong>{% blocktrans with nombre_curso=curso.nombre %}
         ¿Seguro que desea eliminar el curso «{{ nombre_curso }}»?
