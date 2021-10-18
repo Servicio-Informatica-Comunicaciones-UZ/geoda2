@@ -168,6 +168,16 @@
     <h2>{% trans "Añadir un profesor al curso" %}</h2>
     <hr />
 
+    <div class="alert alert-info alert-dismissible fade show">
+      <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
+        <span aria-hidden="true">&times;</span>
+      </button>
+
+      <span class="fas fa-info-circle"></span>
+      {% trans "Es preferible agregar profesores desde aquí en vez de directamente en Moodle." %}
+    </div>
+    <br />
+
     {% crispy pc_form %}
   {% endif %}
 
@@ -199,12 +209,18 @@
     <h2>{% trans "Rematricular profesorado" %}</h2>
     <hr />
 
-    <p>
-      {% blocktrans %}
-      En caso de que, accidentalmente, se haya desmatriculado en Moodle al profesorado,
-      puede volver a cargar en Moodle los datos de GEO.
-      {% endblocktrans %}
-    </p>
+    <div class="alert alert-info alert-dismissible fade show">
+      <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
+        <span aria-hidden="true">&times;</span>
+      </button>
+
+      <span class="fas fa-info-circle"></span>
+      {% blocktranslate %}
+        En caso de que, accidentalmente, se haya desmatriculado en Moodle al profesorado,
+        puede volver a cargar en Moodle los datos de GEO.
+      {% endblocktranslate %}
+    </div>
+    <br />
 
     <form action="{% url 'curso_rematricular' %}" class="form-inline" id="rematricular-form" method="post">
       {% csrf_token %}
@@ -212,6 +228,62 @@
       <div class="btn-group" role="group" aria-label="Botones">
         <button class="btn btn-warning" title="{% trans 'Rematricular profesorado' %}" type="submit">
           <span aria-hidden="true" class="fas fa-people-arrows"></span> {% trans 'Rematricular profesorado' %}
+        </button>
+      </div>
+    </form>
+
+    <br /><br />
+    <h2>{% trans "Matricular alumnos en masa" %}</h2>
+    <hr />
+
+    <div class="alert alert-info alert-dismissible fade show">
+      <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
+        <span aria-hidden="true">&times;</span>
+      </button>
+
+      <span class="fas fa-info-circle"></span>
+      {% blocktranslate %}
+        Para los cursos reglados, se prepara la carga automática de los alumnos
+        del grupo correspondiente (si bien deberá activarla en Moodle).<br />
+        Para los cursos no reglados, desde aquí puede matricular alumnos masivamente subiendo
+        un fichero de texto con los NIPs de los alumnos (un NIP por línea).<br />
+        Para evitar errores, es recomendable que este fichero haya sigo generado desde
+        una base de datos u otro programa informático.
+      {% endblocktranslate %}
+    </div>
+    <br />
+
+    <form action="{% url 'curso_matricular_nips' %}" enctype="multipart/form-data" id="enviar-fichero" method="post">
+      {% csrf_token %}
+      <input type="hidden" id="curso_id" name="curso_id" value="{{ curso.id }}">
+
+      <div class="mb-2">
+        <div class="form-control custom-file" style="border:0">
+          <input type="file" name="file" class="custom-file-input clearablefileinput form-control-file" id="id_file" required accept=".csv,.tsv,.txt">
+          <label class="custom-file-label text-truncate" for="id_file">---</label>
+          <script type="text/javascript" id="script-id_file">
+            const max_upload_size = 10 * 1024;  // 10 KiB
+
+            document.getElementById("script-id_file").parentNode.querySelector('.custom-file-input').onchange = function (e) {
+                // Comprobar tamaño del fichero - <https://stackoverflow.com/questions/5697605/limit-the-size-of-a-file-upload-html-input-element>
+                if (this.files[0].size > max_upload_size) {
+                    alert("El fichero es demasiado grande (máx: 10 KiB).");
+                    this.value = "";
+                }
+                // Mostrar el nombre del fichero(s), estilo crispy forms
+                let filenames = "";
+                for (let i=0; i<e.target.files.length; i++) {
+                    filenames += (i>0 ? ", " : "") + e.target.files[i].name;
+                }
+                e.target.parentNode.querySelector('.custom-file-label').textContent=filenames;
+            }
+          </script>
+        </div>
+      </div>
+
+      <div class="btn-group" role="group" aria-label="Botones">
+        <button class="btn btn-warning" title="{% trans 'Subir el fichero seleccionado' %}" type="submit">
+          <span aria-hidden="true" class="fas fa-file-csv"></span> {% trans 'Enviar fichero' %}
         </button>
       </div>
     </form>
@@ -223,11 +295,17 @@
     <h2>{% trans "Eliminar el curso" %}</h2>
     <hr />
 
-    <p>
-    {% blocktrans %}
-      En caso de que el curso haya sido creado por error, se puede eliminar (tanto en GEO como en Moodle).
-    {% endblocktrans %}
-    </p>
+    <div class="alert alert-info alert-dismissible fade show">
+      <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
+        <span aria-hidden="true">&times;</span>
+      </button>
+
+      <span class="fas fa-info-circle"></span>
+      {% blocktranslate %}
+        En caso de que el curso haya sido creado por error, se puede eliminar (tanto en GEO como en Moodle).
+      {% endblocktranslate %}
+    </div>
+    <br />
 
     <a href="{% url 'curso_delete' curso.id %}" aria-label="{% trans 'Eliminar' %}" class='btn btn-warning' role="button" %}>
       <span aria-hidden="true" class="fas fa-trash-alt"></span> {% trans 'Eliminar' %}

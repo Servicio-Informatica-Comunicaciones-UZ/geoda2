@@ -117,16 +117,35 @@ class WSClient:
 
     def buscar_usuario_nip(self, usuario):
         """Busca en Moodle el usuarioNip correspondiente al usuario de Geoda indicado."""
+        usuario = self.buscar_usuario_nip_or_None(usuario.username)
+        if not usuario:
+            raise Exception('Usuario no encontrado en Moodle.')
+        return usuario
+
+    def buscar_usuario_nip_or_None(self, nip):
+        """Busca en Moodle el usuarioNip correspondiente al NIP indicado, o `None`."""
         payload = {
             'criteria[0][key]': 'username',
-            'criteria[0][value]': usuario.username,
+            'criteria[0][value]': nip,
         }
         respuesta = self._request_url('POST', 'core_user_get_users', self.geo_token, payload)
         usuarios_moodle = respuesta['users']
-        if usuarios_moodle:
-            return usuarios_moodle[0]
+        if not usuarios_moodle:
+            return None
+        return usuarios_moodle[0]
 
-        raise Exception('Usuario no encontrado en Moodle.')
+    def buscar_usuarios_nip(self, nips):
+        """Busca en Moodle los usuariosNip correspondientes a los NIPs indicados."""
+        usuarios = []
+        no_encontrados = []
+        for nip in nips:
+            usuario_moodle = self.buscar_usuario_nip_or_None(nip)
+            if usuario_moodle:
+                usuarios.append(usuario_moodle)
+            else:
+                no_encontrados.append(nip)
+
+        return usuarios, no_encontrados
 
     def desmatricular(self, usuario, curso):
         """Desmatricula a un usuario de un curso."""
@@ -171,6 +190,22 @@ class WSClient:
         }
         mensaje = self._request_url('POST', 'enrol_manual_enrol_users', self.geo_token, payload)
         return mensaje
+
+    def matricular_alumnos(self, nips, curso):
+        """Matricula una lista de usuarios como alumnos de un curso de Moodle."""
+        usuarios_moodle, usuarios_no_encontrados = self.buscar_usuarios_nip(nips)
+        payload = {}
+        for i, usuario in enumerate(usuarios_moodle):
+            payload.update(
+                {
+                    f'enrolments[{i}][roleid]': 5,  # id del rol `Student` en Moodle
+                    f'enrolments[{i}][userid]': usuario['id'],
+                    f'enrolments[{i}][courseid]': curso.id_nk,
+                    f'enrolments[{i}][timestart]': int(timezone.now().timestamp()),
+                }
+            )
+        self._request_url('POST', 'enrol_manual_enrol_users', self.geo_token, payload)
+        return len(usuarios_moodle), usuarios_no_encontrados
 
     def _request_url(self, verb, wsfunction, token, data=None):
         """Envía una petición al Web Service."""

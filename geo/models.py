@@ -512,4 +512,5 @@ class RightsSupport(models.Model):
 
         permissions = (
             ('matricular_plan', _('Puede matricular en un curso a todos los alumnos de un plan')),
+            ('anyadir_alumnos', _('Puede matricular alumnos en un curso')),
         )

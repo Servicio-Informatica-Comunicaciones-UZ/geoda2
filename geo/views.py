@@ -1,8 +1,10 @@
 # standard library
 import json
 from datetime import date
+from os.path import splitext
 
 # third-party
+import magic
 import zeep
 from annoying.functions import get_config, get_object_or_None
 from dateutil.relativedelta import relativedelta
@@ -347,6 +349,51 @@ class CursoDetailView(LoginRequiredMixin, DetailView):
         )
 
         return context
+
+
+class CursoMatricularNipsView(LoginRequiredMixin, ChecksMixin, View):
+    def post(self, request, *args, **kwargs):
+        curso_id = request.POST.get('curso_id')
+        curso = get_object_or_404(Curso, pk=curso_id)
+        fichero = request.FILES.get('file')
+
+        if not fichero:
+            messages.error(request, _('Debe enviar un fichero de texto con los NIPs.'))
+            return redirect('curso_detail', curso_id)
+
+        ext = splitext(fichero.name)[1].lower()
+        if ext not in ('.csv', '.tsv', '.txt'):
+            messages.error(request, _('La extensión del fichero debería ser .txt o .csv .'))
+            return redirect('curso_detail', curso_id)
+
+        filetype = magic.from_buffer(fichero.read(2048), mime=True)
+        fichero.seek(0)
+        if not (filetype.startswith('text/') or filetype == 'application/csv'):
+            messages.error(request, _('El fichero no parece ser un documento de texto plano.'))
+            return redirect('curso_detail', curso_id)
+
+        lineas = fichero.readlines(10 * 1024)  # Max 10 KiB
+        nips = [linea.decode('utf-8').strip() for linea in lineas]
+
+        cliente = WSClient()
+        num_matriculados, usuarios_no_encontrados = cliente.matricular_alumnos(nips, curso)
+
+        if usuarios_no_encontrados:
+            messages.warning(
+                request,
+                _('No se encontró en Moodle el usuario de los siguientes NIPs: ')
+                + ', '.join(usuarios_no_encontrados),
+            )
+
+        messages.success(
+            request, _(f'Se ha matriculado en el curso a {num_matriculados} alumnos.')
+        )
+        return redirect('curso_detail', curso_id)
+
+    def test_func(self):
+        return self.es_profesor_del_curso(
+            self.request.POST.get('curso_id')
+        ) or self.request.user.has_perm('geo.anyadir_alumnos')
 
 
 class CursoRematricularView(LoginRequiredMixin, ChecksMixin, View):

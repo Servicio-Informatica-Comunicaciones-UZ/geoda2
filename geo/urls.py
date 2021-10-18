@@ -8,6 +8,7 @@ from .views import (
     CalendarioUpdate,
     CursoDeleteView,
     CursoDetailView,
+    CursoMatricularNipsView,
     CursoRematricularView,
     CursosTodosView,
     CursosPendientesView,
@@ -51,6 +52,9 @@ urlpatterns = [
     path('pod/', MisAsignaturasView.as_view(), name='mis_asignaturas'),
     path('curso/<int:pk>/', CursoDetailView.as_view(), name='curso_detail'),
     path('curso/', MisCursosView.as_view(), name='mis_cursos'),
+    path(
+        'curso/matricular-nips/', CursoMatricularNipsView.as_view(), name='curso_matricular_nips'
+    ),
     path('curso/rematricular/', CursoRematricularView.as_view(), name='curso_rematricular'),
     path('curso/solicitar/', SolicitarCursoNoRegladoView.as_view(), name='curso_solicitar'),
     path('usuario-externo/solicitar/', ForanoSolicitarView.as_view(), name='forano_solicitar'),

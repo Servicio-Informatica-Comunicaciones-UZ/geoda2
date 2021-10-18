@@ -9,12 +9,14 @@ ENV PYTHONDONTWRITEBYTECODE 1 \
     PYTHONUNBUFFERED 1
 
 # Install packages needed to run your application (not build deps):
+#   libmagic1 -- determine the type of data in a file
 #   libmariadbclient-client -- for running database commands
 #   libpcre3 -- for uWSGI internal routing support
 #   xmlsec1 -- required for SAML auth
 #   mime-support -- for mime types when serving static files
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
+      libmagic1 \
       libmariadb3 \
       libpcre3 \
       libxmlsec1-openssl \
