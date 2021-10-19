@@ -344,8 +344,13 @@ class CursoDetailView(LoginRequiredMixin, DetailView):
         ).select_related('profesor')
         profesores = [asignacion.profesor for asignacion in context['asignaciones']]
         es_profesor_del_curso = self.request.user in profesores
-        context['puede_matricular'] = es_profesor_del_curso or self.request.user.has_perm(
-            'geo.anyadir_profesorcurso'
+
+        context[
+            'puede_matricular_profesores'
+        ] = es_profesor_del_curso or self.request.user.has_perm('geo.anyadir_profesorcurso')
+
+        context['puede_matricular_alumnos'] = es_profesor_del_curso or self.request.user.has_perm(
+            'geo.anyadir_alumnos'
         )
 
         return context
@@ -700,7 +705,7 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
                     ),
                 )
 
-            # Establecemos la vinculación
+            # Nos conectamos al WebService de Gestión de Identidades para establecer la vinculación
             wsdl = get_config('WSDL_VINCULACIONES')
             session = Session()
             session.auth = HTTPBasicAuth(
@@ -718,6 +723,7 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
                 messages.error(request, 'ERROR: %s' % str(ex))
                 return redirect('forano_solicitud')
 
+            # Llamamos al método `creaVinculacion()` de unizar/gestion/identidad/webservice/VinculacionesImpl.java
             response = client.service.creaVinculacion(
                 f'{forano.nip}',  # nip
                 '53',  # codVinculacion Usuarios invitados a Moodle
@@ -901,11 +907,8 @@ class ProfesorCursoAnularView(
         return reverse('curso_detail', args=[self.object.curso_id])
 
 
-class ProfesorCursoAnyadirView(LoginRequiredMixin, PermissionRequiredMixin, View):
+class ProfesorCursoAnyadirView(LoginRequiredMixin, ChecksMixin, View):
     """Crea una asignación profesor-curso."""
-
-    permission_required = 'geo.anyadir_profesorcurso'
-    permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
 
     def post(self, request, *args, **kwargs):
         curso_id = request.POST.get('curso_id')
@@ -930,3 +933,8 @@ class ProfesorCursoAnyadirView(LoginRequiredMixin, PermissionRequiredMixin, View
 
         messages.success(request, _('Se ha añadido el profesor al curso.'))
         return redirect('curso_detail', curso_id)
+
+    def test_func(self):
+        return self.es_profesor_del_curso(
+            self.request.POST.get('curso_id')
+        ) or self.request.user.has_perm('geo.anyadir_profesorcurso')

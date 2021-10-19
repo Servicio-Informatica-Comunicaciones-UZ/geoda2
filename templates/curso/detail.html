@@ -163,7 +163,7 @@
     </small>
   {% endif %}
 
-  {% if curso.estado == curso.Estado.CREADO.value and perms.geo.anyadir_profesorcurso %}
+  {% if curso.estado == curso.Estado.CREADO.value and puede_matricular_profesores %}
     <br /><br />
     <h2>{% trans "Añadir un profesor al curso" %}</h2>
     <hr />
@@ -179,6 +179,34 @@
     <br />
 
     {% crispy pc_form %}
+
+    <br /><br />
+    <h2>{% trans "Rematricular profesorado" %}</h2>
+    <hr />
+
+    <div class="alert alert-info alert-dismissible fade show">
+      <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
+        <span aria-hidden="true">&times;</span>
+      </button>
+
+      <span class="fas fa-info-circle"></span>
+      {% blocktranslate %}
+        En caso de que, accidentalmente, se haya desmatriculado en Moodle al profesorado,
+        puede volver a cargar en Moodle los datos de profesorado que constan en GEO.
+      {% endblocktranslate %}
+    </div>
+    <br />
+
+    <form action="{% url 'curso_rematricular' %}" class="form-inline" id="rematricular-form" method="post">
+      {% csrf_token %}
+      <input type="hidden" id="curso_id" name="curso_id" value="{{ curso.id }}">
+      <div class="btn-group" role="group" aria-label="Botones">
+        <button class="btn btn-warning" title="{% trans 'Rematricular profesorado' %}" type="submit">
+          <span aria-hidden="true" class="fas fa-people-arrows"></span> {% trans 'Rematricular profesorado' %}
+        </button>
+      </div>
+    </form>
+
   {% endif %}
 
 
@@ -204,34 +232,7 @@
   {% endif %}
 
 
-  {% if curso.estado == curso.Estado.CREADO.value and puede_matricular %}
-    <br />
-    <h2>{% trans "Rematricular profesorado" %}</h2>
-    <hr />
-
-    <div class="alert alert-info alert-dismissible fade show">
-      <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-        <span aria-hidden="true">&times;</span>
-      </button>
-
-      <span class="fas fa-info-circle"></span>
-      {% blocktranslate %}
-        En caso de que, accidentalmente, se haya desmatriculado en Moodle al profesorado,
-        puede volver a cargar en Moodle los datos de GEO.
-      {% endblocktranslate %}
-    </div>
-    <br />
-
-    <form action="{% url 'curso_rematricular' %}" class="form-inline" id="rematricular-form" method="post">
-      {% csrf_token %}
-      <input type="hidden" id="curso_id" name="curso_id" value="{{ curso.id }}">
-      <div class="btn-group" role="group" aria-label="Botones">
-        <button class="btn btn-warning" title="{% trans 'Rematricular profesorado' %}" type="submit">
-          <span aria-hidden="true" class="fas fa-people-arrows"></span> {% trans 'Rematricular profesorado' %}
-        </button>
-      </div>
-    </form>
-
+  {% if curso.estado == curso.Estado.CREADO.value and puede_matricular_alumnos %}
     <br /><br />
     <h2>{% trans "Matricular alumnos en masa" %}</h2>
     <hr />
