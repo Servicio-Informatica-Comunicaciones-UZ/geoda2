@@ -153,6 +153,7 @@ class Categoria(models.Model):
 
     NO_REGLADAS = (
         'Biblioteca',
+        'CIFICE',
         'CIRCE',
         'Coordinación',
         'CULM',
@@ -162,7 +163,6 @@ class Categoria(models.Model):
         # y esta categoría NR para actividades de formación transversal y específica.
         'Escuela de Doctorado',
         'Formación',
-        'ICE',
         'Miscelánea',
         'POUZ',
         'Proyectos de innovacion',
