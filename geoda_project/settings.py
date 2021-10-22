@@ -121,6 +121,8 @@ DATABASES = {
         "OPTIONS": {"charset": os.environ.get("DB_CHARSET", "utf8mb4")},
     }
 }
+# https://docs.djangoproject.com/en/3.2/releases/3.2/#customizing-type-of-auto-created-primary-keys
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Password validation
