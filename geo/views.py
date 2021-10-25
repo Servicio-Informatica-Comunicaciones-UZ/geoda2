@@ -377,8 +377,7 @@ class CursoMatricularNipsView(LoginRequiredMixin, ChecksMixin, View):
             messages.error(request, _('El fichero no parece ser un documento de texto plano.'))
             return redirect('curso_detail', curso_id)
 
-        lineas = fichero.readlines(10 * 1024)  # Max 10 KiB
-        nips = [linea.decode('utf-8').strip() for linea in lineas]
+        nips = fichero.read(10 * 1024).decode('utf-8').splitlines()  # Max 10 KiB
 
         cliente = WSClient()
         num_matriculados, usuarios_no_encontrados = cliente.matricular_alumnos(nips, curso)
