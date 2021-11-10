@@ -1,7 +1,7 @@
-# standard library
+# Standard library
 import json
 
-# third-party
+# Third-party
 from social_django.models import UserSocialAuth
 from social_django.utils import load_strategy
 
@@ -59,6 +59,13 @@ class CustomUser(AbstractUser):
     )
     colectivos = models.CharField(max_length=127, blank=True, null=True)
 
+    class Meta:
+        ordering = (
+            'last_name',
+            'last_name_2',
+            'first_name',
+        )
+
     @property
     def full_name(self):
         """Devuelve el nombre completo (nombre y los dos apellidos)."""
@@ -74,6 +81,10 @@ class CustomUser(AbstractUser):
     # Métodos adicionales
     def __str__(self):
         return self.username
+
+    def actualizar(self, request):
+        """Actualiza el usuario con los datos de Gestión de Identidades."""
+        get_identidad(load_strategy(request), None, self)
 
     def get_colectivo_principal(self):
         """Devuelve el colectivo principal del usuario.

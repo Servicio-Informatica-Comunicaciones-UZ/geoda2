@@ -907,23 +907,55 @@ class ProfesorCursoAnularView(
 
 
 class ProfesorCursoAnyadirView(LoginRequiredMixin, ChecksMixin, View):
-    """Crea una asignación profesor-curso."""
+    """
+    Matricula a un usuario como profesor de un curso.
+
+    Crea el usuario si no existe, y crea una asignación profesor-curso.
+    """
 
     def post(self, request, *args, **kwargs):
         curso_id = request.POST.get('curso_id')
         curso = get_object_or_404(Curso, pk=curso_id)
 
+        # Obtenemos el usuario (si ya existe en el sistema).
         User = get_user_model()
         nip = request.POST.get('nip')
         profesor = get_object_or_None(User, username=nip)
 
         if not profesor:
+            # El usuario no existe previamente. Lo creamos con los datos de Gestión de Identidades.
             try:
                 profesor = User.crear_usuario(request, nip)
             except Exception as ex:
                 messages.error(request, 'ERROR: %s' % ex.args[0])
                 return redirect('curso_detail', curso_id)
+        else:
+            # El usuario existe. Actualizamos sus datos con los de Gestión de Identidades.
+            try:
+                profesor.actualizar(self.request)
+            except Exception as ex:
+                # Si Identidades devuelve un error, finalizamos mostrando el mensaje de error.
+                messages.error(request, f'ERROR: {ex}')
+                return redirect('curso_detail', curso_id)
 
+        # Si el usuario no está activo, finalizamos explicando esta circunstancia.
+        if not profesor.is_active:
+            messages.error(
+                request,
+                f'ERROR: {profesor.full_name} no está activo en Gestión de Identidades.',
+            )
+            return redirect('curso_detail', curso_id)
+
+        # Si el usuario no tiene email, no podrá entrar en Moodle.
+        if not profesor.email:
+            messages.error(
+                request,
+                f'ERROR: {profesor.full_name} no tiene establecida'
+                ' ninguna dirección de correo electrónico en Gestión de Identidades.',
+            )
+            return redirect('curso_detail', curso_id)
+
+        # Añadimos al usuario como profesor del curso.
         try:
             curso.anyadir_profesor(profesor)
         except Exception as ex:
