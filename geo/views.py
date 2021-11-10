@@ -413,7 +413,11 @@ class CursoRematricularView(LoginRequiredMixin, ChecksMixin, View):
 
         cliente = WSClient()
         for asignacion in asignaciones:
-            cliente.matricular_profesor(asignacion.profesor, curso)
+            try:
+                cliente.matricular_profesor(asignacion.profesor, curso)
+            except Exception as ex:
+                messages.error(self.request, f'ERROR: {ex}.')
+                return redirect('curso_detail', curso_id)
 
         messages.success(request, _('Se ha vuelto a matricular al profesorado del curso.'))
         return redirect('curso_detail', curso_id)
@@ -883,7 +887,12 @@ class ProfesorCursoAnularView(
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed. It should return an HttpResponse.
         cliente = WSClient()
-        respuestas = cliente.desmatricular(self.object.profesor, self.object.curso)
+        try:
+            respuestas = cliente.desmatricular(self.object.profesor, self.object.curso)
+        except Exception as ex:
+            messages.error(self.request, f'ERROR: {ex}.')
+            return redirect('curso_detail', self.object.curso_id)
+
         for respuesta in respuestas:
             for error in respuesta.get('errors'):
                 messages.error(

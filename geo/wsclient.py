@@ -209,21 +209,40 @@ class WSClient:
 
     def _request_url(self, verb, wsfunction, token, data=None):
         """Envía una petición al Web Service."""
-        if verb == 'POST':
-            resp = requests.post(
-                f'{self.api_url}?wstoken={token}&wsfunction={wsfunction}&moodlewsrestformat=json',
-                data=data,
-            )
-        elif verb == 'GET':
-            resp = requests.get(
-                f'{self.api_url}?wstoken={token}&wsfunction={wsfunction}&moodlewsrestformat=json',
-                params=data,
-            )
-        else:
-            raise Exception('Método HTTP no soportado')
+        try:
+            if verb == 'POST':
+                resp = requests.post(
+                    f'{self.api_url}?wstoken={token}&wsfunction={wsfunction}&moodlewsrestformat=json',
+                    data=data,
+                )
+                resp.raise_for_status()
 
-        if not resp.ok:  # resp.status_code 200
-            resp.raise_for_status()
+            elif verb == 'GET':
+                resp = requests.get(
+                    f'{self.api_url}?wstoken={token}&wsfunction={wsfunction}&moodlewsrestformat=json',
+                    params=data,
+                )
+                resp.raise_for_status()
+
+            else:
+                raise Exception('Método HTTP no soportado')
+
+        except requests.exceptions.SSLError:
+            raise requests.exceptions.SSLError(
+                'No fue posible verificar el certificado SSL de Moodle'
+            )
+        except requests.exceptions.ConnectionError:
+            raise requests.exceptions.ConnectionError('No fue posible conectar con Moodle')
+        except requests.exceptions.HTTPError:
+            raise requests.exceptions.HTTPError('Moodle devolvió una respuesta HTTP no válida')
+        except requests.exceptions.Timeout:
+            raise requests.exceptions.Timeout('Moodle no respondió')
+        # except requests.exceptions.TooManyRedirects:
+        #     raise requests.exceptions.TooManyRedirects('Demasiadas redirecciones')
+        except requests.exceptions.RequestException:
+            raise requests.exceptions.RequestException(
+                'Problema desconocido al enviar la petición a Moodle'
+            )
 
         received_data = json.loads(resp.content.decode('utf-8'))
         if isinstance(received_data, dict) and received_data.get('exception', None):
