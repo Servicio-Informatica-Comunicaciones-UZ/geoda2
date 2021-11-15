@@ -16,7 +16,7 @@ services:
             --sql-mode=ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION,ANSI_QUOTES,NO_AUTO_CREATE_USER
             --transaction-isolation=READ-COMMITTED
         env_file: ./env/common.env
-        image: mariadb:10.5
+        image: mariadb:10.6
         networks:
             geoda2_net:
                 ipv4_address: 172.101.0.2
