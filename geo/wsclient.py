@@ -1,5 +1,6 @@
 # standard library
 import json
+import sys
 
 # third-party libraries
 import requests
@@ -241,7 +242,7 @@ class WSClient:
         #     raise requests.exceptions.TooManyRedirects('Demasiadas redirecciones')
         except requests.exceptions.RequestException:
             raise requests.exceptions.RequestException(
-                'Problema desconocido al enviar la petición a Moodle'
+                f'Problema desconocido al enviar la petición a Moodle ({sys.exc_info()[0]})'
             )
 
         received_data = json.loads(resp.content.decode('utf-8'))
