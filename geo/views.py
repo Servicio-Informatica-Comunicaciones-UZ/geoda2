@@ -688,7 +688,7 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
     required = ('nip', 'nombre', 'email', 'motivo_solicitud')
     template_name = 'forano/solicitar.html'
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):  # noqa: max-complexity: 11
         form = self.get_form()
         if form.is_valid():
             forano = form.save(False)
@@ -720,21 +720,27 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
                     wsdl=wsdl, transport=zeep.transports.Transport(session=session)
                 )
             except RequestConnectionError:
-                messages.error(request, _('Se produjo un error. Solicite soporte.'))
+                messages.error(request, _('Se produjo un error de conexión. Vuelva a intentarlo.'))
                 return redirect('forano_solicitud')
             except Exception as ex:
-                messages.error(request, 'ERROR: %s' % str(ex))
+                messages.error(request, f'ERROR: {ex}')
                 return redirect('forano_solicitud')
 
             # Llamamos al método `creaVinculacion()` de unizar/gestion/identidad/webservice/VinculacionesImpl.java
-            response = client.service.creaVinculacion(
-                f'{forano.nip}',  # nip
-                '53',  # codVinculacion Usuarios invitados a Moodle
-                date.today().isoformat(),  # fechaInicio
-                (date.today() + relativedelta(years=1)).isoformat(),  # fechaFin (en 1 año)
-                self.request.user.username,  # nipResponsable
-                forano.email,  # correoPersonal
-            )
+            try:
+                response = client.service.creaVinculacion(
+                    f'{forano.nip}',  # nip
+                    '53',  # codVinculacion Usuarios invitados a Moodle
+                    date.today().isoformat(),  # fechaInicio
+                    (date.today() + relativedelta(years=1)).isoformat(),  # fechaFin (en 1 año)
+                    self.request.user.username,  # nipResponsable
+                    forano.email,  # correoPersonal
+                )
+            except zeep.exceptions.TransportError:
+                messages.error(
+                    request, _('Se produjo un error de transporte. Vuelva a intentarlo.')
+                )
+                return redirect('forano_solicitud')
 
             if response.aviso:
                 messages.warning(request, response.descripcionAviso)
