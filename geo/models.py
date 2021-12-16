@@ -333,7 +333,12 @@ class Curso(models.Model):
     )
     anyo_academico = models.IntegerField(blank=True, null=True, verbose_name=_('Año académico'))
     asignatura = models.OneToOneField(
-        Asignatura, blank=True, null=True, on_delete=models.PROTECT, verbose_name=_('Asignatura')
+        Asignatura,
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+        related_name='curso',
+        verbose_name=_('Asignatura'),
     )
     estado = models.IntegerField(choices=Estado.choices, verbose_name=_('Estado'))
     motivo_solicitud = models.TextField(
@@ -347,7 +352,7 @@ class Curso(models.Model):
     )
     comentarios = models.TextField(blank=True, null=True, verbose_name=_('Comentarios'))
     profesores = models.ManyToManyField(
-        'accounts.CustomUser', related_name='profesores', through='ProfesorCurso'
+        'accounts.CustomUser', related_name='cursos', through='ProfesorCurso'
     )
 
     class Meta:
