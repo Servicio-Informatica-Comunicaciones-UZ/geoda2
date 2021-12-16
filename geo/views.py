@@ -569,7 +569,15 @@ class ResolverSolicitudCursoView(LoginRequiredMixin, PermissionRequiredMixin, Re
             #     categoria.crear_en_plataforma()
 
             cliente = WSClient()
-            datos_recibidos = cliente.crear_curso(curso.get_datos())
+            try:
+                datos_recibidos = cliente.crear_curso(curso.get_datos())
+            except Exception as err:
+                messages.error(
+                    request,
+                    _(f'ERROR: No fue posible crear el curso: {err}.'),
+                )
+                return redirect('curso_detail', id_recibido)
+
             curso.actualizar_tras_creacion(datos_recibidos)
             cliente.matricular_profesor(curso.profesores.first(), curso)
             messages.info(request, _(f'El curso «{curso.nombre}» ha sido autorizado y creado.'))
