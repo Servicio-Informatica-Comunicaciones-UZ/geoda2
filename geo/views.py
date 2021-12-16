@@ -115,11 +115,6 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
     """
 
     def get(self, request, *args, **kwargs):
-        asignatura = get_object_or_404(Asignatura, id=kwargs['pk'])
-        if hasattr(asignatura, 'curso'):
-            messages.error(request, _('El curso ya estaba creado.'))
-            return redirect('curso_detail', asignatura.curso.id)
-
         usuario = self.request.user
         if not usuario.email:
             messages.error(
@@ -132,9 +127,14 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
                     )
                 ),
             )
-            return redirect('curso_detail', asignatura.curso.id)
+            return redirect('mis_asignaturas')
 
-        curso = self._cargar_asignatura_en_curso(asignatura, usuario)
+        asignatura = get_object_or_404(Asignatura, id=kwargs['pk'])
+        try:
+            curso = self._cargar_asignatura_en_curso(asignatura, usuario)
+        except Exception as ex:
+            messages.error(request, f'ERROR: {ex}')
+            return redirect('curso_detail', asignatura.curso.id)
 
         # Comprobar si existe la categoría en la plataforma, y si no, crearla.
         categoria = curso.categoria
