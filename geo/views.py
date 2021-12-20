@@ -114,7 +114,7 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
     Si la creación tiene éxito, el navegador es redirigido a la ficha del curso.
     """
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         usuario = self.request.user
         if not usuario.email:
             messages.error(

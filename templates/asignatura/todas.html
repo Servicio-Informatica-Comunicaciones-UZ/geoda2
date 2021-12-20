@@ -41,4 +41,51 @@
   <br />
   {% render_table table %}
 </div>
+
+<!-- Diálogo modal -->
+<div
+  class="modal fade"
+  id="crearModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="crearModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="crearModalLabel">{% trans '¿Seguro que desea crear este curso?' %}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="advertencia"></div> <!-- Rellenado por función JS -->
+      </div>
+      <div class="modal-footer">
+        <form action="#" id="crear-form" method="post">
+          {% csrf_token %}
+          <button type="button" class="btn btn-info" data-dismiss="modal">
+            <span class="fas fa-times"></span> {% trans 'Cancelar' %}
+          </button>
+          <button type="submit" class="btn btn-warning">
+            <span class="fas fa-plus"></span> {% trans 'Crear' %}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock content %}
+
+{% block extrajs %}
+<script type="text/javascript">
+  $(document).on("click", ".prepararCrear", function() {
+    $("#crearModal .advertencia").html(
+      "<p>¿Seguro que desea crear un curso para la asignatura «" + $(this).data("nombre") + "»?</p>"
+    );
+    $("#crear-form").attr("action", $(this).data('url'));
+  });
+</script>
+{% endblock extrajs %}
