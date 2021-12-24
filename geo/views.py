@@ -729,10 +729,10 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
                 )
             except RequestConnectionError:
                 messages.error(request, _('Se produjo un error de conexión. Vuelva a intentarlo.'))
-                return redirect('forano_solicitud')
+                return redirect('forano_solicitar')
             except Exception as ex:
                 messages.error(request, f'ERROR: {ex}')
-                return redirect('forano_solicitud')
+                return redirect('forano_solicitar')
 
             # Llamamos al método `creaVinculacion()` de unizar/gestion/identidad/webservice/VinculacionesImpl.java
             try:
@@ -748,7 +748,7 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
                 messages.error(
                     request, _('Se produjo un error de transporte. Vuelva a intentarlo.')
                 )
-                return redirect('forano_solicitud')
+                return redirect('forano_solicitar')
 
             if response.aviso:
                 messages.warning(request, response.descripcionAviso)
