@@ -195,17 +195,18 @@ class WSClient:
     def matricular_alumnos(self, nips, curso):
         """Matricula una lista de usuarios como alumnos de un curso de Moodle."""
         usuarios_moodle, usuarios_no_encontrados = self.buscar_usuarios_nip(nips)
-        payload = {}
-        for i, usuario in enumerate(usuarios_moodle):
-            payload.update(
-                {
-                    f'enrolments[{i}][roleid]': 5,  # id del rol `Student` en Moodle
-                    f'enrolments[{i}][userid]': usuario['id'],
-                    f'enrolments[{i}][courseid]': curso.id_nk,
-                    f'enrolments[{i}][timestart]': int(timezone.now().timestamp()),
-                }
-            )
-        self._request_url('POST', 'enrol_manual_enrol_users', self.geo_token, payload)
+        if usuarios_moodle:
+            payload = {}
+            for i, usuario in enumerate(usuarios_moodle):
+                payload.update(
+                    {
+                        f'enrolments[{i}][roleid]': 5,  # id del rol `Student` en Moodle
+                        f'enrolments[{i}][userid]': usuario['id'],
+                        f'enrolments[{i}][courseid]': curso.id_nk,
+                        f'enrolments[{i}][timestart]': int(timezone.now().timestamp()),
+                    }
+                )
+            self._request_url('POST', 'enrol_manual_enrol_users', self.geo_token, payload)
         return len(usuarios_moodle), usuarios_no_encontrados
 
     def _request_url(self, verb, wsfunction, token, data=None):
