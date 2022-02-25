@@ -143,7 +143,11 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
 
         cliente = WSClient()
         datos_curso = curso.get_datos()
-        datos_recibidos = cliente.crear_curso(datos_curso)
+        try:
+            datos_recibidos = cliente.crear_curso(datos_curso)
+        except Exception as ex:
+            messages.error(request, f'ERROR: {ex}')
+            return redirect('curso_detail', curso.id)
         curso.actualizar_tras_creacion(datos_recibidos)
 
         mensaje = cliente.automatricular(asignatura, curso)
