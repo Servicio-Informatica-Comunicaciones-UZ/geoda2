@@ -195,6 +195,12 @@ class ASTodasView(LoginRequiredMixin, ChecksMixin, PagedFilteredTableView):
     template_name = 'asignatura/todas.html'
     formhelper_class = AsignaturaFilterFormHelper
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        anyo_academico = Calendario.objects.get(slug='actual').anyo
+        context['curso'] = f'{anyo_academico}/{anyo_academico + 1}'
+        return context
+
     def get_queryset(self):
         anyo_academico = Calendario.objects.get(slug='actual').anyo
         return Asignatura.objects.filter(anyo_academico=anyo_academico).select_related('curso')
@@ -516,6 +522,12 @@ class MisAsignaturasView(LoginRequiredMixin, ChecksMixin, SingleTableView):
     table_class = AsignaturasTable
     template_name = 'pod/mis_asignaturas.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        anyo_academico = Calendario.objects.get(slug='actual').anyo
+        context['curso'] = f'{anyo_academico}/{anyo_academico + 1}'
+        return context
+
     def get_queryset(self):
         anyo_academico = Calendario.objects.get(slug='actual').anyo
         pods = Pod.objects.filter(nip=self.request.user.username, anyo_academico=anyo_academico)
@@ -639,8 +651,14 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
             )
             return redirect('mis_cursos')
 
-        formulario = CursoSolicitarForm(user=self.request.user)
-        return render(request, self.template_name, {'form': formulario})
+        # `get_context_data()` is in ModelFormMixin
+        # which cannot be used without the `fields` attribute (maybe with form_class?).
+        anyo_academico = Calendario.objects.get(slug='actual').anyo
+        context = {
+            'curso': f'{anyo_academico}/{anyo_academico + 1}',
+            'form': CursoSolicitarForm(user=self.request.user),
+        }
+        return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         formulario = CursoSolicitarForm(data=request.POST, user=self.request.user)
