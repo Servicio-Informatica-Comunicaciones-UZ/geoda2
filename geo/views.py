@@ -387,10 +387,28 @@ class CursoMatricularNipsView(LoginRequiredMixin, ChecksMixin, View):
             messages.error(request, _('El fichero no parece ser un documento de texto plano.'))
             return redirect('curso_detail', curso_id)
 
-        nips = fichero.read(10 * 1024).decode('utf-8').splitlines()  # Max 10 KiB
+        try:
+            nips = fichero.read(10 * 1024).decode('utf-8').splitlines()  # Max 10 KiB
+        except UnicodeDecodeError as ex:
+            messages.error(
+                self.request,
+                mark_safe(
+                    _(
+                        'Error al leer el fichero. '
+                        'Posiblemente contenta algún carácter extraño.<br>\n'
+                        'Revise el fichero para corregirlo, o bien vuelva a generarlo.<br>\n'
+                        f'ERROR: {ex}.'
+                    )
+                ),
+            )
+            return redirect('curso_detail', curso_id)
 
         cliente = WSClient()
-        num_matriculados, usuarios_no_encontrados = cliente.matricular_alumnos(nips, curso)
+        try:
+            num_matriculados, usuarios_no_encontrados = cliente.matricular_alumnos(nips, curso)
+        except Exception as ex:
+            messages.error(self.request, _(f'ERROR: {ex}.'))
+            return redirect('curso_detail', curso_id)
 
         if usuarios_no_encontrados:
             messages.warning(
@@ -426,7 +444,7 @@ class CursoRematricularView(LoginRequiredMixin, ChecksMixin, View):
             try:
                 cliente.matricular_profesor(asignacion.profesor, curso)
             except Exception as ex:
-                messages.error(self.request, f'ERROR: {ex}.')
+                messages.error(self.request, _(f'ERROR: {ex}.'))
                 return redirect('curso_detail', curso_id)
 
         messages.success(request, _('Se ha vuelto a matricular al profesorado del curso.'))
