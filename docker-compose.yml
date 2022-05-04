@@ -43,4 +43,4 @@ services:
             - protocol: tcp
               published: 8001
               target: 8001
-        restart: on-failure
+        restart: always
