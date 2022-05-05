@@ -5,14 +5,14 @@ verify_ssl = true
 
 [dev-packages]
 black = "*"
+django-debug-toolbar = "*"
 pre-commit = "*"
 pylint = "*"
 
 [packages]
-django = "==4.0.4"  # Remember to re-generate `requirements.txt`: `pipenv lock -r`
+django = "==4.0.4"  # Remember to re-generate `requirements.txt`: `pipenv requirements`
 django-annoying = "*"
 django-crispy-forms = "*"
-django-debug-toolbar = "*"
 django-filter = "*"
 django-tables2 = "*"
 django-templated-email = "*"

@@ -15,7 +15,7 @@ import socket
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
 # Quick-start development settings - unsuitable for production
@@ -234,6 +234,25 @@ SOCIAL_AUTH_URL_NAMESPACE = "social"
 # CRISPY FORMS
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
+if DEBUG:
+    # DJANGO-DEBUG-TOOLBAR - <https://github.com/jazzband/django-debug-toolbar>
+    # ------------------------------------------------------------------------------
+    # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#prerequisites
+    INSTALLED_APPS += ['debug_toolbar']  # noqa F405
+    # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#middleware
+    MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']  # noqa F405
+    # https://django-debug-toolbar.readthedocs.io/en/latest/configuration.html#debug-toolbar-config
+    DEBUG_TOOLBAR_CONFIG = {
+        'DISABLE_PANELS': ['debug_toolbar.panels.redirects.RedirectsPanel'],
+        'SHOW_TEMPLATE_CONTEXT': True,
+    }
+    # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#internal-ips
+
+    import socket  # only if you haven't already imported this
+
+    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+    INTERNAL_IPS = [ip[: ip.rfind('.')] + '.1' for ip in ips] + ['127.0.0.1', '10.0.2.2']
+
 # DATOS DE LA PLATAFORMA
 URL_PLATAFORMA = os.environ.get("URL_PLATAFORMA")
 GEO_TOKEN = os.environ.get("GEO_TOKEN")
@@ -249,23 +268,6 @@ PASS_IDENTIDAD = os.environ.get("PASS_IDENTIDAD")
 WSDL_VINCULACIONES = os.environ.get("WSDL_VINCULACIONES")
 USER_VINCULACIONES = os.environ.get("USER_VINCULACIONES")
 PASS_VINCULACIONES = os.environ.get("PASS_VINCULACIONES")
-
-
-# DJANGO-DEBUG-TOOLBAR - <https://github.com/jazzband/django-debug-toolbar>
-# ------------------------------------------------------------------------------
-# https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#prerequisites
-INSTALLED_APPS += ["debug_toolbar"]  # noqa F405
-# https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#middleware
-MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]  # noqa F405
-# https://django-debug-toolbar.readthedocs.io/en/latest/configuration.html#debug-toolbar-config
-DEBUG_TOOLBAR_CONFIG = {
-    "DISABLE_PANELS": ["debug_toolbar.panels.redirects.RedirectsPanel"],
-    "SHOW_TEMPLATE_CONTEXT": True,
-}
-# https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#internal-ips
-# import socket
-HOSTNAME, _, IPS = socket.gethostbyname_ex(socket.gethostname())
-INTERNAL_IPS = [ip[:-1] + "1" for ip in IPS]
 
 # SECURITY
 SECURE_CONTENT_TYPE_NOSNIFF = True
