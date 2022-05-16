@@ -245,6 +245,6 @@ pipenv [--python 3.7] install [--dev]
 
 ```bash
 pipenv shell
-export DJANGO_SETTINGS_MODULE=geoda_project.settings-dev
+set -a; . env/common.env; . env/geoda2.env; set +a
 ./manage.py runserver [<IP>:[:<puerto>]]
 ```
