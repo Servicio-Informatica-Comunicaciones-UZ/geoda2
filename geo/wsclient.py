@@ -8,6 +8,7 @@ from annoying.functions import get_config
 
 # Django
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 
 class WSClient:
@@ -243,7 +244,8 @@ class WSClient:
         #     raise requests.exceptions.TooManyRedirects('Demasiadas redirecciones')
         except requests.exceptions.RequestException:
             raise requests.exceptions.RequestException(
-                f'Problema desconocido al enviar la petición a Moodle ({sys.exc_info()[0]})'
+                _('Problema desconocido al enviar la petición a Moodle (%(info)s)')
+                % {'info': sys.exc_info()[0]}
             )
 
         received_data = json.loads(resp.content.decode('utf-8'))

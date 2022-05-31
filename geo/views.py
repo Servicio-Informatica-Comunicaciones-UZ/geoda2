@@ -133,7 +133,7 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
         try:
             curso = self._cargar_asignatura_en_curso(asignatura, usuario)
         except Exception as ex:
-            messages.error(request, f'ERROR: {ex}')
+            messages.error(request, _('ERROR: %(ex)s') % {'ex': ex})
             return redirect('curso_detail', asignatura.curso.id)
 
         # Comprobar si existe la categoría en la plataforma, y si no, crearla.
@@ -146,7 +146,7 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
         try:
             datos_recibidos = cliente.crear_curso(datos_curso)
         except Exception as ex:
-            messages.error(request, f'ERROR: {ex}')
+            messages.error(request, _('ERROR: %(ex)s') % {'ex': ex})
             return redirect('curso_detail', curso.id)
         curso.actualizar_tras_creacion(datos_recibidos)
 
@@ -324,7 +324,10 @@ class CursoDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
             for pc in curso.profesorcurso_set.all():
                 pc.delete()
 
-        messages.success(request, _(f"El curso «{curso.nombre}» ha sido borrado con éxito."))
+        messages.success(
+            request,
+            _('El curso «%(nombre)s» ha sido borrado con éxito.') % {'nombre': curso.nombre},
+        )
         return super().post(request, *args, **kwargs)
 
 
@@ -397,8 +400,9 @@ class CursoMatricularNipsView(LoginRequiredMixin, ChecksMixin, View):
                         'Error al leer el fichero. '
                         'Posiblemente contenta algún carácter extraño.<br>\n'
                         'Revise el fichero para corregirlo, o bien vuelva a generarlo.<br>\n'
-                        f'ERROR: {ex}.'
+                        'ERROR: %(ex)s.'
                     )
+                    % {'ex': ex}
                 ),
             )
             return redirect('curso_detail', curso_id)
@@ -407,7 +411,7 @@ class CursoMatricularNipsView(LoginRequiredMixin, ChecksMixin, View):
         try:
             num_matriculados, usuarios_no_encontrados = cliente.matricular_alumnos(nips, curso)
         except Exception as ex:
-            messages.error(self.request, _(f'ERROR: {ex}.'))
+            messages.error(self.request, _('ERROR: %(ex)s.') % {'ex': ex})
             return redirect('curso_detail', curso_id)
 
         if usuarios_no_encontrados:
@@ -418,7 +422,8 @@ class CursoMatricularNipsView(LoginRequiredMixin, ChecksMixin, View):
             )
 
         messages.success(
-            request, _(f'Se ha matriculado en el curso a {num_matriculados} alumnos.')
+            request,
+            _('Se ha matriculado en el curso a %(num)s alumnos.') % {'num': num_matriculados},
         )
         return redirect('curso_detail', curso_id)
 
@@ -444,7 +449,7 @@ class CursoRematricularView(LoginRequiredMixin, ChecksMixin, View):
             try:
                 cliente.matricular_profesor(asignacion.profesor, curso)
             except Exception as ex:
-                messages.error(self.request, _(f'ERROR: {ex}.'))
+                messages.error(self.request, _('ERROR: %(ex)s.') % {'ex': ex})
                 return redirect('curso_detail', curso_id)
 
         messages.success(request, _('Se ha vuelto a matricular al profesorado del curso.'))
@@ -526,9 +531,14 @@ class MatricularPlanView(LoginRequiredMixin, PermissionRequiredMixin, View):
         messages.success(
             request,
             _(
-                f'Se ha matriculado en este curso a todos los alumnos del plan {plan_id_nk}'
-                ' ({asignaturas[0].nombre_estudio}, {asignaturas[0].nombre_centro}).'
-            ),
+                'Se ha matriculado en este curso a todos los alumnos del plan {%(plan)s}'
+                ' (%(estudio)s, %(centro)s).'
+            )
+            % {
+                'plan': plan_id_nk,
+                'estudio': asignaturas[0].nombre_estudio,
+                'centro': asignaturas[0].nombre_centro,
+            },
         )
 
         return redirect('curso_detail', curso_id)
@@ -608,17 +618,22 @@ class ResolverSolicitudCursoView(LoginRequiredMixin, PermissionRequiredMixin, Re
             except Exception as err:
                 messages.error(
                     request,
-                    _(f'ERROR: No fue posible crear el curso: {err}.'),
+                    _('ERROR: No fue posible crear el curso: %(err)s.') % {'err': err},
                 )
                 return redirect('curso_detail', id_recibido)
 
             curso.actualizar_tras_creacion(datos_recibidos)
             cliente.matricular_profesor(curso.profesores.first(), curso)
-            messages.info(request, _(f'El curso «{curso.nombre}» ha sido autorizado y creado.'))
+            messages.info(
+                request,
+                _('El curso «%(nombre)s» ha sido autorizado y creado.') % {'nombre': curso.nombre},
+            )
         else:
             curso.estado = Curso.Estado.DENEGADO
             curso.save()
-            messages.info(request, _(f'El curso «{curso.nombre}» ha sido denegado.'))
+            messages.info(
+                request, _('El curso «%(nombre)s» ha sido denegado.') % {'nombre': curso.nombre}
+            )
 
         try:
             self._notifica_resolucion(curso, request.build_absolute_uri('/')[:-1])
@@ -626,9 +641,10 @@ class ResolverSolicitudCursoView(LoginRequiredMixin, PermissionRequiredMixin, Re
             messages.warning(
                 request,
                 _(
-                    'No se envió por correo electrónico la notificación de la resolución '
-                    f'sobre la solicitud de curso: {err}.'
-                ),
+                    'No se envió por correo electrónico la notificación de la resolución'
+                    ' sobre la solicitud de curso: %(err)s.'
+                )
+                % {'err': err},
             )
 
         return super().post(request, *args, **kwargs)
@@ -691,8 +707,9 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
                 messages.warning(
                     request,
                     _(
-                        f'No se enviaron por correo las notificaciones de la solicitud de curso no reglado: {err}'
-                    ),
+                        'No se enviaron por correo las notificaciones de la solicitud de curso no reglado: %(err)s'
+                    )
+                    % {'err': err},
                 )
 
             return redirect('mis_cursos')
@@ -751,9 +768,10 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
                 messages.warning(
                     request,
                     _(
-                        'No se enviaron las notificaciones de la solicitud de vinculación '
-                        f'por correo electrónico: {err}'
-                    ),
+                        'No se enviaron las notificaciones de la solicitud de vinculación'
+                        ' por correo electrónico: %(err)s'
+                    )
+                    % {'err': err},
                 )
 
             # Nos conectamos al WebService de Gestión de Identidades para establecer la vinculación
@@ -771,7 +789,7 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
                 messages.error(request, _('Se produjo un error de conexión. Vuelva a intentarlo.'))
                 return redirect('forano_solicitar')
             except Exception as ex:
-                messages.error(request, f'ERROR: {ex}')
+                messages.error(request, _('ERROR: %(ex)s') % {'ex': ex})
                 return redirect('forano_solicitar')
 
             # Llamamos al método `creaVinculacion()` de unizar/gestion/identidad/webservice/VinculacionesImpl.java
@@ -944,7 +962,7 @@ class ProfesorCursoAnularView(
         try:
             respuestas = cliente.desmatricular(self.object.profesor, self.object.curso)
         except Exception as ex:
-            messages.error(self.request, f'ERROR: {ex}.')
+            messages.error(self.request, _('ERROR: %(ex)s.') % {'ex': ex})
             return redirect('curso_detail', self.object.curso_id)
 
         for respuesta in respuestas:
@@ -998,14 +1016,15 @@ class ProfesorCursoAnyadirView(LoginRequiredMixin, ChecksMixin, View):
                 profesor.actualizar(self.request)
             except Exception as ex:
                 # Si Identidades devuelve un error, finalizamos mostrando el mensaje de error.
-                messages.error(request, f'ERROR: {ex}')
+                messages.error(request, _('ERROR: %(ex)s') % {'ex': ex})
                 return redirect('curso_detail', curso_id)
 
         # Si el usuario no está activo, finalizamos explicando esta circunstancia.
         if not profesor.is_active:
             messages.error(
                 request,
-                f'ERROR: {profesor.full_name} no está activo en Gestión de Identidades.',
+                _('ERROR: %(nombre)s no está activo en Gestión de Identidades.')
+                % {'nombre': profesor.full_name},
             )
             return redirect('curso_detail', curso_id)
 
@@ -1013,8 +1032,11 @@ class ProfesorCursoAnyadirView(LoginRequiredMixin, ChecksMixin, View):
         if not profesor.email:
             messages.error(
                 request,
-                f'ERROR: {profesor.full_name} no tiene establecida'
-                ' ninguna dirección de correo electrónico en Gestión de Identidades.',
+                _(
+                    'ERROR: %(nombre)s no tiene establecida'
+                    ' ninguna dirección de correo electrónico en Gestión de Identidades.'
+                )
+                % {'nombre': profesor.full_name},
             )
             return redirect('curso_detail', curso_id)
 
