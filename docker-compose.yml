@@ -36,6 +36,10 @@ services:
             - ./env/geoda2.env
         depends_on:
             - db
+        labels:
+            ofelia.enabled: "true"
+            ofelia.job-exec.profesores.schedule: "0 35 06 * * *"
+            ofelia.job-exec.profesores.command: "python manage.py crear_usuarios"
         networks:
             geoda2_net:
                 ipv4_address: 172.101.0.3
@@ -44,3 +48,16 @@ services:
               published: 8001
               target: 8001
         restart: always
+
+    ofelia:
+        command: daemon --docker
+        depends_on:
+            - web
+        environment:
+            - "TZ=Europe/Madrid"
+        image: mcuadros/ofelia:latest
+        networks:
+            geoda2_net:
+                ipv4_address: 172.101.0.4
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock:ro
