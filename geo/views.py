@@ -154,7 +154,8 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
         messages.info(request, mensaje)
 
         profesores = asignatura.get_profesores()
-        profesores = set(profesores.append(usuario))
+        profesores.append(usuario)
+        profesores = set(profesores)
         for profesor in profesores:
             try:
                 curso.anyadir_profesor(profesor)
