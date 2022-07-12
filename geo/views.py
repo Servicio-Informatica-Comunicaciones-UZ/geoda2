@@ -153,11 +153,14 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
         mensaje = cliente.automatricular(asignatura, curso)
         messages.info(request, mensaje)
 
-        try:
-            curso.anyadir_profesor(usuario)
-        except Exception as ex:
-            messages.error(request, 'ERROR: %s' % str(ex))
-            return redirect('curso_detail', curso.id)
+        profesores = asignatura.get_profesores()
+        profesores = set(profesores.append(usuario))
+        for profesor in profesores:
+            try:
+                curso.anyadir_profesor(profesor)
+            except Exception as ex:
+                messages.error(request, 'ERROR: %s' % str(ex))
+                return redirect('curso_detail', curso.id)
 
         messages.success(request, _('Curso creado correctamente en Moodle.'))
 

@@ -5,6 +5,7 @@ from time import time
 from annoying.functions import get_config, get_object_or_None
 
 # Django
+from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.urls import reverse
@@ -82,6 +83,20 @@ class Asignatura(models.Model):
             f'{self.cod_grupo_asignatura}_{self.anyo_academico}'
         )
 
+    def get_profesores(self):
+        """Devuelve los usuarios que son docentes de la asignatura según el POD."""
+        pods = Pod.objects.filter(
+            anyo_academico=self.anyo_academico,
+            asignatura_id=self.asignatura_id,
+            cod_grupo_asignatura=self.cod_grupo_asignatura,
+            centro_id=self.centro_id,
+            plan_id_nk=self.plan_id_nk,
+        )
+        profesores = [pod.get_usuario_or_None() for pod in pods]
+        # Si llegara una asignación a un NIP que no exista en la tabla de usuarios, la omitimos.
+        profesores = list(filter(None, profesores))
+        return profesores
+
 
 class Calendario(models.Model):
     """Este modelo almacena el año académico actual."""
@@ -141,6 +156,11 @@ class Pod(models.Model):
         except Asignatura.DoesNotExist:
             return None
         return asig
+
+    def get_usuario_or_None(self):
+        """Devuelve el modelo User correspondiente a este registro."""
+        User = get_user_model()
+        return get_object_or_None(User, username=self.nip)
 
 
 class Categoria(models.Model):
@@ -384,9 +404,9 @@ class Curso(models.Model):
 
     def anyadir_profesor(self, usuario):
         """Añade al usuario a la lista de profesores del curso y lo matricula en Moodle."""
-        pc = ProfesorCurso.objects.create(curso=self, profesor=usuario, fecha_alta=timezone.now())
         cliente = WSClient()
         cliente.matricular_profesor(usuario, self)
+        pc = ProfesorCurso.objects.create(curso=self, profesor=usuario, fecha_alta=timezone.now())
         return pc
 
     def borrar_en_plataforma(self):
