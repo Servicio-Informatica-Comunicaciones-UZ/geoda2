@@ -80,13 +80,9 @@ class ChecksMixin(UserPassesTestMixin):
         """Devuelve si el usuario actual es profesor del curso indicado."""
         self.permission_denied_message = _('Usted no es profesor de este curso')
         curso = get_object_or_404(Curso, pk=curso_id)
-        asignaciones = curso.profesorcurso_set.filter(
-            Q(fecha_baja__gt=timezone.now()) | Q(fecha_baja=None)
-        ).select_related('profesor')
-        profesores = [asignacion.profesor for asignacion in asignaciones]
         usuario_actual = self.request.user
 
-        return usuario_actual in profesores
+        return usuario_actual in curso.profesores_activos
 
     def test_func(self):
         raise NotImplementedError(
@@ -233,23 +229,25 @@ class CalendarioUpdate(
     template_name = 'gestion/calendario_form.html'
 
     # Tras cambiar el año hay que mover en Moodle
-    # las categorías Varios (5047) y Escuela de Doctorado (5021).
-    # Se puede usar `moosh` para mover una categoría a otra.
-    # Example: Move the category with id 5 to be in the category with id 7:
-    # moosh category-move 5 7
-
-    # También hay que moverlas en Geoda:
-    # SELECT id, anyo_academico FROM categoria WHERE supercategoria_id IS NULL
-    #   ORDER BY anyo_academico DESC LIMIT 1;
-    # UPDATE categoria SET anyo_academico=<anyo>, supercategoria_id=<id> WHERE id_nk=5047;
-    # UPDATE categoria SET anyo_academico=<anyo>, supercategoria_id=<id> WHERE id_nk=5021;
+    # las categorías «Varios» (5047) y «Escuela de Doctorado» (5021).
 
     # NOTA: La Escuela de Doctorado tiene dos categorías:
     #
-    # * una categoría directamente en Cursos 20xx-20yy,
-    #   con 1 curso por cada PD, que se pasa de un año al siguiente.
-    # * otra categoría dentro de No regladas,
+    # * una categoría (5021) directamente en «Cursos 20xx-20yy»,
+    #   con 1 curso por cada PD, que es la que se pasa de un año al siguiente.
+    # * otra categoría (5747, 5701, 5776...) dentro de la categoría «No reglada» de cada año,
     #   para actividades de formación transversal y específica.
+
+    # Se puede usar `moosh` para mover en Moodle una categoría a otra.
+    # Example: Move the category with id 5021 to be in the category with id 6543:
+    #     moosh category-move 5021 6543
+
+    # También hay que mover esas dos categorías en Geoda:
+    #
+    # SELECT id, anyo_academico FROM categoria WHERE supercategoria_id IS NULL
+    #   ORDER BY anyo_academico DESC LIMIT 1;  -- Obtener el `id` de la nueva supercategoría
+    # UPDATE categoria SET anyo_academico=<anyo>, supercategoria_id=<id> WHERE id_nk=5047;
+    # UPDATE categoria SET anyo_academico=<anyo>, supercategoria_id=<id> WHERE id_nk=5021;
 
     success_message = mark_safe(
         str(_('Se ha actualizado el curso académico actual.'))
@@ -444,14 +442,10 @@ class CursoRematricularView(LoginRequiredMixin, ChecksMixin, View):
         curso_id = request.POST.get('curso_id')
         curso = get_object_or_404(Curso, pk=curso_id)
 
-        asignaciones = curso.profesorcurso_set.filter(
-            Q(fecha_baja__gt=timezone.now()) | Q(fecha_baja=None)
-        ).select_related('profesor')
-
         cliente = WSClient()
-        for asignacion in asignaciones:
+        for profesor in curso.profesores_activos:
             try:
-                cliente.matricular_profesor(asignacion.profesor, curso)
+                cliente.matricular_profesor(profesor, curso)
             except Exception as ex:
                 messages.error(self.request, _('ERROR: %(ex)s.') % {'ex': ex})
                 return redirect('curso_detail', curso_id)
@@ -621,8 +615,7 @@ class ResolverSolicitudCursoView(LoginRequiredMixin, PermissionRequiredMixin, Re
                 datos_recibidos = cliente.crear_curso(curso.get_datos())
             except Exception as err:
                 messages.error(
-                    request,
-                    _('ERROR: No fue posible crear el curso: %(err)s.') % {'err': err},
+                    request, _('ERROR: No fue posible crear el curso: %(err)s.') % {'err': err}
                 )
                 return redirect('curso_detail', id_recibido)
 
@@ -998,7 +991,7 @@ class ProfesorCursoAnyadirView(LoginRequiredMixin, ChecksMixin, View):
     Crea el usuario si no existe, y crea una asignación profesor-curso.
     """
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):  # noqa: ignore=C901
         curso_id = request.POST.get('curso_id')
         curso = get_object_or_404(Curso, pk=curso_id)
 
@@ -1039,6 +1032,18 @@ class ProfesorCursoAnyadirView(LoginRequiredMixin, ChecksMixin, View):
                 _(
                     'ERROR: %(nombre)s no tiene establecida'
                     ' ninguna dirección de correo electrónico en Gestión de Identidades.'
+                )
+                % {'nombre': profesor.full_name},
+            )
+            return redirect('curso_detail', curso_id)
+
+        # Si el usuario ya es profesor del curso, no lo añadimos por segunda vez.
+        if profesor in curso.profesores_activos:
+            messages.error(
+                request,
+                _(
+                    'ERROR: %(nombre)s ya es profesor de este curso.'
+                    ' Si se ha dado de baja en Moodle, puede rematricularlo en la sección inferior.'
                 )
                 % {'nombre': profesor.full_name},
             )

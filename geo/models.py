@@ -8,6 +8,7 @@ from annoying.functions import get_config, get_object_or_None
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -373,7 +374,7 @@ class Curso(models.Model):
     comentarios = models.TextField(blank=True, null=True, verbose_name=_('Comentarios'))
     profesores = models.ManyToManyField(
         'accounts.CustomUser', related_name='cursos', through='ProfesorCurso'
-    )
+    )  # NOTA: Incluye los que hayan sido dados de baja.
 
     class Meta:
         db_table = 'curso'
@@ -442,6 +443,15 @@ class Curso(models.Model):
             'startdate': int(time() + 60),
         }
 
+    @property
+    def profesores_activos(self):
+        """Devuelve los usuarios que están dados de alta como profesores del curso."""
+        asignaciones = self.profesorcurso_set.filter(
+            Q(fecha_baja__gt=timezone.now()) | Q(fecha_baja=None)
+        ).select_related('profesor')
+        profesores = [asignacion.profesor for asignacion in asignaciones]
+        return profesores
+
 
 class Forano(models.Model):
     """Usuario invitado, que no es profesor, PAS ni estudiante de la Universidad."""
@@ -456,7 +466,7 @@ class Forano(models.Model):
     nip = models.PositiveIntegerField(
         verbose_name=_('NIP a vincular'),
         help_text=_('Número de Identificación Personal del usuario a vincular.'),
-        validators=[MinValueValidator(100001), MaxValueValidator(999999)],
+        validators=[MinValueValidator(100_001), MaxValueValidator(999_999)],
     )
     nombre = models.CharField(
         max_length=127,
@@ -533,7 +543,8 @@ class RightsSupport(models.Model):
     """Dummy auxiliary model in order to create global permissions not related to a model."""
 
     class Meta:
-        managed = False  # No database table creation or deletion operations will be performed for this model.
+        # No database table creation or deletion operations will be performed for this model.
+        managed = False
 
         permissions = (
             ('matricular_plan', _('Puede matricular en un curso a todos los alumnos de un plan')),
