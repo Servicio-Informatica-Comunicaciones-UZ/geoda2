@@ -40,6 +40,8 @@ services:
             ofelia.enabled: "true"
             ofelia.job-exec.profesores.schedule: "0 35 06 * * *"
             ofelia.job-exec.profesores.command: "python manage.py crear_usuarios"
+            ofelia.job-exec.matriculas.schedule: "0 40 06 * * *"
+            ofelia.job-exec.matriculas.command: "python manage.py matricular_pod"
         networks:
             geoda2_net:
                 ipv4_address: 172.101.0.3
