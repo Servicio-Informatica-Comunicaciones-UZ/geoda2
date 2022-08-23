@@ -13,7 +13,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # Obtenemos los NIPs que figuran en el POD pero que no están matriculados en el curso
         with connection.cursor() as cursor:
-            cursor.execute(  # FIXME controlar fecha baja!
+            cursor.execute(
                 '''
                 SELECT c.id, p.nip
                 FROM curso c

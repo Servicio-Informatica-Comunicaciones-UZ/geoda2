@@ -210,7 +210,7 @@ class WSClient:
             self._request_url('POST', 'enrol_manual_enrol_users', self.geo_token, payload)
         return len(usuarios_moodle), usuarios_no_encontrados
 
-    def _request_url(self, verb, wsfunction, token, data=None):
+    def _request_url(self, verb, wsfunction, token, data=None):  # noqa: C901
         """Envía una petición al Web Service."""
         try:
             if verb == 'POST':
@@ -240,15 +240,22 @@ class WSClient:
             raise requests.exceptions.HTTPError('Moodle devolvió una respuesta HTTP no válida')
         except requests.exceptions.Timeout:
             raise requests.exceptions.Timeout('Moodle no respondió')
-        # except requests.exceptions.TooManyRedirects:
-        #     raise requests.exceptions.TooManyRedirects('Demasiadas redirecciones')
+        except requests.exceptions.TooManyRedirects:
+            raise requests.exceptions.TooManyRedirects('Demasiadas redirecciones')
         except requests.exceptions.RequestException:
             raise requests.exceptions.RequestException(
                 _('Problema desconocido al enviar la petición a Moodle (%(info)s)')
                 % {'info': sys.exc_info()[0]}
             )
 
-        received_data = json.loads(resp.content.decode('utf-8'))
+        try:
+            received_data = json.loads(resp.content.decode('utf-8'))
+        except json.JSONDecodeError:
+            raise Exception(
+                _('La respuesta del servidor Moodle no es un JSON válido: %(contenido)s')
+                % {'contenido': resp.content.decode('utf-8')}
+            )
+
         if isinstance(received_data, dict) and received_data.get('exception', None):
             raise Exception(received_data.get('message'))
 

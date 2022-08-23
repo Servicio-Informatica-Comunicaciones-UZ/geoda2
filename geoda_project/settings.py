@@ -149,7 +149,7 @@ STATIC_ROOT = str(BASE_DIR / 'staticfiles')
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-url
 STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
-STATICFILES_DIRS = [str(BASE_DIR / 'static')]
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
@@ -161,7 +161,7 @@ TEMPLATES = [
         # https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-TEMPLATES-BACKEND
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         # https://docs.djangoproject.com/en/dev/ref/settings/#dirs
-        'DIRS': [str(BASE_DIR / 'templates')],
+        'DIRS': [BASE_DIR / 'templates'],
         # https://docs.djangoproject.com/en/dev/ref/settings/#app-dirs
         'APP_DIRS': True,
         'OPTIONS': {
