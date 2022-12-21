@@ -1,4 +1,4 @@
-# third-party
+# Third-party
 from crispy_forms.bootstrap import FormActions, InlineField, StrictButton
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import ButtonHolder, Div, Fieldset, Layout, Submit
@@ -8,7 +8,7 @@ from django import forms
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-# local Django
+# Local Django
 from .models import Calendario, Categoria, Curso, ProfesorCurso
 
 
@@ -97,6 +97,9 @@ class CursoSolicitarForm(forms.ModelForm):
             self.fields[field].required = True
 
         anyo_academico = Calendario.objects.get(slug='actual').anyo
+
+        self.fields['nombre'].widget.attrs['placeholder'] = self.fields['nombre'].help_text
+
         cat_anyo = Categoria.objects.get(
             anyo_academico=anyo_academico, supercategoria_id__isnull=True
         )
@@ -109,6 +112,9 @@ class CursoSolicitarForm(forms.ModelForm):
             .order_by('nombre')
             .all()
         )
+        self.fields['motivo_solicitud'].widget.attrs['placeholder'] = self.fields[
+            'motivo_solicitud'
+        ].help_text
 
     def save(self, commit=True):
         """Guarda la solicitud de curso, y añade al solicitante como profesor."""

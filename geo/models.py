@@ -1,19 +1,19 @@
-# standard library
+# Standard library
 from time import time
 
-# third-party
+# Third-party
 from annoying.functions import get_config, get_object_or_None
 
 # Django
 from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-# local Django
+# Local Django
 from .wsclient import WSClient
 
 
@@ -318,8 +318,9 @@ class Curso(models.Model):
     nombre = models.CharField(
         max_length=200,
         help_text=_(
-            'Nombre del curso. No se puede cambiar, así que debe ser descriptivo y diferenciable de otros.'
+            'El nombre del curso no se puede cambiar, así que debe ser descriptivo y diferenciable de otros.'
         ),
+        verbose_name=_('Nombre del curso'),
     )
     solicitante = models.ForeignKey(
         'accounts.CustomUser',
