@@ -551,3 +551,121 @@ class RightsSupport(models.Model):
             ('matricular_plan', _('Puede matricular en un curso a todos los alumnos de un plan')),
             ('anyadir_alumnos', _('Puede matricular alumnos en un curso')),
         )
+
+
+class Centro(models.Model):
+    """
+    Modelo que representa un centro de estudios.
+
+    `id` es el código del centro en Sigma.
+    """
+
+    id = models.PositiveSmallIntegerField(_('cód. académico'), primary_key=True)
+    nombre = models.CharField(max_length=255)
+    municipio = models.CharField(max_length=100, blank=True, null=True)
+    esta_activo = models.BooleanField(_('¿Activo?'), default=False)
+
+    class Meta:
+        db_table = 'centro'
+        ordering = ['nombre']
+
+    def __str__(self):
+        return f'{ self.nombre } ({ self.academico_id_nk })'
+
+
+class Matriculacion(models.Model):
+    """Matriculación de un alumno en una asignatura"""
+
+    anyo_academico = models.IntegerField(verbose_name=_('Año académico'))
+    nip = models.PositiveIntegerField(
+        verbose_name=_('NIP del alumno'),
+        help_text=_('Número de Identificación Personal del alumno matriculado.'),
+        validators=[MinValueValidator(100_001), MaxValueValidator(9_999_999)],
+    )
+    centro = models.ForeignKey('Centro', on_delete=models.PROTECT, related_name='matriculaciones')
+    plan = models.ForeignKey(
+        'Plan',
+        on_delete=models.PROTECT,
+        limit_choices_to={'esta_activo': True},
+    )
+    asignatura_id = models.IntegerField(_('Cód. asignatura'), db_index=True)
+    tipo_asignatura = models.CharField(max_length=15)
+    cod_grupo_asignatura = models.IntegerField(_('Grupo'))
+
+    class Meta:
+        db_table = 'matriculacion'
+
+
+class Estudio(models.Model):
+    """
+    Modelo para representar un estudio.
+
+    `id` es el código del estudio en Sigma.
+    """
+
+    id = models.PositiveSmallIntegerField(_('Cód. estudio'), primary_key=True)
+    nombre = models.CharField(max_length=255)
+    esta_activo = models.BooleanField(_('¿Activo?'), default=True)
+
+    class Meta:
+        db_table = 'estudio'
+        ordering = ['nombre']
+
+    def __str__(self):
+        return self.nombre
+
+
+class Plan(models.Model):
+    """
+    Modelo para representar un plan de estudios.
+
+    El campo `id` es el código del plan en Sigma.
+    """
+
+    id = models.PositiveSmallIntegerField(_('Cód. plan'), primary_key=True)
+    esta_activo = models.BooleanField(_('¿Activo?'), default=True)
+    centro = models.ForeignKey('Centro', on_delete=models.PROTECT, related_name='planes')
+    estudio = models.ForeignKey('Estudio', on_delete=models.PROTECT, related_name='planes')
+
+    class Meta:
+        db_table = 'plan'
+
+    def __str__(self):
+        return _(f'{ self.estudio.nombre } (plan { self.id })')
+
+
+class MatriculaAutomatica(models.Model):
+    """Matrícula automática en cursos de Moodle con los datos de matriculación de Sigma"""
+
+    id = models.BigAutoField(primary_key=True)
+    courseid = models.PositiveBigIntegerField()
+    sigmacourseid = models.CharField(max_length=10)
+    sigmagroupid = models.CharField(max_length=5)
+    active = models.BooleanField(_('¿Activo?'))
+    sigmatitu = models.CharField(max_length=10)
+    sigmacentro = models.CharField(max_length=10)
+    fijo = models.BooleanField(_('¿Registro predefinido?'))
+
+    asignatura_id = models.IntegerField(_('Cód. asignatura'), blank=True, null=True)
+    cod_grupo_asignatura = models.IntegerField(_('Grupo'), blank=True, null=True)
+    plan = models.ForeignKey(
+        'Plan',
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
+        limit_choices_to={'esta_activo': True},
+    )
+    centro = models.ForeignKey(
+        'Centro',
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
+        limit_choices_to={'esta_activo': True},
+    )
+
+    class Meta:
+        db_table = 'matricula_automatica'
+        unique_together = (
+            ('asignatura_id', 'cod_grupo_asignatura', 'plan', 'courseid', 'centro'),
+            ('sigmacourseid', 'sigmagroupid', 'sigmatitu', 'courseid', 'sigmacentro'),
+        )
