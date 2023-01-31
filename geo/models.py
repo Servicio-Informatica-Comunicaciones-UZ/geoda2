@@ -110,60 +110,6 @@ class Calendario(models.Model):
         permissions = [('calendario', _('Puede modificar el año académico actual.'))]
 
 
-class Pod(models.Model):
-    """Correspondencia entre asignaturas regladas y profesores.
-
-    Establecida en el Plan de Ordenación Docente.
-    La tabla se carga mediante una tarea ETL (Pentaho Spoon).
-    """
-
-    plan_id_nk = models.IntegerField(blank=True, null=True, verbose_name='Cód. plan')
-    centro_id = models.IntegerField(blank=True, null=True, verbose_name='Cód. centro')
-    asignatura_id = models.IntegerField(blank=True, null=True, verbose_name='Cód. asignatura')
-    cod_grupo_asignatura = models.IntegerField(blank=True, null=True, verbose_name='Grupo')
-    anyo_academico = models.IntegerField(blank=True, null=True, verbose_name='Año académico')
-    nip = models.CharField(max_length=10, blank=True, null=True, verbose_name='NIP')
-    apellido1 = models.CharField(
-        max_length=32, blank=True, null=True, verbose_name='Primer apellido'
-    )
-    apellido2 = models.CharField(
-        max_length=32, blank=True, null=True, verbose_name='Segundo apellido'
-    )
-    nombre = models.CharField(max_length=32, blank=True, null=True, verbose_name='Nombre')
-    tipo_docencia = models.IntegerField(_("Tipo de docencia"))
-
-    class Meta:
-        db_table = 'pod'
-        index_together = ['nip', 'anyo_academico']
-        verbose_name = 'registro del Plan de Ordenación Docente'
-        verbose_name_plural = 'registros del Plan de Ordenación Docente'
-
-    def __str__(self):
-        return '{} {} {} {}'.format(
-            self.anyo_academico, self.plan_id_nk, self.asignatura_id, self.nip
-        )
-
-    # Alternative: https://pypi.org/project/django-composite-foreignkey/
-    def get_asignatura_or_None(self):
-        """Devuelve el modelo Asignatura correspondiente a este registro."""
-        try:
-            asig = Asignatura.objects.get(
-                anyo_academico=self.anyo_academico,
-                centro_id=self.centro_id,
-                plan_id_nk=self.plan_id_nk,
-                asignatura_id=self.asignatura_id,
-                cod_grupo_asignatura=self.cod_grupo_asignatura,
-            )
-        except Asignatura.DoesNotExist:
-            return None
-        return asig
-
-    def get_usuario_or_None(self):
-        """Devuelve el modelo User correspondiente a este registro."""
-        User = get_user_model()
-        return get_object_or_None(User, username=self.nip)
-
-
 class Categoria(models.Model):
     """
     Este modelo representa la categoría de los cursos.
@@ -294,6 +240,26 @@ class Categoria(models.Model):
             'parent': self.supercategoria.id_nk if self.supercategoria else None,
             'idnumber': f'cat_{self.id}',
         }
+
+
+class Centro(models.Model):
+    """
+    Modelo que representa un centro de estudios.
+
+    `id` es el código del centro en Sigma.
+    """
+
+    id = models.PositiveSmallIntegerField(_('cód. académico'), primary_key=True)
+    nombre = models.CharField(max_length=255)
+    municipio = models.CharField(max_length=100, blank=True, null=True)
+    esta_activo = models.BooleanField(_('¿Activo?'), default=False)
+
+    class Meta:
+        db_table = 'centro'
+        ordering = ['nombre']
+
+    def __str__(self):
+        return f'{ self.nombre } ({ self.academico_id_nk })'
 
 
 class Curso(models.Model):
@@ -454,6 +420,25 @@ class Curso(models.Model):
         return profesores
 
 
+class Estudio(models.Model):
+    """
+    Modelo para representar un estudio.
+
+    `id` es el código del estudio en Sigma.
+    """
+
+    id = models.PositiveSmallIntegerField(_('Cód. estudio'), primary_key=True)
+    nombre = models.CharField(max_length=255)
+    esta_activo = models.BooleanField(_('¿Activo?'), default=True)
+
+    class Meta:
+        db_table = 'estudio'
+        ordering = ['nombre']
+
+    def __str__(self):
+        return self.nombre
+
+
 class Forano(models.Model):
     """Usuario invitado, que no es profesor, PAS ni estudiante de la Universidad."""
 
@@ -519,121 +504,6 @@ class Forano(models.Model):
         return reverse('forano_detail', args=[self.id])
 
 
-class ProfesorCurso(models.Model):
-    """Vinculación entre un curso y la persona que lo creó/solicitó."""
-
-    id = models.AutoField(primary_key=True)
-    curso = models.ForeignKey('Curso', models.CASCADE)
-    profesor = models.ForeignKey('accounts.CustomUser', models.PROTECT)
-    fecha_alta = models.DateTimeField(blank=True, null=True, verbose_name=_('Fecha de alta'))
-    fecha_baja = models.DateTimeField(blank=True, null=True, verbose_name=_('Fecha de baja'))
-
-    class Meta:
-        db_table = 'profesor_curso'
-        ordering = ('curso_id', 'fecha_alta', 'fecha_baja')
-        verbose_name = _('asignación profesor-curso')
-        verbose_name_plural = _('asignaciones profesor-curso')
-
-        permissions = [
-            ('anyadir_profesorcurso', _('Puede añadir un profesor a un curso.')),
-            ('pc_anular', _('Puede dar de baja a un profesor de un curso.')),
-        ]
-
-
-class RightsSupport(models.Model):
-    """Dummy auxiliary model in order to create global permissions not related to a model."""
-
-    class Meta:
-        # No database table creation or deletion operations will be performed for this model.
-        managed = False
-
-        permissions = (
-            ('matricular_plan', _('Puede matricular en un curso a todos los alumnos de un plan')),
-            ('anyadir_alumnos', _('Puede matricular alumnos en un curso')),
-        )
-
-
-class Centro(models.Model):
-    """
-    Modelo que representa un centro de estudios.
-
-    `id` es el código del centro en Sigma.
-    """
-
-    id = models.PositiveSmallIntegerField(_('cód. académico'), primary_key=True)
-    nombre = models.CharField(max_length=255)
-    municipio = models.CharField(max_length=100, blank=True, null=True)
-    esta_activo = models.BooleanField(_('¿Activo?'), default=False)
-
-    class Meta:
-        db_table = 'centro'
-        ordering = ['nombre']
-
-    def __str__(self):
-        return f'{ self.nombre } ({ self.academico_id_nk })'
-
-
-class Matriculacion(models.Model):
-    """Matriculación de un alumno en una asignatura"""
-
-    anyo_academico = models.IntegerField(verbose_name=_('Año académico'))
-    nip = models.PositiveIntegerField(
-        verbose_name=_('NIP del alumno'),
-        help_text=_('Número de Identificación Personal del alumno matriculado.'),
-        validators=[MinValueValidator(100_001), MaxValueValidator(9_999_999)],
-    )
-    centro = models.ForeignKey('Centro', on_delete=models.PROTECT, related_name='matriculaciones')
-    plan = models.ForeignKey(
-        'Plan',
-        on_delete=models.PROTECT,
-        limit_choices_to={'esta_activo': True},
-    )
-    asignatura_id = models.IntegerField(_('Cód. asignatura'), db_index=True)
-    tipo_asignatura = models.CharField(max_length=15)
-    cod_grupo_asignatura = models.IntegerField(_('Grupo'))
-
-    class Meta:
-        db_table = 'matriculacion'
-
-
-class Estudio(models.Model):
-    """
-    Modelo para representar un estudio.
-
-    `id` es el código del estudio en Sigma.
-    """
-
-    id = models.PositiveSmallIntegerField(_('Cód. estudio'), primary_key=True)
-    nombre = models.CharField(max_length=255)
-    esta_activo = models.BooleanField(_('¿Activo?'), default=True)
-
-    class Meta:
-        db_table = 'estudio'
-        ordering = ['nombre']
-
-    def __str__(self):
-        return self.nombre
-
-
-class Plan(models.Model):
-    """
-    Modelo para representar un plan de estudios.
-
-    El campo `id` es el código del plan en Sigma.
-    """
-
-    id = models.PositiveSmallIntegerField(_('Cód. plan'), primary_key=True)
-    esta_activo = models.BooleanField(_('¿Activo?'), default=True)
-    centro = models.ForeignKey('Centro', on_delete=models.PROTECT, related_name='planes')
-    estudio = models.ForeignKey('Estudio', on_delete=models.PROTECT, related_name='planes')
-
-    class Meta:
-        db_table = 'plan'
-
-    def __str__(self):
-        return _(f'{ self.estudio.nombre } (plan { self.id })')
-
-
 class MatriculaAutomatica(models.Model):
     """Matrícula automática en cursos de Moodle con los datos de matriculación de Sigma"""
 
@@ -668,4 +538,134 @@ class MatriculaAutomatica(models.Model):
         unique_together = (
             ('asignatura_id', 'cod_grupo_asignatura', 'plan', 'courseid', 'centro'),
             ('sigmacourseid', 'sigmagroupid', 'sigmatitu', 'courseid', 'sigmacentro'),
+        )
+
+
+class Matriculacion(models.Model):
+    """Matriculación Sigma de un alumno en una asignatura"""
+
+    anyo_academico = models.IntegerField(verbose_name=_('Año académico'))
+    nip = models.PositiveIntegerField(
+        verbose_name=_('NIP del alumno'),
+        help_text=_('Número de Identificación Personal del alumno matriculado.'),
+        validators=[MinValueValidator(100_001), MaxValueValidator(9_999_999)],
+    )
+    centro = models.ForeignKey('Centro', on_delete=models.PROTECT, related_name='matriculaciones')
+    plan = models.ForeignKey(
+        'Plan',
+        on_delete=models.PROTECT,
+        limit_choices_to={'esta_activo': True},
+    )
+    asignatura_id = models.IntegerField(_('Cód. asignatura'), db_index=True)
+    tipo_asignatura = models.CharField(max_length=15)
+    cod_grupo_asignatura = models.IntegerField(_('Grupo'))
+
+    class Meta:
+        db_table = 'matriculacion'
+
+
+class Plan(models.Model):
+    """
+    Modelo para representar un plan de estudios.
+
+    El campo `id` es el código del plan en Sigma.
+    """
+
+    id = models.PositiveSmallIntegerField(_('Cód. plan'), primary_key=True)
+    esta_activo = models.BooleanField(_('¿Activo?'), default=True)
+    centro = models.ForeignKey('Centro', on_delete=models.PROTECT, related_name='planes')
+    estudio = models.ForeignKey('Estudio', on_delete=models.PROTECT, related_name='planes')
+
+    class Meta:
+        db_table = 'plan'
+
+    def __str__(self):
+        return _(f'{ self.estudio.nombre } (plan { self.id })')
+
+
+class Pod(models.Model):
+    """Correspondencia entre asignaturas regladas y profesores.
+
+    Establecida en el Plan de Ordenación Docente.
+    La tabla se carga mediante una tarea ETL (Pentaho Spoon).
+    """
+
+    plan_id_nk = models.IntegerField(blank=True, null=True, verbose_name='Cód. plan')
+    centro_id = models.IntegerField(blank=True, null=True, verbose_name='Cód. centro')
+    asignatura_id = models.IntegerField(blank=True, null=True, verbose_name='Cód. asignatura')
+    cod_grupo_asignatura = models.IntegerField(blank=True, null=True, verbose_name='Grupo')
+    anyo_academico = models.IntegerField(blank=True, null=True, verbose_name='Año académico')
+    nip = models.CharField(max_length=10, blank=True, null=True, verbose_name='NIP')
+    apellido1 = models.CharField(
+        max_length=32, blank=True, null=True, verbose_name='Primer apellido'
+    )
+    apellido2 = models.CharField(
+        max_length=32, blank=True, null=True, verbose_name='Segundo apellido'
+    )
+    nombre = models.CharField(max_length=32, blank=True, null=True, verbose_name='Nombre')
+    tipo_docencia = models.IntegerField(_("Tipo de docencia"))
+
+    class Meta:
+        db_table = 'pod'
+        index_together = ['nip', 'anyo_academico']
+        verbose_name = 'registro del Plan de Ordenación Docente'
+        verbose_name_plural = 'registros del Plan de Ordenación Docente'
+
+    def __str__(self):
+        return '{} {} {} {}'.format(
+            self.anyo_academico, self.plan_id_nk, self.asignatura_id, self.nip
+        )
+
+    # Alternative: https://pypi.org/project/django-composite-foreignkey/
+    def get_asignatura_or_None(self):
+        """Devuelve el modelo Asignatura correspondiente a este registro."""
+        try:
+            asig = Asignatura.objects.get(
+                anyo_academico=self.anyo_academico,
+                centro_id=self.centro_id,
+                plan_id_nk=self.plan_id_nk,
+                asignatura_id=self.asignatura_id,
+                cod_grupo_asignatura=self.cod_grupo_asignatura,
+            )
+        except Asignatura.DoesNotExist:
+            return None
+        return asig
+
+    def get_usuario_or_None(self):
+        """Devuelve el modelo User correspondiente a este registro."""
+        User = get_user_model()
+        return get_object_or_None(User, username=self.nip)
+
+
+class ProfesorCurso(models.Model):
+    """Vinculación entre un curso y la persona que lo creó/solicitó."""
+
+    id = models.AutoField(primary_key=True)
+    curso = models.ForeignKey('Curso', models.CASCADE)
+    profesor = models.ForeignKey('accounts.CustomUser', models.PROTECT)
+    fecha_alta = models.DateTimeField(blank=True, null=True, verbose_name=_('Fecha de alta'))
+    fecha_baja = models.DateTimeField(blank=True, null=True, verbose_name=_('Fecha de baja'))
+
+    class Meta:
+        db_table = 'profesor_curso'
+        ordering = ('curso_id', 'fecha_alta', 'fecha_baja')
+        verbose_name = _('asignación profesor-curso')
+        verbose_name_plural = _('asignaciones profesor-curso')
+
+        permissions = [
+            ('anyadir_profesorcurso', _('Puede añadir un profesor a un curso.')),
+            ('pc_anular', _('Puede dar de baja a un profesor de un curso.')),
+        ]
+
+
+class RightsSupport(models.Model):
+    """Dummy auxiliary model in order to create global permissions not related to a model."""
+
+    class Meta:
+        # No database table creation or deletion operations will be performed for this model.
+        managed = False
+
+        permissions = (
+            ('matricular_plan', _('Puede matricular en un curso a todos los alumnos de un plan')),
+            ('anyadir_alumnos', _('Puede matricular alumnos en un curso')),
         )
