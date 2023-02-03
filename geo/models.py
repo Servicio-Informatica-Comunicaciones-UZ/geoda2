@@ -540,6 +540,12 @@ class MatriculaAutomatica(models.Model):
             ('sigmacourseid', 'sigmagroupid', 'sigmatitu', 'courseid', 'sigmacentro'),
         )
 
+    def get_nombre_asignatura(self):
+        # TODO: Renombrar Asignatura a GrupoAsignatura, y crear un modelo Asignatura con sus id y nombres
+        return (
+            Asignatura.objects.filter(asignatura_id=self.asignatura_id).first().nombre_asignatura
+        )
+
 
 class Matriculacion(models.Model):
     """Matriculación Sigma de un alumno en una asignatura"""

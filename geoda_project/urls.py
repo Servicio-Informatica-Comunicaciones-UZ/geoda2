@@ -21,12 +21,13 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.urls import include, path
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
-
+from geo.api import api
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('api/', api.urls),
     path(
         'browserconfig.xml',
         RedirectView.as_view(url=staticfiles_storage.url('favicons/browserconfig.xml')),

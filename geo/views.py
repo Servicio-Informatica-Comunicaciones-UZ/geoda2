@@ -46,7 +46,16 @@ from .forms import (
     MatricularPlanForm,
     ProfesorCursoAddForm,
 )
-from .models import Asignatura, Calendario, Categoria, Curso, Forano, Pod, ProfesorCurso
+from .models import (
+    Asignatura,
+    Calendario,
+    Categoria,
+    Curso,
+    Forano,
+    MatriculaAutomatica,
+    Pod,
+    ProfesorCurso,
+)
 from .tables import (
     AsignaturasTable,
     CursosTodosTable,
@@ -366,6 +375,10 @@ class CursoDetailView(LoginRequiredMixin, DetailView):
 
         context['puede_matricular_alumnos'] = es_profesor_del_curso or self.request.user.has_perm(
             'geo.anyadir_alumnos'
+        )
+
+        context['matriculas_automaticas'] = MatriculaAutomatica.objects.filter(
+            courseid=self.object.id_nk
         )
 
         return context

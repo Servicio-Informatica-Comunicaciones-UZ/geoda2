@@ -98,6 +98,7 @@ INSTALLED_APPS = [
     'django_filters',  # https://pypi.org/project/django-filter/
     'django_tables2',  # https://github.com/jieter/django-tables2
     'social_django',  # https://github.com/python-social-auth/social-app-django
+    'widget_tweaks',  # https://github.com/jazzband/django-widget-tweaks
 ]
 
 # AUTHENTICATION
