@@ -48,7 +48,9 @@ class Asignatura(models.Model):
     valor_periodo = models.CharField(
         max_length=2, blank=True, null=True, verbose_name=_('Periodo')
     )
-    cod_grupo_asignatura = models.IntegerField(blank=True, null=True, verbose_name=_('Grupo'))
+    cod_grupo_asignatura = models.IntegerField(
+        blank=True, null=True, verbose_name=_('Cód. grupo de la asignatura')
+    )
     turno = models.CharField(max_length=1, blank=True, null=True)
     tipo_docencia = models.IntegerField(blank=True, null=True, verbose_name=_('Tipo de docencia'))
     anyo_academico = models.IntegerField(blank=True, null=True, verbose_name=_('Año académico'))
@@ -259,7 +261,7 @@ class Centro(models.Model):
         ordering = ['nombre']
 
     def __str__(self):
-        return f'{ self.nombre } ({ self.academico_id_nk })'
+        return f'{ self.nombre } ({ self.id })'
 
 
 class Curso(models.Model):
@@ -452,7 +454,7 @@ class Forano(models.Model):
     nip = models.PositiveIntegerField(
         verbose_name=_('NIP a vincular'),
         help_text=_('Número de Identificación Personal del usuario a vincular.'),
-        validators=[MinValueValidator(100_001), MaxValueValidator(999_999)],
+        validators=[MinValueValidator(100_001), MaxValueValidator(9_999_999)],
     )
     nombre = models.CharField(
         max_length=127,
@@ -511,13 +513,24 @@ class MatriculaAutomatica(models.Model):
     courseid = models.PositiveBigIntegerField()
     sigmacourseid = models.CharField(max_length=10)
     sigmagroupid = models.CharField(max_length=5)
-    active = models.BooleanField(_('¿Activo?'))
+    active = models.BooleanField(_('¿Activo?'), default=False)
     sigmatitu = models.CharField(max_length=10)
     sigmacentro = models.CharField(max_length=10)
-    fijo = models.BooleanField(_('¿Registro predefinido?'))
+    fijo = models.BooleanField(_('¿Registro predefinido?'), default=False)
 
-    asignatura_id = models.IntegerField(_('Cód. asignatura'), blank=True, null=True)
-    cod_grupo_asignatura = models.IntegerField(_('Grupo'), blank=True, null=True)
+    asignatura_id = models.IntegerField(
+        _('Cód. asignatura'),
+        blank=True,
+        null=True,
+        validators=[MinValueValidator(10_001), MaxValueValidator(999_999)],
+        help_text=_(
+            'Puede consultar el código de una asignatura'
+            ' en la <a href="https://estudios.unizar.es">web de estudios</a>.'
+        ),
+    )
+    cod_grupo_asignatura = models.IntegerField(
+        _('Cód. grupo de la asignatura'), blank=True, null=True
+    )
     plan = models.ForeignKey(
         'Plan',
         on_delete=models.PROTECT,
@@ -542,9 +555,8 @@ class MatriculaAutomatica(models.Model):
 
     def get_nombre_asignatura(self):
         # TODO: Renombrar Asignatura a GrupoAsignatura, y crear un modelo Asignatura con sus id y nombres
-        return (
-            Asignatura.objects.filter(asignatura_id=self.asignatura_id).first().nombre_asignatura
-        )
+        asignatura = Asignatura.objects.filter(asignatura_id=self.asignatura_id).first()
+        return asignatura.nombre_asignatura if asignatura else None
 
 
 class Matriculacion(models.Model):
@@ -564,7 +576,7 @@ class Matriculacion(models.Model):
     )
     asignatura_id = models.IntegerField(_('Cód. asignatura'), db_index=True)
     tipo_asignatura = models.CharField(max_length=15)
-    cod_grupo_asignatura = models.IntegerField(_('Grupo'))
+    cod_grupo_asignatura = models.IntegerField(_('Cód. grupo de la asignatura'))
 
     class Meta:
         db_table = 'matriculacion'
@@ -586,7 +598,8 @@ class Plan(models.Model):
         db_table = 'plan'
 
     def __str__(self):
-        return _(f'{ self.estudio.nombre } (plan { self.id })')
+        # TODO Use format_lazy
+        return f'{ self.estudio.nombre } (plan { self.id })'
 
 
 class Pod(models.Model):
@@ -599,7 +612,9 @@ class Pod(models.Model):
     plan_id_nk = models.IntegerField(blank=True, null=True, verbose_name='Cód. plan')
     centro_id = models.IntegerField(blank=True, null=True, verbose_name='Cód. centro')
     asignatura_id = models.IntegerField(blank=True, null=True, verbose_name='Cód. asignatura')
-    cod_grupo_asignatura = models.IntegerField(blank=True, null=True, verbose_name='Grupo')
+    cod_grupo_asignatura = models.IntegerField(
+        blank=True, null=True, verbose_name='Cód. grupo de la asignatura'
+    )
     anyo_academico = models.IntegerField(blank=True, null=True, verbose_name='Año académico')
     nip = models.CharField(max_length=10, blank=True, null=True, verbose_name='NIP')
     apellido1 = models.CharField(

@@ -43,6 +43,7 @@ from .forms import (
     CursoFilterFormHelper,
     CursoSolicitarForm,
     ForanoFilterFormHelper,
+    MatriculaAutomaticaForm,
     MatricularPlanForm,
     ProfesorCursoAddForm,
 )
@@ -352,33 +353,35 @@ class CursoDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         curso_id = self.get_object().id
 
+        asignaciones = self.object.profesorcurso_set.filter(
+            Q(fecha_baja__gt=timezone.now()) | Q(fecha_baja=None)
+        ).select_related('profesor')
+        profesores = [asignacion.profesor for asignacion in asignaciones]
+        es_profesor_del_curso = self.request.user in profesores
+
         mp_form = MatricularPlanForm()
         # Inicializo aquí el valor de `curso_id` en el formulario.
         # No lo paso como un diccionario al crear el formulario, porque entonces
         # `is_bound` sería True, y el campo `nip` se marcaría como `is_invalid`.
         mp_form.fields['curso_id'].initial = curso_id
-        context['mp_form'] = mp_form
 
         pc_form = ProfesorCursoAddForm()
         pc_form.fields['curso_id'].initial = curso_id
-        context['pc_form'] = pc_form
 
-        context['asignaciones'] = self.object.profesorcurso_set.filter(
-            Q(fecha_baja__gt=timezone.now()) | Q(fecha_baja=None)
-        ).select_related('profesor')
-        profesores = [asignacion.profesor for asignacion in context['asignaciones']]
-        es_profesor_del_curso = self.request.user in profesores
-
-        context[
-            'puede_matricular_profesores'
-        ] = es_profesor_del_curso or self.request.user.has_perm('geo.anyadir_profesorcurso')
-
-        context['puede_matricular_alumnos'] = es_profesor_del_curso or self.request.user.has_perm(
-            'geo.anyadir_alumnos'
-        )
-
-        context['matriculas_automaticas'] = MatriculaAutomatica.objects.filter(
-            courseid=self.object.id_nk
+        context.update(
+            {
+                'asignaciones': asignaciones,
+                'matriculas_automaticas': MatriculaAutomatica.objects.filter(
+                    courseid=self.object.id_nk
+                ),
+                'ma_form': MatriculaAutomaticaForm,
+                'mp_form': mp_form,
+                'pc_form': pc_form,
+                'puede_matricular_profesores': es_profesor_del_curso
+                or self.request.user.has_perm('geo.anyadir_profesorcurso'),
+                'puede_matricular_alumnos': es_profesor_del_curso
+                or self.request.user.has_perm('geo.anyadir_alumnos'),
+            }
         )
 
         return context
@@ -947,6 +950,31 @@ class ForanoTodosView(LoginRequiredMixin, PermissionRequiredMixin, PagedFiltered
 #             recipient_list=[forano.solicitante.email],
 #             context={'forano': forano},
 #         )
+
+
+class MatriculaAutomaticaAnyadirView(LoginRequiredMixin, ChecksMixin, View):
+    """
+    Añade un registro para la matrícula automática de alumnos matriculados en asignaturas Sigma.
+    """
+
+    def post(self, request, *args, **kwargs):
+        curso_id = kwargs['pk']
+        curso = get_object_or_404(Curso, pk=curso_id)
+        formulario = MatriculaAutomaticaForm(data=request.POST)
+        if formulario.is_valid():
+            ma = formulario.save(commit=False)
+            ma.courseid = curso.id_nk
+            ma.save()
+        else:
+            messages.error(request, formulario.errors)
+            return redirect('curso_detail', curso_id)
+
+        return redirect(reverse('curso_detail', kwargs={'pk': curso_id}) + '#carga_automatica')
+
+    def test_func(self):
+        return self.es_profesor_del_curso(self.kwargs.get('pk')) or self.request.user.has_perm(
+            'geo.anyadir_alumnos'
+        )
 
 
 class ProfesorCursoAnularView(

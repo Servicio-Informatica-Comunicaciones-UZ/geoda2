@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 # Local Django
-from .models import Calendario, Categoria, Curso, ProfesorCurso
+from .models import Calendario, Categoria, Curso, MatriculaAutomatica, ProfesorCurso
 
 
 class AsignaturaFilterFormHelper(FormHelper):
@@ -166,6 +166,19 @@ class ForanoFilterFormHelper(FormHelper):
     )
 
 
+class MatriculaAutomaticaForm(forms.ModelForm):
+    """Formulario para matricular en un curso a los matriculados en un grupo de asignatura Sigma"""
+
+    class Meta:
+        model = MatriculaAutomatica
+        fields = ('asignatura_id', 'centro', 'plan', 'cod_grupo_asignatura')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['centro'].empty_label = _('Todos')
+        self.fields['plan'].empty_label = _('Todos')
+
+
 class MatricularPlanForm(forms.Form):
     """Formulario para matricular en un curso a todos los matriculados en un plan."""
 
@@ -212,7 +225,7 @@ class ProfesorCursoAddForm(forms.Form):
         # help_text=_('Número de Identificación Personal del profesor'),
         label=_('NIP del nuevo profesor'),
         min_value=0,
-        max_value=999999,
+        max_value=9999999,
         required=True,
     )
 

@@ -17,6 +17,7 @@ from .views import (
     ForanoSolicitarView,
     ForanoTodosView,
     HomePageView,
+    MatriculaAutomaticaAnyadirView,
     MatricularPlanView,
     MisAsignaturasView,
     MisCursosView,
@@ -50,6 +51,11 @@ urlpatterns = [
         name='pc_anular',
     ),
     path('pod/', MisAsignaturasView.as_view(), name='mis_asignaturas'),
+    path(
+        'curso/<int:pk>/matricula-automatica/',
+        MatriculaAutomaticaAnyadirView.as_view(),
+        name='ma_anyadir',
+    ),
     path('curso/<int:pk>/', CursoDetailView.as_view(), name='curso_detail'),
     path('curso/', MisCursosView.as_view(), name='mis_cursos'),
     path(

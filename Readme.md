@@ -132,6 +132,7 @@ y el fichero `alumnos_asignaturas.dat` creado por una pasarela ETL (Pentaho Spoo
 matricular automáticamente en los cursos Moodle a los estudiantes matriculados en Sigm@.
 
 > TODO: Crear un plugin de _enrolment_, con su propio tipo de matriculación.
+> Esto permitiría distinguir los alumnos matriculados manualmente de los matriculados automáticamente.
 
 Instalación sobre contenedores Docker
 -------------------------------------

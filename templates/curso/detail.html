@@ -306,12 +306,12 @@
       <tbody>
         {% for registro in matriculas_automaticas %}
           <tr id="registro_{{ registro.id }}">
-            <td>{{ registro.asignatura_id }}</td>
-            <td>{{ registro.get_nombre_asignatura }}</td>
-            <td>{{ registro.cod_grupo_asignatura }}</td>
-            <td>{{ registro.centro.nombre }}</td>
-            <td>{{ registro.plan_id }}</td>
-            <td>{{ registro.plan.estudio.nombre }}</td>
+            <td>{{ registro.asignatura_id | default:'—' }}</td>
+            <td>{{ registro.get_nombre_asignatura | default:'Todas' }}</td>
+            <td>{{ registro.cod_grupo_asignatura | default:'Todos' }}</td>
+            <td>{{ registro.centro.nombre | default:'Todos' }}</td>
+            <td>{{ registro.plan_id | default:'—' }}</td>
+            <td>{{ registro.plan.estudio.nombre | default:'Todos' }}</td>
             <td>
               <div class="custom-control custom-switch">
                 <input type="checkbox" class="custom-control-input" id="active_switch_{{ registro.id }}"
@@ -331,10 +331,19 @@
       </tbody>
     </table>
 
-    <form action="#" method="post">
-      {% csrf_token %}
+    <h3>{% trans 'Añadir registro' %}</h3>
 
+    <form action="{% url 'ma_anyadir' curso.id %}" id="matricula-automatica-form" method="post">
+      {% csrf_token %}
+        {{ ma_form | crispy }}
+
+        <div class="btn-group" role="group" aria-label="{{ _('Botones') }}">
+            <button class="btn btn-warning" type="submit" title="{% trans 'Añadir registro para matrícula automática' %}" >
+              <span class="fas fa-plus"></span>&nbsp; {% translate 'Añadir' %}
+            </button>
+        </div>
     </form>
+
 
     <br /><br />
     <h2>{% trans "Matricular alumnos en masa" %}</h2>
