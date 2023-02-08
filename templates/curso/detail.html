@@ -9,6 +9,9 @@
   <script>
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
+    grupoNode = document.getElementById("div_id_cod_grupo_asignatura");
+    grupoNode.style.display = 'none';
+
     const delRegistro = async registroId => {
       try {
         const res = await axios.delete(
@@ -36,6 +39,7 @@
     asignaturaField.addEventListener('change', event => {
       if (!event.target.value) {
         document.getElementById("nombre_asignatura_node").innerHTML = "";
+        grupoNode.style.display = 'none';
         return;
       }
 
@@ -55,9 +59,11 @@
         if (registros.length) {
           nombreNode.innerHTML = registros[0].nombre_asignatura
           nombreNode.setAttribute("class", "text-success");
+          grupoNode.style.display = 'block';
         } else {
           nombreNode.innerHTML = 'No se encontró esa asignatura.';
           nombreNode.setAttribute("class", "text-danger");
+          grupoNode.style.display = 'none';
         }
       })
       .catch(error => {
