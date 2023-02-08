@@ -1,5 +1,11 @@
 from ninja import ModelSchema, Schema
-from .models import MatriculaAutomatica
+from .models import Asignatura, MatriculaAutomatica
+
+
+class AsignaturaSchema(ModelSchema):
+    class Config:
+        model = Asignatura
+        model_fields = '__all__'
 
 
 class MatriculaAutomaticaSchema(ModelSchema):

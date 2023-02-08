@@ -1,9 +1,16 @@
 from django.shortcuts import get_object_or_404
 from ninja import NinjaAPI
-from .models import MatriculaAutomatica
-from .schema import NotFoundSchema
+from .models import Asignatura, Calendario, MatriculaAutomatica
+from .schema import AsignaturaSchema, NotFoundSchema
 
 api = NinjaAPI()
+
+
+@api.get('/asignaturas/{asignatura_id}', response=list[AsignaturaSchema])
+def list_asignaturas(request, asignatura_id: int):
+    """Devuelve los registros de la tabla `asignatura` de un código de asignatura"""
+    anyo_academico = Calendario.objects.get(slug='actual').anyo
+    return Asignatura.objects.filter(asignatura_id=asignatura_id, anyo_academico=anyo_academico)
 
 
 @api.delete('/matricula-automatica/{registro_id}', response={204: None})

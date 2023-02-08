@@ -8,6 +8,7 @@
 
   <script>
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
     const delRegistro = async registroId => {
       try {
         const res = await axios.delete(
@@ -19,6 +20,7 @@
           console.error(e);
       }
     }
+
     const toggleActive = registroId => {
       axios.patch(
         `/api/matricula-automatica-toggle/${registroId}`,
@@ -29,6 +31,39 @@
         console.error(error);
       });
     }
+
+    const asignaturaField = document.getElementById("id_asignatura_id");
+    asignaturaField.addEventListener('change', event => {
+      if (!event.target.value) {
+        document.getElementById("nombre_asignatura_node").innerHTML = "";
+        return;
+      }
+
+      axios.get(
+        `/api/asignaturas/${event.target.value}`,
+        { headers: { 'X-CSRFToken': csrftoken } }
+      )
+      .then(resp => {
+        nombreNode = document.getElementById("nombre_asignatura_node");
+        if (!nombreNode) {
+          nombreNode = document.createElement('span');
+          nombreNode.id = "nombre_asignatura_node";
+          asignaturaField.after(nombreNode);
+        }
+
+        registros = resp.data
+        if (registros.length) {
+          nombreNode.innerHTML = registros[0].nombre_asignatura
+          nombreNode.setAttribute("class", "text-success");
+        } else {
+          nombreNode.innerHTML = 'No se encontró esa asignatura.';
+          nombreNode.setAttribute("class", "text-danger");
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+    });
   </script>
 {% endblock extrajs %}
 
