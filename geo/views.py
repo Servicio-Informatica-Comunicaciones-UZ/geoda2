@@ -962,6 +962,19 @@ class MatriculaAutomaticaAnyadirView(LoginRequiredMixin, ChecksMixin, View):
         curso = get_object_or_404(Curso, pk=curso_id)
         formulario = MatriculaAutomaticaForm(data=request.POST)
         if formulario.is_valid():
+            data = formulario.cleaned_data
+            # Los gestores pueden matricular a todo un plan o centro, pero el PDI debe elegir una asignatura.
+            if not self.request.user.has_perm('geo.anyadir_alumnos') and not data['asignatura_id']:
+                messages.error(request, _("No ha seleccionado ninguna asignatura."))
+                return redirect('curso_detail', curso_id)
+
+            # No se puede matricular a todos los estudiantes de la Universidad.
+            if not data['asignatura_id'] and not data['centro'] and not data['plan']:
+                messages.error(
+                    request, _("No ha seleccionado ninguna asignatura, centro ni plan.")
+                )
+                return redirect('curso_detail', curso_id)
+
             ma = formulario.save(commit=False)
             ma.courseid = curso.id_nk
             ma.save()
