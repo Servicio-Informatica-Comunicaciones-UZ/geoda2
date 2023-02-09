@@ -513,7 +513,7 @@ class MatriculaAutomatica(models.Model):
     courseid = models.PositiveBigIntegerField()
     sigmacourseid = models.CharField(max_length=10)
     sigmagroupid = models.CharField(max_length=5)
-    active = models.BooleanField(_('¿Activo?'), default=False)
+    active = models.BooleanField(_('¿Activo?'), default=True)
     sigmatitu = models.CharField(max_length=10)
     sigmacentro = models.CharField(max_length=10)
     fijo = models.BooleanField(_('¿Registro predefinido?'), default=False)
@@ -529,7 +529,10 @@ class MatriculaAutomatica(models.Model):
         ),
     )
     cod_grupo_asignatura = models.IntegerField(
-        _('Cód. grupo de la asignatura'), blank=True, null=True
+        _('Cód. grupo de la asignatura'),
+        blank=True,
+        null=True,
+        help_text=_('Déjelo en blanco para seleccionar todos los grupos.'),
     )
     plan = models.ForeignKey(
         'Plan',

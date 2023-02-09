@@ -309,8 +309,8 @@
 
   {% if curso.estado == curso.Estado.CREADO.value and puede_matricular_alumnos %}
 
-    <a id="carga_automatica"></a><br /><br />
-    <h2>{% trans "Carga automática de alumnos" %}</h2>
+    <a id="matriculacion-automatica"></a><br /><br />
+    <h2>{% trans "Matriculación automática de alumnos" %}</h2>
     <hr />
 
     <div class="alert alert-info alert-dismissible fade show">
@@ -320,13 +320,15 @@
 
       <span class="fas fa-info-circle"></span>
       {% blocktranslate %}
-        Para los cursos reglados, se prepara un registro para la carga automática
-        de los alumnos del grupo correspondiente.
-        Si lo desea, puede activar dicha carga automática en la tabla inferior.<br />
-        También puede añadir registros adicionales para cargar alumnos de otros grupos o
-        asignaturas.<br />
-        Para los grupos activados, se revisará diariamente si hay nuevos alumnos matriculados en Sigma.<br />
-        Si desactiva un registro, <em>no</em> se desmatriculará a los alumnos ya matriculados.
+        Al crear un curso reglado, se prepara un registro (<em>desactivado</em>) para la matriculación automática
+        en el curso Moodle de los alumnos matriculados en Sigm@ en el grupo correspondiente.<br />
+        Si lo desea, puede activar dicha matriculación automática en la tabla inferior.<br />
+        <br />
+        Si desea matricular automáticamente en Moodle alumnos de otros grupos o asignaturas,
+        puede añadir registros adicionales.<br />
+        Para los registros activos, se revisará diariamente si hay nuevos alumnos matriculados en Sigm@.<br />
+        Si desactiva o borra un registro, <em>no</em> se desmatriculará del curso Moodle
+        a los alumnos que ya estén matriculados en él.
       {% endblocktranslate %}
     </div>
     <br />

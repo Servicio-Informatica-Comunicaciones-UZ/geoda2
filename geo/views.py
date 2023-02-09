@@ -982,7 +982,9 @@ class MatriculaAutomaticaAnyadirView(LoginRequiredMixin, ChecksMixin, View):
             messages.error(request, formulario.errors)
             return redirect('curso_detail', curso_id)
 
-        return redirect(reverse('curso_detail', kwargs={'pk': curso_id}) + '#carga_automatica')
+        return redirect(
+            reverse('curso_detail', kwargs={'pk': curso_id}) + '#matriculacion-automatica'
+        )
 
     def test_func(self):
         return self.es_profesor_del_curso(self.kwargs.get('pk')) or self.request.user.has_perm(
