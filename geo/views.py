@@ -975,6 +975,18 @@ class MatriculaAutomaticaAnyadirView(LoginRequiredMixin, ChecksMixin, View):
                 )
                 return redirect('curso_detail', curso_id)
 
+            # Introducir un grupo de asignatura no tiene sentido sin una asignatura, centro y plan.
+            if data['cod_grupo_asignatura'] and not (
+                data['asignatura_id'] and data['centro'] and data['plan']
+            ):
+                messages.error(
+                    request,
+                    _(
+                        "Para seleccionar un grupo es obligatorio indicar la asignatura, centro y plan."
+                    ),
+                )
+                return redirect('curso_detail', curso_id)
+
             ma = formulario.save(commit=False)
             ma.courseid = curso.id_nk
             ma.save()
