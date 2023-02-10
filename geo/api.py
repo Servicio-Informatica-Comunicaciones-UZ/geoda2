@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404
 from ninja import NinjaAPI
 from .models import Asignatura, Calendario, MatriculaAutomatica
 from .schema import AsignaturaSchema, NotFoundSchema
+from .utils import matricular_grupo_sigma
 
 api = NinjaAPI()
 
@@ -25,9 +26,15 @@ def delete_matricula_automatica(request, registro_id: int):
 def toggle_matricula_automatica(request, registro_id: int):
     """Activa o desactiva un registro"""
     try:
-        registro = MatriculaAutomatica.objects.get(pk=registro_id)
-        registro.active = not registro.active
-        registro.save()
+        ma = MatriculaAutomatica.objects.get(pk=registro_id)
+        ma.active = not ma.active
+        ma.save()
+
+        if ma.active:
+            matricular_grupo_sigma(
+                ma.courseid, ma.asignatura_id, ma.cod_grupo_asignatura, ma.centro_id, ma.plan_id
+            )
+
         return 200  # OK
-    except registro.DoesNotExist:  # as e:
+    except ma.DoesNotExist:  # as e:
         return 404, {'message': 'No se encontró ese registro de matrícula automática.'}
