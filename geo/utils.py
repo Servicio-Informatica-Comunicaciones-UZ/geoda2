@@ -37,7 +37,9 @@ def matricular_grupo_sigma(courseid, asignatura_id, cod_grupo_asignatura, centro
     if centro_id:
         consulta += f' AND centro_id = {centro_id}'
     if plan_id:
-        consulta += f' AND plan_id = {plan_id}'
+        # 107 (estudio 449): Movilidad para 1º y 2º ciclo y grado
+        # 266 (estudio 634): Movilidad para máster
+        consulta += f' AND plan_id IN ({plan_id}, 107, 266)'
 
     with connection.cursor() as cursor:
         cursor.execute(consulta)
@@ -61,5 +63,3 @@ def matricular_grupo_sigma(courseid, asignatura_id, cod_grupo_asignatura, centro
     print('NIPs no encontrados:', repr(usuarios_no_encontrados))
 
     return num_matriculados, len(usuarios_no_encontrados)
-
-    # TODO: planes 107 y 266 (movilidad)
