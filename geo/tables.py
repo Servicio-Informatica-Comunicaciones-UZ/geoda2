@@ -57,7 +57,6 @@ class AsignaturasTable(tables.Table):
 
 
 class CursosTodosTable(tables.Table):
-
     enlace = tables.Column(empty_values=(), verbose_name='')
 
     def render_enlace(self, record):
@@ -101,7 +100,6 @@ class CursosPendientesTable(tables.Table):
 
 
 class CursoTable(tables.Table):
-
     enlace = tables.Column(empty_values=(), verbose_name='')
 
     def render_enlace(self, record):
@@ -120,7 +118,6 @@ class CursoTable(tables.Table):
 
 
 class ForanoTodosTable(tables.Table):
-
     enlace = tables.Column(empty_values=(), verbose_name='')
 
     def render_enlace(self, record):

@@ -4,7 +4,6 @@ from django import template
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
-
 register = template.Library()
 
 # DEFAULT_TAGS defined in django.contrib.messages.constants

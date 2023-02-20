@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
 from ninja import NinjaAPI
+
 from .models import Asignatura, Calendario, MatriculaAutomatica
 from .schema import AsignaturaSchema, NotFoundSchema
 from .utils import matricular_grupo_sigma
@@ -35,6 +36,6 @@ def toggle_matricula_automatica(request, registro_id: int):
                 ma.courseid, ma.asignatura_id, ma.cod_grupo_asignatura, ma.centro_id, ma.plan_id
             )
 
-        return 200  # OK
+        return 200, None  # OK
     except ma.DoesNotExist:  # as e:
         return 404, {'message': 'No se encontró ese registro de matrícula automática.'}

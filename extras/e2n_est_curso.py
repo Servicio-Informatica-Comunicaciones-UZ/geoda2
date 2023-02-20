@@ -22,7 +22,6 @@ import pymysql  # <https://github.com/PyMySQL/PyMySQL/>
 import requests  # <https://github.com/psf/requests>
 import toml  # <https://github.com/uiri/toml>
 
-
 config = toml.load('config.toml')
 api_url = config['moodle']['api_url']
 geo_token = config['moodle']['geo_token']

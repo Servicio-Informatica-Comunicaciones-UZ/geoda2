@@ -3,7 +3,6 @@ from django.urls import path
 
 from . import views
 
-
 urlpatterns = [
     # Evita que un usuario ya autenticado pueda volver a la página de inicio de sesión
     path('login/', auth_views.LoginView.as_view(redirect_authenticated_user=True), name='login'),

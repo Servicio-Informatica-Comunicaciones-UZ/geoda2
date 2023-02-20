@@ -4,14 +4,14 @@ import json
 # third-party
 import zeep
 from annoying.functions import get_config
-from lxml.etree import XMLSyntaxError
-from requests import Session
-from requests.auth import HTTPBasicAuth
-from requests.exceptions import ConnectionError as RequestConnectionError
 
 # Django
 from django.contrib import messages
 from django.core.validators import ValidationError, validate_email
+from lxml.etree import XMLSyntaxError
+from requests import Session
+from requests.auth import HTTPBasicAuth
+from requests.exceptions import ConnectionError as RequestConnectionError
 
 
 def get_identidad(strategy, response, user, *args, **kwargs):

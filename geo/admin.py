@@ -3,7 +3,6 @@ from django.utils.translation import gettext_lazy as _
 
 from .models import Asignatura, Calendario, Categoria, Curso, Pod, ProfesorCurso
 
-
 # Register your models here.
 
 admin.site.register(Asignatura)

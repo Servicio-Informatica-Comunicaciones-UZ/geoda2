@@ -1,5 +1,4 @@
 from annoying.functions import get_object_or_None
-
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.db import connection
@@ -18,8 +17,10 @@ class Command(BaseCommand):
                 SELECT c.id, p.nip
                 FROM curso c
                 JOIN asignatura a ON c.asignatura_id = a.id
-                JOIN pod p ON a.anyo_academico = p.anyo_academico AND a.asignatura_id = p.asignatura_id
-                              AND a.cod_grupo_asignatura = p.cod_grupo_asignatura AND a.centro_id = p.centro_id
+                JOIN pod p ON a.anyo_academico = p.anyo_academico
+                              AND a.asignatura_id = p.asignatura_id
+                              AND a.cod_grupo_asignatura = p.cod_grupo_asignatura
+                              AND a.centro_id = p.centro_id
                               AND a.plan_id_nk = p.plan_id_nk
                 JOIN accounts_customuser ac ON ac.username = p.nip
                 LEFT JOIN profesor_curso pc ON c.id = pc.curso_id AND ac.id=pc.profesor_id

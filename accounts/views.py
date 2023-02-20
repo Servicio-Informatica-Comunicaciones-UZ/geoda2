@@ -1,6 +1,5 @@
 # third-party
 from annoying.functions import get_config
-from social_django.utils import load_backend, load_strategy
 
 # Django
 from django.contrib.auth import logout
@@ -11,6 +10,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from django.views.generic.base import RedirectView, View
+from social_django.utils import load_backend, load_strategy
 
 
 def metadata_xml(request):

@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import (
+from .views import (  # ForanoResolverView,
     ASCrearCursoView,
     ASTodasView,
     AyudaView,
@@ -10,10 +10,9 @@ from .views import (
     CursoDetailView,
     CursoMatricularNipsView,
     CursoRematricularView,
-    CursosTodosView,
     CursosPendientesView,
+    CursosTodosView,
     ForanoDetailView,
-    # ForanoResolverView,
     ForanoSolicitarView,
     ForanoTodosView,
     HomePageView,
@@ -26,7 +25,6 @@ from .views import (
     ResolverSolicitudCursoView,
     SolicitarCursoNoRegladoView,
 )
-
 
 urlpatterns = [
     path('', HomePageView.as_view(), name='home'),

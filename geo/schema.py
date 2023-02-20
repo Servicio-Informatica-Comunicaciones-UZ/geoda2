@@ -1,4 +1,5 @@
 from ninja import ModelSchema, Schema
+
 from .models import Asignatura, MatriculaAutomatica
 
 
@@ -26,6 +27,6 @@ class MatriculaAutomaticaSchema(ModelSchema):
 
 
 class NotFoundSchema(Schema):
-    """Single field returned when no model object is found for the ID provided as a path parameter."""
+    """Single field returned when no model object is found for the ID provided."""
 
     message: str

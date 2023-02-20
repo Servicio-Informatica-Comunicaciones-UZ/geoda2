@@ -1,15 +1,15 @@
 # Standard library
 import json
 
-# Third-party
-from social_django.models import UserSocialAuth
-from social_django.utils import load_strategy
-
 # Django
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+# Third-party
+from social_django.models import UserSocialAuth
+from social_django.utils import load_strategy
 
 # local Django
 from .pipeline import get_identidad
@@ -106,7 +106,7 @@ class CustomUser(AbstractUser):
 
     @classmethod
     def crear_usuario(cls, request, nip):
-        """Crea un registro de usuario con el NIP indicado y los datos de Gestión de Identidades."""
+        """Crea un registro de usuario con el NIP dado y los datos de Gestión de Identidades."""
 
         usuario = cls.objects.create_user(username=nip)
         try:

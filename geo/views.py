@@ -8,11 +8,6 @@ import magic
 import zeep
 from annoying.functions import get_config, get_object_or_None
 from dateutil.relativedelta import relativedelta
-from django_tables2.views import SingleTableView
-from requests import Session
-from requests.auth import HTTPBasicAuth
-from requests.exceptions import ConnectionError as RequestConnectionError
-from templated_email import send_templated_mail
 
 # Django
 from django.contrib import messages
@@ -35,6 +30,11 @@ from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import DetailView, RedirectView, TemplateView, UpdateView
 from django.views.generic.edit import CreateView, DeleteView
+from django_tables2.views import SingleTableView
+from requests import Session
+from requests.auth import HTTPBasicAuth
+from requests.exceptions import ConnectionError as RequestConnectionError
+from templated_email import send_templated_mail
 
 # local Django
 from .filters import AsignaturaListFilter, CursoFilter, ForanoFilter
@@ -59,8 +59,8 @@ from .models import (
 )
 from .tables import (
     AsignaturasTable,
-    CursosTodosTable,
     CursosPendientesTable,
+    CursosTodosTable,
     CursoTable,
     ForanoTodosTable,
 )
@@ -190,7 +190,8 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
             categoria=asignatura.get_categoria(),
             anyo_academico=asignatura.anyo_academico,
             asignatura_id=asignatura.id,
-            estado=Curso.Estado.AUTORIZADO,  # Las asignaturas regladas son aprobadas automáticamente
+            # Las asignaturas regladas son aprobadas automáticamente
+            estado=Curso.Estado.AUTORIZADO,
         )
         curso.save()
         return curso
@@ -574,7 +575,8 @@ class MisAsignaturasView(LoginRequiredMixin, ChecksMixin, SingleTableView):
         anyo_academico = Calendario.objects.get(slug='actual').anyo
         pods = Pod.objects.filter(nip=self.request.user.username, anyo_academico=anyo_academico)
         asignaturas = [pod.get_asignatura_or_None() for pod in pods]
-        # Si llegara una asignación a una asignatura que no esté en la tabla `asignatura`, la omitimos.
+        # Si llegara una asignación a una asignatura que no esté en la tabla `asignatura`,
+        # la omitimos.
         asignaturas = list(filter(None, asignaturas))
         return asignaturas
 
@@ -720,7 +722,8 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
                 messages.warning(
                     request,
                     _(
-                        'No se enviaron por correo las notificaciones de la solicitud de curso no reglado: %(err)s'
+                        'No se enviaron por correo las notificaciones'
+                        ' de la solicitud de curso no reglado: %(err)s'
                     )
                     % {'err': err},
                 )
@@ -734,7 +737,7 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
 
     @staticmethod
     def _notifica_solicitud(curso, site_url):
-        """Envía email a los miembros del grupo Gestores informando de la solicitud de curso no reglado."""
+        """Envía email a los Gestores informando de la solicitud de curso no reglado."""
         grupo_gestores = Group.objects.get(name='Gestores')
         gestores = grupo_gestores.user_set.all()
         destinatarios = list(map(lambda g: g.email, gestores))
@@ -805,7 +808,8 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
                 messages.error(request, _('ERROR: %(ex)s') % {'ex': ex})
                 return redirect('forano_solicitar')
 
-            # Llamamos al método `creaVinculacion()` de unizar/gestion/identidad/webservice/VinculacionesImpl.java
+            # Llamamos al método `creaVinculacion()`
+            # de unizar/gestion/identidad/webservice/VinculacionesImpl.java
             try:
                 response = client.service.creaVinculacion(
                     f'{forano.nip}',  # nip
@@ -850,7 +854,7 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
 
     @staticmethod
     def _notifica_solicitud(forano, site_url):
-        """Envía email a los miembros del grupo Gestores informando de la solicitud de vinculación."""
+        """Envía email a los Gestores informando de la solicitud de vinculación."""
         grupo_gestores = Group.objects.get(name='Gestores')
         gestores = grupo_gestores.user_set.all()
         destinatarios = list(map(lambda g: g.email, gestores))
@@ -932,7 +936,7 @@ class ForanoTodosView(LoginRequiredMixin, PermissionRequiredMixin, PagedFiltered
 #                 messages.success(
 #                     request,
 #                     _(
-#                         f'El NIP «{forano.nip}» ha sido vinculado a Moodle.  Es posible que usted'
+#                         f'El NIP «{forano.nip}» ha sido vinculado a Moodle.  Es posible que Vd.'
 #                         ' no vea al invitado entre los usuarios de la plataforma hasta que'
 #                         ' el invitado acceda a la plataforma por primera vez.'
 #                     ),
@@ -963,7 +967,8 @@ class MatriculaAutomaticaAnyadirView(LoginRequiredMixin, ChecksMixin, View):
         formulario = MatriculaAutomaticaForm(data=request.POST)
         if formulario.is_valid():
             data = formulario.cleaned_data
-            # Los gestores pueden matricular a todo un plan o centro, pero el PDI debe elegir una asignatura.
+            # Los gestores pueden matricular a todo un plan o centro,
+            # pero el PDI debe elegir una asignatura.
             if not self.request.user.has_perm('geo.anyadir_alumnos') and not data['asignatura_id']:
                 messages.error(request, _("No ha seleccionado ninguna asignatura."))
                 return redirect('curso_detail', curso_id)
@@ -982,7 +987,8 @@ class MatriculaAutomaticaAnyadirView(LoginRequiredMixin, ChecksMixin, View):
                 messages.error(
                     request,
                     _(
-                        "Para seleccionar un grupo es obligatorio indicar la asignatura, centro y plan."
+                        'Para seleccionar un grupo'
+                        ' es obligatorio indicar la asignatura, centro y plan.'
                     ),
                 )
                 return redirect('curso_detail', curso_id)
@@ -1022,7 +1028,8 @@ class ProfesorCursoAnularView(
     template_name = 'gestion/profesorcurso_form.html'
 
     def form_valid(self, form):
-        # This method is called when valid form data has been POSTed. It should return an HttpResponse.
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
         cliente = WSClient()
         try:
             respuestas = cliente.desmatricular(self.object.profesor, self.object.curso)
@@ -1111,7 +1118,8 @@ class ProfesorCursoAnyadirView(LoginRequiredMixin, ChecksMixin, View):
                 request,
                 _(
                     'ERROR: %(nombre)s ya es profesor de este curso.'
-                    ' Si se ha dado de baja en Moodle, puede rematricularlo en la sección inferior.'
+                    ' Si se ha dado de baja en Moodle,'
+                    ' puede rematricularlo en la sección inferior.'
                 )
                 % {'nombre': profesor.full_name},
             )
