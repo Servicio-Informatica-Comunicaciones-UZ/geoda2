@@ -21,7 +21,9 @@ class PagedFilteredTableView(SingleTableView):
         return context
 
 
-def matricular_grupo_sigma(courseid, asignatura_id, cod_grupo_asignatura, centro_id, plan_id):
+def matricular_grupo_sigma(
+    courseid, asignatura_id, cod_grupo_asignatura, centro_id, plan_id
+) -> tuple[int, int]:
     """Matricula en un curso Moodle los NIPs matriculados en Sigma que cumplan los filtros."""
 
     # Buscamos los NIPs matriculados en Sigma que cumplan los filtros
@@ -49,16 +51,17 @@ def matricular_grupo_sigma(courseid, asignatura_id, cod_grupo_asignatura, centro
     nips = [fila[0] for fila in filas]
     try:
         curso = Curso.objects.get(id_nk=courseid)
-    except Exception as ex:
+    except Exception:  # as ex:
         print(f'Curso #{courseid} no encontrado.')
-        return
+        return 0, 0
 
     cliente = WSClient()
     num_matriculados, usuarios_no_encontrados = cliente.matricular_alumnos(nips, curso)
 
     print(f'Matriculados {num_matriculados} estudiantes en el curso Moodle #{courseid}.')
     print(
-        f'Asignatura: {asignatura_id}  Grupo: {cod_grupo_asignatura}  Centro: {centro_id}  Plan: {plan_id}'
+        f'Asignatura: {asignatura_id}  Grupo: {cod_grupo_asignatura}'
+        f'  Centro: {centro_id}  Plan: {plan_id}'
     )
     print('NIPs no encontrados:', repr(usuarios_no_encontrados))
 

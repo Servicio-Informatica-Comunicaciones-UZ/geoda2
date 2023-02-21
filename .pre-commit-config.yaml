@@ -27,7 +27,7 @@ repos:
         exclude: '.svg$'
       - id: file-contents-sorter  # Sorts the lines in specified files (defaults to alphabetical)
         args: ["--ignore-case", "--unique"]
-        files: ^(\.gitignore|\.dockerignore|requirements[-\w]*.txt)$
+        files: ^(requirements[-\w]*.txt)$
       - id: mixed-line-ending  # Replaces or checks mixed line ending
         args: ["--fix=lf"]
       - id: name-tests-test  # Verifies that test files are named correctly

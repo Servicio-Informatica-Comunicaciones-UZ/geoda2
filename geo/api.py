@@ -23,19 +23,24 @@ def delete_matricula_automatica(request, registro_id: int):
     return 204, None  # No content
 
 
-@api.patch('/matricula-automatica-toggle/{registro_id}', response={200: None, 404: NotFoundSchema})
+@api.patch('/matricula-automatica-toggle/{registro_id}', response={200: dict, 404: NotFoundSchema})
 def toggle_matricula_automatica(request, registro_id: int):
     """Activa o desactiva un registro"""
     try:
         ma = MatriculaAutomatica.objects.get(pk=registro_id)
         ma.active = not ma.active
         ma.save()
-
-        if ma.active:
-            matricular_grupo_sigma(
-                ma.courseid, ma.asignatura_id, ma.cod_grupo_asignatura, ma.centro_id, ma.plan_id
-            )
-
-        return 200, None  # OK
     except ma.DoesNotExist:  # as e:
         return 404, {'message': 'No se encontró ese registro de matrícula automática.'}
+
+    num_matriculados, num_no_encontrados = 0, 0
+    if ma.active:
+        num_matriculados, num_no_encontrados = matricular_grupo_sigma(
+            ma.courseid, ma.asignatura_id, ma.cod_grupo_asignatura, ma.centro_id, ma.plan_id
+        )
+
+    return 200, {
+        'num_matriculados': num_matriculados,
+        'num_no_encontrados': num_no_encontrados,
+        'queda_activado': ma.active,
+    }  # OK

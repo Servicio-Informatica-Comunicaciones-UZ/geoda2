@@ -25,12 +25,26 @@
     }
 
     const toggleActive = registroId => {
+      document.getElementById('div_resultado_matricula_automatica').style.display = 'none';
       axios.patch(
         `/api/matricula-automatica-toggle/${registroId}`,
         { headers: { 'X-CSRFToken': csrftoken } }
       )
-      // .then(response => ...)
+      .then(response => {
+        span_resultado = document.getElementById('span_resultado_matricula_automatica');
+        if (response.data.queda_activado) {
+          span_resultado.innerHTML = `Matriculados ${response.data.num_matriculados} estudiantes.`;
+          if (response.data.num_no_encontrados) {
+            span_resultado.innerHTML += ` No se encontraron ${response.data.num_no_encontrados} estudiantes.`;
+          }
+        } else {
+          span_resultado.innerHTML = "Registro desactivado. No se desmatricula a los estudiantes ya matriculados.";
+        }
+
+        document.getElementById('div_resultado_matricula_automatica').style.display = 'block';
+      })
       .catch(error => {
+        document.getElementById('div_resultado_matricula_automatica').style.display = 'none';
         console.error(error);
       });
     }
@@ -373,6 +387,11 @@
         {% endfor %}
       </tbody>
     </table>
+
+    <div id="div_resultado_matricula_automatica" class="alert alert-info fade show" style="display: none;">
+      <span class="fas fa-info-circle"></span>
+      <span id="span_resultado_matricula_automatica"></span>
+    </div>
 
     <h3>{% trans 'Añadir registro' %}</h3>
 
