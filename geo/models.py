@@ -18,7 +18,7 @@ from .wsclient import WSClient
 
 
 class Asignatura(models.Model):
-    """Este modelo representa una asignatura Sigma, de un estudio reglado.
+    """Este modelo representa un grupo de una asignatura Sigma, de un estudio reglado.
 
     La tabla se carga mediante una tarea ETL (Pentaho Spoon).
     """
@@ -286,7 +286,8 @@ class Curso(models.Model):
     nombre = models.CharField(
         max_length=200,
         help_text=_(
-            'El nombre del curso no se puede cambiar, así que debe ser descriptivo y diferenciable de otros.'
+            'El nombre del curso no se puede cambiar,'
+            ' así que debe ser descriptivo y diferenciable de otros.'
         ),
         verbose_name=_('Nombre del curso'),
     )
@@ -488,7 +489,9 @@ class Forano(models.Model):
         null=True,
         related_name='foranos_resueltos',
     )
-    # curso = models.ForeignKey(Curso, models.PROTECT, blank=True, null=True, verbose_name=_('Curso'))
+    # curso = models.ForeignKey(
+    #     Curso, models.PROTECT, blank=True, null=True, verbose_name=_('Curso')
+    # )
     solicitante = models.ForeignKey(
         'accounts.CustomUser',
         models.PROTECT,
@@ -557,7 +560,8 @@ class MatriculaAutomatica(models.Model):
         )
 
     def get_nombre_asignatura(self):
-        # TODO: Renombrar Asignatura a GrupoAsignatura, y crear un modelo Asignatura con sus id y nombres
+        # TODO: Renombrar Asignatura a GrupoAsignatura,
+        # y crear un modelo Asignatura con sus id y nombres
         asignatura = Asignatura.objects.filter(asignatura_id=self.asignatura_id).first()
         return asignatura.nombre_asignatura if asignatura else None
 

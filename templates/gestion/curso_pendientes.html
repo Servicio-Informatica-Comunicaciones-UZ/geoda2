@@ -5,25 +5,25 @@
 {% block title %}{% trans "Cursos pendientes de aprobación" %}{% endblock title %}
 
 {% block content %}
-  <div class='container-blanco'>
-    <h1 id="pendientes">{% trans "Cursos pendientes de aprobación" %}</h1>
-    <hr>
+    <div class='container-blanco'>
+        <h1 id="pendientes">{% trans "Cursos pendientes de aprobación" %}</h1>
+        <hr>
 
-    <div class="alert alert-info alert-dismissible fade show">
-      <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-        <span aria-hidden="true">&times;</span>
-      </button>
+        <div class="alert alert-info alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
+                <span aria-hidden="true">&times;</span>
+            </button>
 
-      <span class="fas fa-info-circle"></span>
-      {% trans "Aquí puede ver los cursos que están pendientes de aprobación." %}<br />
-      {% trans "Puede entrar en cada uno de ellos para aprobar o denegar la solicitud." %}
-    </div><br>
+            <span class="fas fa-info-circle"></span>
+            {% trans "Aquí puede ver los cursos que están pendientes de aprobación." %}<br />
+            {% trans "Puede entrar en cada uno de ellos para aprobar o denegar la solicitud." %}
+        </div><br>
 
-    {% if table.data|length > 0 %}
-      {% render_table table %}
-    {% else %}
-      <p>{% trans "En estos momentos no hay ningún curso pendiente de aprobación." %}</p>
-    {% endif %}
+        {% if table.data|length > 0 %}
+            {% render_table table %}
+        {% else %}
+            <p>{% trans "En estos momentos no hay ningún curso pendiente de aprobación." %}</p>
+        {% endif %}
 
-  </div>
+    </div>
 {% endblock content %}

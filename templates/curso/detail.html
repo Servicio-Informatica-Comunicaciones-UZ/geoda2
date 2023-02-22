@@ -4,490 +4,490 @@
 {% block title %}{% trans "Detalles del curso" %}{% endblock title %}
 
 {% block extrajs %}
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-  <script>
-    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    <script>
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-    grupoNode = document.getElementById("div_id_cod_grupo_asignatura");
-    grupoNode.style.display = 'none';
-
-    const delRegistro = async registroId => {
-      try {
-        const res = await axios.delete(
-            `/api/matricula-automatica/${registroId}`,
-            { headers: { 'X-CSRFToken': csrftoken } }
-        );
-        document.getElementById(`registro_${registroId}`).remove();
-      } catch (e) {
-          console.error(e);
-      }
-    }
-
-    const toggleActive = registroId => {
-      document.getElementById('div_resultado_matricula_automatica').style.display = 'none';
-      axios.patch(
-        `/api/matricula-automatica-toggle/${registroId}`,
-        { headers: { 'X-CSRFToken': csrftoken } }
-      )
-      .then(response => {
-        span_resultado = document.getElementById('span_resultado_matricula_automatica');
-        if (response.data.queda_activado) {
-          span_resultado.innerHTML = `Matriculados ${response.data.num_matriculados} estudiantes.`;
-          if (response.data.num_no_encontrados) {
-            span_resultado.innerHTML += ` No se encontraron ${response.data.num_no_encontrados} estudiantes.`;
-          }
-        } else {
-          span_resultado.innerHTML = "Registro desactivado. No se desmatricula a los estudiantes ya matriculados.";
-        }
-
-        document.getElementById('div_resultado_matricula_automatica').style.display = 'block';
-      })
-      .catch(error => {
-        document.getElementById('div_resultado_matricula_automatica').style.display = 'none';
-        console.error(error);
-      });
-    }
-
-    const asignaturaField = document.getElementById("id_asignatura_id");
-    asignaturaField.addEventListener('change', event => {
-      if (!event.target.value) {
-        document.getElementById("nombre_asignatura_node").innerHTML = "";
+        grupoNode = document.getElementById("div_id_cod_grupo_asignatura");
         grupoNode.style.display = 'none';
-        return;
-      }
 
-      axios.get(
-        `/api/asignaturas/${event.target.value}`,
-        { headers: { 'X-CSRFToken': csrftoken } }
-      )
-      .then(resp => {
-        nombreNode = document.getElementById("nombre_asignatura_node");
-        if (!nombreNode) {
-          nombreNode = document.createElement('span');
-          nombreNode.id = "nombre_asignatura_node";
-          asignaturaField.after(nombreNode);
+        const delRegistro = async registroId => {
+            try {
+                const res = await axios.delete(
+                    `/api/matricula-automatica/${registroId}`,
+                    { headers: { 'X-CSRFToken': csrftoken } }
+                );
+                document.getElementById(`registro_${registroId}`).remove();
+            } catch (e) {
+                console.error(e);
+            }
         }
 
-        registros = resp.data
-        if (registros.length) {
-          nombreNode.innerHTML = registros[0].nombre_asignatura
-          nombreNode.setAttribute("class", "text-success");
-          grupoNode.style.display = 'block';
-        } else {
-          nombreNode.innerHTML = 'No se encontró esa asignatura.';
-          nombreNode.setAttribute("class", "text-danger");
-          grupoNode.style.display = 'none';
+        const toggleActive = registroId => {
+            document.getElementById('div_resultado_matricula_automatica').style.display = 'none';
+            axios.patch(
+                `/api/matricula-automatica-toggle/${registroId}`,
+                { headers: { 'X-CSRFToken': csrftoken } }
+            )
+                .then(response => {
+                span_resultado = document.getElementById('span_resultado_matricula_automatica');
+                if (response.data.queda_activado) {
+                    span_resultado.innerHTML = `Matriculados ${response.data.num_matriculados} estudiantes.`;
+                    if (response.data.num_no_encontrados) {
+                        span_resultado.innerHTML += ` No se encontraron ${response.data.num_no_encontrados} estudiantes.`;
+                    }
+                } else {
+                    span_resultado.innerHTML = "Registro desactivado. No se desmatricula a los estudiantes ya matriculados.";
+                }
+
+                document.getElementById('div_resultado_matricula_automatica').style.display = 'block';
+            })
+                .catch(error => {
+                document.getElementById('div_resultado_matricula_automatica').style.display = 'none';
+                console.error(error);
+            });
         }
-      })
-      .catch(error => {
-        console.error(error);
-      });
-    });
-  </script>
+
+        const asignaturaField = document.getElementById("id_asignatura_id");
+        asignaturaField.addEventListener('change', event => {
+            if (!event.target.value) {
+                document.getElementById("nombre_asignatura_node").innerHTML = "";
+                grupoNode.style.display = 'none';
+                return;
+            }
+
+            axios.get(
+                `/api/asignaturas/${event.target.value}`,
+                { headers: { 'X-CSRFToken': csrftoken } }
+            )
+                .then(resp => {
+                nombreNode = document.getElementById("nombre_asignatura_node");
+                if (!nombreNode) {
+                    nombreNode = document.createElement('span');
+                    nombreNode.id = "nombre_asignatura_node";
+                    asignaturaField.after(nombreNode);
+                }
+
+                registros = resp.data
+                if (registros.length) {
+                    nombreNode.innerHTML = registros[0].nombre_asignatura
+                    nombreNode.setAttribute("class", "text-success");
+                    grupoNode.style.display = 'block';
+                } else {
+                    nombreNode.innerHTML = 'No se encontró esa asignatura.';
+                    nombreNode.setAttribute("class", "text-danger");
+                    grupoNode.style.display = 'none';
+                }
+            })
+                .catch(error => {
+                console.error(error);
+            });
+        });
+    </script>
 {% endblock extrajs %}
 
 {% block content %}
-<div class="container-blanco">
-  <h1 id="detalles">{% trans "Detalles del curso" %}</h1>
-  <hr />
-  <br />
-
-  <table class="table table-striped table-hover" aria-describedby="detalles">
-    <tr>
-      <th scope="row">{% trans "Id" %}</th>
-      <td>{{ curso.id }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "Nombre" %}</th>
-      <td>{{ curso.nombre }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "Curso académico" %}</th>
-      <td>{{ curso.curso_academico }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "Cód. asignatura Sigma" %}</th>
-      <td>{{ curso.asignatura.asignatura_id | default_if_none:"—" }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "Grupo" %}</th>
-      <td>{{ curso.asignatura.cod_grupo_asignatura | default_if_none:"—" }}</td>
-    </tr>
-
-    <tr>
-      <th scope="row">{% trans "Estado" %}</th>
-      <td>{{ curso.get_estado_display }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "Fecha de solicitud" %}</th>
-      <td>{{ curso.fecha_solicitud }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "Fecha de autorización" %}</th>
-      <td>{{ curso.fecha_autorizacion | default_if_none:"—" }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "Autorizador" %}</th>
-      <td>{{ curso.autorizador | default_if_none:"—" }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "Fecha de creación" %}</th>
-      <td>{{ curso.fecha_creacion | default_if_none:"—" }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "Código en plataforma" %}</th>
-      <td>{{ curso.id_nk | default_if_none:"—" }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "URL" %}</th>
-      <td>
-        {% if curso.url %}
-          <a target="_blank" href="{{ curso.url }}">{{ curso.url }}</a>
-        {% else %}
-          —
-        {% endif %}
-        </td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "Categoría" %}</th>
-      <td>{{ curso.categoria.nombre | default_if_none:"—" }} ({{ curso.categoria.id_nk }})</td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "Motivo de la solicitud" %}</th>
-      <td>{{ curso.motivo_solicitud | default_if_none:"—" | linebreaks }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "Comentarios" %}</th>
-      <td>{{ curso.comentarios | default_if_none:"—" | linebreaks }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "Profesorado" %}</th>
-      <td>
-        <ul class="listado">
-        {% for asignacion in asignaciones %}
-          <li>
-            {{ asignacion.profesor.full_name }} &lt;{{ asignacion.profesor.email }}&gt;
-            {% if perms.geo.pc_anular %}
-              <a href={% url "pc_anular" asignacion.id %} class='btn btn-warning btn-xs'
-                title='Dar de baja a este profesor en este curso'>
-                <span class='fas fa-user-times' aria-hidden='true' style='display: inline;'></span>
-                {% trans "Dar de baja" %}
-              </a>
-            {% endif %}
-          </li>
-        {% endfor %}
-        </ul>
-      </td>
-    </tr>
-  </table>
-
-  {% if curso.estado == curso.Estado.SOLICITADO.value and perms.geo.cursos_pendientes %}
-
-    {% if perms.geo.curso_administrar %}
-      <a href="{% url 'admin:geo_curso_change' curso.id %}" class="btn btn-info">
-        <span class="fas fa-pencil-alt" aria-hidden="true"></span> {% trans "Modificar curso" %}
-      </a><br />
-    {% endif %}
-
-    <br />
-    <h2>{% trans "Resolver la solicitud" %}</h2>
-    <hr />
-    <form action="{% url 'curso_resolver' %}" id="resolver-form" method="post">
-      {% csrf_token %}
-      <input type='hidden' id='id' name='id' value='{{ curso.id }}'>
-      <div><strong>{% trans "Decisión" %}</strong></div>
-      <div class="form-check-inline">
-        <label class="form-check-label">
-          <input type="radio" class="form-check-input" name="decision" value="denegar" required>
-          {% trans "Denegar" %}
-        </label>
-      </div>
-      <div class="form-check-inline">
-        <label class="form-check-label">
-          <input type="radio" class="form-check-input" name="decision" value="autorizar" required>
-          {% trans "Autorizar" %}
-        </label>
-      </div>
-
-      <div id="div_id_comentarios" class="form-group">
-        <label for="id_comentarios" class="col-form-label">
-          <strong>{% trans "Comentarios" %}</strong>
-        </label>
-        <div class="">
-          <textarea name="comentarios" cols="40" rows="10" class="textarea form-control" id="id_comentarios"
-          ></textarea>
-          <small id="hint_id_comentarios" class="form-text text-muted">
-            {% trans "Si lo desea, añada una explicación para el solicitante sobre la razón de aprobar o denegar el curso solicitado." %}
-          </small>
-        </div>
-      </div>
-
-      <br style="clear: both;" />
-      <div class="btn-group" role="group" aria-label="Botones">
-        <a href="{% url 'curso_pendientes' %}" class="btn btn-info">
-          <span class="fas fa-step-backward"></span> {% trans "Retroceder" %}
-        </a>
-        <button type="submit" class="btn btn-warning">
-          <span class="fas fa-gavel"></span> {% trans "Resolver" %}
-        </button>
-      </div>
-    </form>
-  {% endif %}
-
-  {% if curso.estado == curso.Estado.CREADO.value and not curso.asignatura_id and perms.geo.matricular_plan %}
-    <br />
-    <h2>{% trans "Matricular a todos los alumnos de un plan" %}</h2>
-    <hr />
-
-    {% crispy mp_form %}
-
-    <small id="hint_plan_id_nk" class="form-text text-muted">
-      {% trans 'Puede consultar el código del plan en la <a href="https://estudios.unizar.es">web de estudios</a>.' %}
-    </small>
-  {% endif %}
-
-  {% if curso.estado == curso.Estado.CREADO.value and puede_matricular_profesores %}
-    <br /><br />
-    <h2>{% trans "Añadir un profesor al curso" %}</h2>
-    <hr />
-
-    <div class="alert alert-info alert-dismissible fade show">
-      <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-        <span aria-hidden="true">&times;</span>
-      </button>
-
-      <span class="fas fa-info-circle"></span>
-      {% blocktranslate %}
-        Si añade un profesor directamente en Moodle, GEO no se enterará y el nuevo profesor no podrá
-        acceder a esta página para gestionar el curso en GEO.<br />
-        Si añade al nuevo profesor desde aquí, el curso le aparecerá en la página «Mis cursos»
-        cuando inicie sesión en GEO.
-      {% endblocktranslate %}
-    </div>
-    <br />
-
-    {% crispy pc_form %}
-
-    <br /><br />
-    <h2>{% trans "Rematricular profesorado" %}</h2>
-    <hr />
-
-    <div class="alert alert-info alert-dismissible fade show">
-      <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-        <span aria-hidden="true">&times;</span>
-      </button>
-
-      <span class="fas fa-info-circle"></span>
-      {% blocktranslate %}
-        En caso de que, accidentalmente, se haya desmatriculado en Moodle al profesorado,
-        puede volver a cargar en Moodle los datos de profesorado que constan en GEO.
-      {% endblocktranslate %}
-    </div>
-    <br />
-
-    <form action="{% url 'curso_rematricular' %}" class="form-inline" id="rematricular-form" method="post">
-      {% csrf_token %}
-      <input type="hidden" id="curso_id" name="curso_id" value="{{ curso.id }}">
-      <div class="btn-group" role="group" aria-label="Botones">
-        <button class="btn btn-warning" title="{% trans 'Rematricular profesorado' %}" type="submit">
-          <span aria-hidden="true" class="fas fa-people-arrows"></span> {% trans 'Rematricular profesorado' %}
-        </button>
-      </div>
-    </form>
-
-  {% endif %}
-
-
-  {% if curso.estado == curso.Estado.CREADO.value and perms.geo.curso_historial %}
-    <br /><br />
-    <h2>{% trans "Historial de profesores del curso" %}</h2>
-    <hr />
-
-    <table class="table table-striped table-hover" aria-describedby="historial de profesores">
-      <tr>
-        <th scope='col'>{% trans 'Profesor(a)' %}</th>
-        <th scope='col'>{% trans 'Fecha de alta' %}</th>
-        <th scope='col'>{% trans 'Fecha de baja' %}</th>
-      </tr>
-    {% for pc in curso.profesorcurso_set.all %}
-      <tr>
-        <td>{{ pc.profesor.full_name }}</td>
-        <td>{{ pc.fecha_alta | default_if_none:"—" }}</td>
-        <td>{{ pc.fecha_baja | default_if_none:"—" }}</td>
-      </tr>
-    {% endfor %}
-    </table>
-  {% endif %}
-
-
-  {% if curso.estado == curso.Estado.CREADO.value and puede_matricular_alumnos %}
-
-    <a id="matriculacion-automatica"></a><br /><br />
-    <h2>{% trans "Matriculación automática de alumnos" %}</h2>
-    <hr />
-
-    <div class="alert alert-info alert-dismissible fade show">
-      <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-        <span aria-hidden="true">&times;</span>
-      </button>
-
-      <span class="fas fa-info-circle"></span>
-      {% blocktranslate %}
-        Al crear un curso reglado, se prepara un registro (<em>desactivado</em>) para la matriculación automática
-        en el curso Moodle de los alumnos matriculados en Sigm@ en el grupo correspondiente.<br />
-        Si lo desea, puede activar dicha matriculación automática en la tabla inferior.<br />
+    <div class="container-blanco">
+        <h1 id="detalles">{% trans "Detalles del curso" %}</h1>
+        <hr />
         <br />
-        Si desea matricular automáticamente en Moodle alumnos de otros grupos o asignaturas,
-        puede añadir registros adicionales.<br />
-        Para los registros activos, se revisará diariamente si hay nuevos alumnos matriculados en Sigm@.<br />
-        Si desactiva o borra un registro, <em>no</em> se desmatriculará del curso Moodle
-        a los alumnos que ya estén matriculados en él.
-      {% endblocktranslate %}
+
+        <table class="table table-striped table-hover" aria-describedby="detalles">
+            <tr>
+                <th scope="row">{% trans "Id" %}</th>
+                <td>{{ curso.id }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Nombre" %}</th>
+                <td>{{ curso.nombre }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Curso académico" %}</th>
+                <td>{{ curso.curso_academico }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Cód. asignatura Sigma" %}</th>
+                <td>{{ curso.asignatura.asignatura_id | default_if_none:"—" }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Grupo" %}</th>
+                <td>{{ curso.asignatura.cod_grupo_asignatura | default_if_none:"—" }}</td>
+            </tr>
+
+            <tr>
+                <th scope="row">{% trans "Estado" %}</th>
+                <td>{{ curso.get_estado_display }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Fecha de solicitud" %}</th>
+                <td>{{ curso.fecha_solicitud }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Fecha de autorización" %}</th>
+                <td>{{ curso.fecha_autorizacion | default_if_none:"—" }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Autorizador" %}</th>
+                <td>{{ curso.autorizador | default_if_none:"—" }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Fecha de creación" %}</th>
+                <td>{{ curso.fecha_creacion | default_if_none:"—" }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Código en plataforma" %}</th>
+                <td>{{ curso.id_nk | default_if_none:"—" }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "URL" %}</th>
+                <td>
+                    {% if curso.url %}
+                        <a target="_blank" href="{{ curso.url }}">{{ curso.url }}</a>
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Categoría" %}</th>
+                <td>{{ curso.categoria.nombre | default_if_none:"—" }} ({{ curso.categoria.id_nk }})</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Motivo de la solicitud" %}</th>
+                <td>{{ curso.motivo_solicitud | default_if_none:"—" | linebreaks }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Comentarios" %}</th>
+                <td>{{ curso.comentarios | default_if_none:"—" | linebreaks }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Profesorado" %}</th>
+                <td>
+                    <ul class="listado">
+                        {% for asignacion in asignaciones %}
+                            <li>
+                                {{ asignacion.profesor.full_name }} &lt;{{ asignacion.profesor.email }}&gt;
+                                {% if perms.geo.pc_anular %}
+                                    <a href={% url "pc_anular" asignacion.id %} class='btn btn-warning btn-xs'
+                                        title='Dar de baja a este profesor en este curso'>
+                                        <span class='fas fa-user-times' aria-hidden='true' style='display: inline;'></span>
+                                        {% trans "Dar de baja" %}
+                                    </a>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+        </table>
+
+        {% if curso.estado == curso.Estado.SOLICITADO.value and perms.geo.cursos_pendientes %}
+
+            {% if perms.geo.curso_administrar %}
+                <a href="{% url 'admin:geo_curso_change' curso.id %}" class="btn btn-info">
+                    <span class="fas fa-pencil-alt" aria-hidden="true"></span> {% trans "Modificar curso" %}
+                </a><br />
+            {% endif %}
+
+            <br />
+            <h2>{% trans "Resolver la solicitud" %}</h2>
+            <hr />
+            <form action="{% url 'curso_resolver' %}" id="resolver-form" method="post">
+                {% csrf_token %}
+                <input type='hidden' id='id' name='id' value='{{ curso.id }}'>
+                <div><strong>{% trans "Decisión" %}</strong></div>
+                <div class="form-check-inline">
+                    <label class="form-check-label">
+                        <input type="radio" class="form-check-input" name="decision" value="denegar" required>
+                        {% trans "Denegar" %}
+                    </label>
+                </div>
+                <div class="form-check-inline">
+                    <label class="form-check-label">
+                        <input type="radio" class="form-check-input" name="decision" value="autorizar" required>
+                        {% trans "Autorizar" %}
+                    </label>
+                </div>
+
+                <div id="div_id_comentarios" class="form-group">
+                    <label for="id_comentarios" class="col-form-label">
+                        <strong>{% trans "Comentarios" %}</strong>
+                    </label>
+                    <div class="">
+                        <textarea name="comentarios" cols="40" rows="10" class="textarea form-control" id="id_comentarios"
+                        ></textarea>
+                        <small id="hint_id_comentarios" class="form-text text-muted">
+                            {% trans "Si lo desea, añada una explicación para el solicitante sobre la razón de aprobar o denegar el curso solicitado." %}
+                        </small>
+                    </div>
+                </div>
+
+                <br style="clear: both;" />
+                <div class="btn-group" role="group" aria-label="Botones">
+                    <a href="{% url 'curso_pendientes' %}" class="btn btn-info">
+                        <span class="fas fa-step-backward"></span> {% trans "Retroceder" %}
+                    </a>
+                    <button type="submit" class="btn btn-warning">
+                        <span class="fas fa-gavel"></span> {% trans "Resolver" %}
+                    </button>
+                </div>
+            </form>
+        {% endif %}
+
+        {% if curso.estado == curso.Estado.CREADO.value and not curso.asignatura_id and perms.geo.matricular_plan %}
+            <br />
+            <h2>{% trans "Matricular a todos los alumnos de un plan" %}</h2>
+            <hr />
+
+            {% crispy mp_form %}
+
+            <small id="hint_plan_id_nk" class="form-text text-muted">
+                {% trans 'Puede consultar el código del plan en la <a href="https://estudios.unizar.es">web de estudios</a>.' %}
+            </small>
+        {% endif %}
+
+        {% if curso.estado == curso.Estado.CREADO.value and puede_matricular_profesores %}
+            <br /><br />
+            <h2>{% trans "Añadir un profesor al curso" %}</h2>
+            <hr />
+
+            <div class="alert alert-info alert-dismissible fade show">
+                <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+                <span class="fas fa-info-circle"></span>
+                {% blocktranslate %}
+                    Si añade un profesor directamente en Moodle, GEO no se enterará y el nuevo profesor no podrá
+                    acceder a esta página para gestionar el curso en GEO.<br />
+                    Si añade al nuevo profesor desde aquí, el curso le aparecerá en la página «Mis cursos»
+                    cuando inicie sesión en GEO.
+                {% endblocktranslate %}
+            </div>
+            <br />
+
+            {% crispy pc_form %}
+
+            <br /><br />
+            <h2>{% trans "Rematricular profesorado" %}</h2>
+            <hr />
+
+            <div class="alert alert-info alert-dismissible fade show">
+                <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+                <span class="fas fa-info-circle"></span>
+                {% blocktranslate %}
+                    En caso de que, accidentalmente, se haya desmatriculado en Moodle al profesorado,
+                    puede volver a cargar en Moodle los datos de profesorado que constan en GEO.
+                {% endblocktranslate %}
+            </div>
+            <br />
+
+            <form action="{% url 'curso_rematricular' %}" class="form-inline" id="rematricular-form" method="post">
+                {% csrf_token %}
+                <input type="hidden" id="curso_id" name="curso_id" value="{{ curso.id }}">
+                <div class="btn-group" role="group" aria-label="Botones">
+                    <button class="btn btn-warning" title="{% trans 'Rematricular profesorado' %}" type="submit">
+                        <span aria-hidden="true" class="fas fa-people-arrows"></span> {% trans 'Rematricular profesorado' %}
+                    </button>
+                </div>
+            </form>
+
+        {% endif %}
+
+
+        {% if curso.estado == curso.Estado.CREADO.value and perms.geo.curso_historial %}
+            <br /><br />
+            <h2>{% trans "Historial de profesores del curso" %}</h2>
+            <hr />
+
+            <table class="table table-striped table-hover" aria-describedby="historial de profesores">
+                <tr>
+                    <th scope='col'>{% trans 'Profesor(a)' %}</th>
+                    <th scope='col'>{% trans 'Fecha de alta' %}</th>
+                    <th scope='col'>{% trans 'Fecha de baja' %}</th>
+                </tr>
+                {% for pc in curso.profesorcurso_set.all %}
+                    <tr>
+                        <td>{{ pc.profesor.full_name }}</td>
+                        <td>{{ pc.fecha_alta | default_if_none:"—" }}</td>
+                        <td>{{ pc.fecha_baja | default_if_none:"—" }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+
+
+        {% if curso.estado == curso.Estado.CREADO.value and puede_matricular_alumnos %}
+
+            <a id="matriculacion-automatica"></a><br /><br />
+            <h2>{% trans "Matriculación automática de alumnos" %}</h2>
+            <hr />
+
+            <div class="alert alert-info alert-dismissible fade show">
+                <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+                <span class="fas fa-info-circle"></span>
+                {% blocktranslate %}
+                    Al crear un curso reglado, se prepara un registro (<em>desactivado</em>) para la matriculación automática
+                    en el curso Moodle de los alumnos matriculados en Sigm@ en el grupo correspondiente.<br />
+                    Si lo desea, puede activar dicha matriculación automática en la tabla inferior.<br />
+                    <br />
+                    Si desea matricular automáticamente en Moodle alumnos de otros grupos o asignaturas,
+                    puede añadir registros adicionales.<br />
+                    Para los registros activos, se revisará diariamente si hay nuevos alumnos matriculados en Sigm@.<br />
+                    Si desactiva o borra un registro, <em>no</em> se desmatriculará del curso Moodle
+                    a los alumnos que ya estén matriculados en él.
+                {% endblocktranslate %}
+            </div>
+            <br />
+
+            <table class="table table-striped table-hover" aria-describedby="matriculación automática">
+                <thead>
+                    <tr>
+                        <th scope='col'>{% trans 'Cód. asignatura' %}</th>
+                        <th scope='col'>{% trans 'Asignatura' %}</th>
+                        <th scope='col'>{% trans 'Cód. grupo' %}</th>
+                        <th scope='col'>{% trans 'Centro' %}</th>
+                        <th scope='col'>{% trans 'Cód. plan' %}</th>
+                        <th scope='col'>{% trans 'Estudio' %}</th>
+                        <th scope='col'>{% trans 'Activo' %}</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for registro in matriculas_automaticas %}
+                        <tr id="registro_{{ registro.id }}">
+                            <td>{{ registro.asignatura_id | default:'—' }}</td>
+                            <td>{{ registro.get_nombre_asignatura | default:'Todas' }}</td>
+                            <td>{{ registro.cod_grupo_asignatura | default:'Todos' }}</td>
+                            <td>{{ registro.centro.nombre | default:'Todos' }}</td>
+                            <td>{{ registro.plan_id | default:'—' }}</td>
+                            <td>{{ registro.plan.estudio.nombre | default:'Todos' }}</td>
+                            <td>
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input" id="active_switch_{{ registro.id }}"
+                                        {% if registro.active %}checked{% endif %}
+                                        onchange="toggleActive({{ registro.id }})"
+                                    >
+                                    <label class="custom-control-label" for="active_switch_{{ registro.id }}"></label>
+                                </div>
+                            </td>
+                            <td>
+                                {% if not registro.fijo %}
+                                    <span class="fas fa-trash-alt text-danger" title="Eliminar" aria-label="Eliminar" role="button" onclick="delRegistro({{ registro.id }})"></span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div id="div_resultado_matricula_automatica" class="alert alert-info fade show" style="display: none;">
+                <span class="fas fa-info-circle"></span>
+                <span id="span_resultado_matricula_automatica"></span>
+            </div>
+
+            <h3>{% trans 'Añadir registro' %}</h3>
+
+            <form action="{% url 'ma_anyadir' curso.id %}" id="matricula-automatica-form" method="post">
+                {% csrf_token %}
+                {{ ma_form | crispy }}
+
+                <div class="btn-group" role="group" aria-label="{{ _('Botones') }}">
+                    <button class="btn btn-warning" type="submit" title="{% trans 'Añadir registro para matrícula automática' %}" >
+                        <span class="fas fa-plus"></span>&nbsp; {% translate 'Añadir' %}
+                    </button>
+                </div>
+            </form>
+
+
+            <br /><br />
+            <h2>{% trans "Matricular alumnos en masa" %}</h2>
+            <hr />
+
+            <div class="alert alert-info alert-dismissible fade show">
+                <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+                <span class="fas fa-info-circle"></span>
+                {% blocktranslate %}
+                    Para los cursos reglados, se prepara la carga automática de los alumnos
+                    del grupo correspondiente (si bien deberá activarla en la sección anterior).<br />
+                    Para los cursos no reglados, desde aquí puede matricular alumnos masivamente subiendo
+                    un fichero de texto (.txt o .csv) con los NIPs de los alumnos (un NIP por línea).
+                    Los alumnos que ya estuvieran matriculados en el curso, seguirán matriculados.<br />
+                    Para evitar errores, es recomendable que este fichero haya sigo generado desde
+                    una base de datos u otro programa informático.
+                {% endblocktranslate %}
+            </div>
+            <br />
+
+            <form action="{% url 'curso_matricular_nips' %}" enctype="multipart/form-data" id="enviar-fichero" method="post">
+                {% csrf_token %}
+                <input type="hidden" id="curso_id" name="curso_id" value="{{ curso.id }}">
+
+                <div class="mb-2">
+                    <div class="form-control custom-file" style="border:0">
+                        <input type="file" name="file" class="custom-file-input clearablefileinput form-control-file" id="id_file" required accept=".csv,.tsv,.txt">
+                        <label class="custom-file-label text-truncate" for="id_file">---</label>
+                        <script type="text/javascript" id="script-id_file">
+                            const max_upload_size = 10 * 1024;  // 10 KiB
+
+                            document.getElementById("script-id_file").parentNode.querySelector('.custom-file-input').onchange = function (e) {
+                                // Comprobar tamaño del fichero - <https://stackoverflow.com/questions/5697605/limit-the-size-of-a-file-upload-html-input-element>
+                                if (this.files[0].size > max_upload_size) {
+                                    alert("El fichero es demasiado grande (máx: 10 KiB).");
+                                    this.value = "";
+                                }
+                                // Mostrar el nombre del fichero(s), estilo crispy forms
+                                let filenames = "";
+                                for (let i=0; i<e.target.files.length; i++) {
+                                    filenames += (i>0 ? ", " : "") + e.target.files[i].name;
+                                }
+                                e.target.parentNode.querySelector('.custom-file-label').textContent=filenames;
+                            }
+                        </script>
+                    </div>
+                </div>
+
+                <div class="btn-group" role="group" aria-label="Botones">
+                    <button class="btn btn-warning" title="{% trans 'Subir el fichero seleccionado' %}" type="submit">
+                        <span aria-hidden="true" class="fas fa-file-csv"></span> {% trans 'Enviar fichero' %}
+                    </button>
+                </div>
+            </form>
+        {% endif %}
+
+
+        {% if perms.geo.curso_delete %}
+            <br /><br />
+            <h2>{% trans "Eliminar el curso" %}</h2>
+            <hr />
+
+            <div class="alert alert-info alert-dismissible fade show">
+                <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+                <span class="fas fa-info-circle"></span>
+                {% blocktranslate %}
+                    En caso de que el curso haya sido creado por error, se puede eliminar (tanto en GEO como en Moodle).
+                {% endblocktranslate %}
+            </div>
+            <br />
+
+            <a href="{% url 'curso_delete' curso.id %}" aria-label="{% trans 'Eliminar' %}" class='btn btn-warning' role="button" %}>
+                <span aria-hidden="true" class="fas fa-trash-alt"></span> {% trans 'Eliminar' %}
+            </a>
+
+        {% endif %}
+
     </div>
-    <br />
-
-    <table class="table table-striped table-hover" aria-describedby="matriculación automática">
-      <thead>
-        <tr>
-          <th scope='col'>{% trans 'Cód. asignatura' %}</th>
-          <th scope='col'>{% trans 'Asignatura' %}</th>
-          <th scope='col'>{% trans 'Cód. grupo' %}</th>
-          <th scope='col'>{% trans 'Centro' %}</th>
-          <th scope='col'>{% trans 'Cód. plan' %}</th>
-          <th scope='col'>{% trans 'Estudio' %}</th>
-          <th scope='col'>{% trans 'Activo' %}</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for registro in matriculas_automaticas %}
-          <tr id="registro_{{ registro.id }}">
-            <td>{{ registro.asignatura_id | default:'—' }}</td>
-            <td>{{ registro.get_nombre_asignatura | default:'Todas' }}</td>
-            <td>{{ registro.cod_grupo_asignatura | default:'Todos' }}</td>
-            <td>{{ registro.centro.nombre | default:'Todos' }}</td>
-            <td>{{ registro.plan_id | default:'—' }}</td>
-            <td>{{ registro.plan.estudio.nombre | default:'Todos' }}</td>
-            <td>
-              <div class="custom-control custom-switch">
-                <input type="checkbox" class="custom-control-input" id="active_switch_{{ registro.id }}"
-                    {% if registro.active %}checked{% endif %}
-                    onchange="toggleActive({{ registro.id }})"
-                >
-                <label class="custom-control-label" for="active_switch_{{ registro.id }}"></label>
-              </div>
-            </td>
-            <td>
-              {% if not registro.fijo %}
-                <span class="fas fa-trash-alt text-danger" title="Eliminar" aria-label="Eliminar" role="button" onclick="delRegistro({{ registro.id }})"></span>
-              {% endif %}
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-
-    <div id="div_resultado_matricula_automatica" class="alert alert-info fade show" style="display: none;">
-      <span class="fas fa-info-circle"></span>
-      <span id="span_resultado_matricula_automatica"></span>
-    </div>
-
-    <h3>{% trans 'Añadir registro' %}</h3>
-
-    <form action="{% url 'ma_anyadir' curso.id %}" id="matricula-automatica-form" method="post">
-      {% csrf_token %}
-        {{ ma_form | crispy }}
-
-        <div class="btn-group" role="group" aria-label="{{ _('Botones') }}">
-            <button class="btn btn-warning" type="submit" title="{% trans 'Añadir registro para matrícula automática' %}" >
-              <span class="fas fa-plus"></span>&nbsp; {% translate 'Añadir' %}
-            </button>
-        </div>
-    </form>
-
-
-    <br /><br />
-    <h2>{% trans "Matricular alumnos en masa" %}</h2>
-    <hr />
-
-    <div class="alert alert-info alert-dismissible fade show">
-      <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-        <span aria-hidden="true">&times;</span>
-      </button>
-
-      <span class="fas fa-info-circle"></span>
-      {% blocktranslate %}
-        Para los cursos reglados, se prepara la carga automática de los alumnos
-        del grupo correspondiente (si bien deberá activarla en la sección anterior).<br />
-        Para los cursos no reglados, desde aquí puede matricular alumnos masivamente subiendo
-        un fichero de texto (.txt o .csv) con los NIPs de los alumnos (un NIP por línea).
-        Los alumnos que ya estuvieran matriculados en el curso, seguirán matriculados.<br />
-        Para evitar errores, es recomendable que este fichero haya sigo generado desde
-        una base de datos u otro programa informático.
-      {% endblocktranslate %}
-    </div>
-    <br />
-
-    <form action="{% url 'curso_matricular_nips' %}" enctype="multipart/form-data" id="enviar-fichero" method="post">
-      {% csrf_token %}
-      <input type="hidden" id="curso_id" name="curso_id" value="{{ curso.id }}">
-
-      <div class="mb-2">
-        <div class="form-control custom-file" style="border:0">
-          <input type="file" name="file" class="custom-file-input clearablefileinput form-control-file" id="id_file" required accept=".csv,.tsv,.txt">
-          <label class="custom-file-label text-truncate" for="id_file">---</label>
-          <script type="text/javascript" id="script-id_file">
-            const max_upload_size = 10 * 1024;  // 10 KiB
-
-            document.getElementById("script-id_file").parentNode.querySelector('.custom-file-input').onchange = function (e) {
-                // Comprobar tamaño del fichero - <https://stackoverflow.com/questions/5697605/limit-the-size-of-a-file-upload-html-input-element>
-                if (this.files[0].size > max_upload_size) {
-                    alert("El fichero es demasiado grande (máx: 10 KiB).");
-                    this.value = "";
-                }
-                // Mostrar el nombre del fichero(s), estilo crispy forms
-                let filenames = "";
-                for (let i=0; i<e.target.files.length; i++) {
-                    filenames += (i>0 ? ", " : "") + e.target.files[i].name;
-                }
-                e.target.parentNode.querySelector('.custom-file-label').textContent=filenames;
-            }
-          </script>
-        </div>
-      </div>
-
-      <div class="btn-group" role="group" aria-label="Botones">
-        <button class="btn btn-warning" title="{% trans 'Subir el fichero seleccionado' %}" type="submit">
-          <span aria-hidden="true" class="fas fa-file-csv"></span> {% trans 'Enviar fichero' %}
-        </button>
-      </div>
-    </form>
-  {% endif %}
-
-
-  {% if perms.geo.curso_delete %}
-    <br /><br />
-    <h2>{% trans "Eliminar el curso" %}</h2>
-    <hr />
-
-    <div class="alert alert-info alert-dismissible fade show">
-      <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-        <span aria-hidden="true">&times;</span>
-      </button>
-
-      <span class="fas fa-info-circle"></span>
-      {% blocktranslate %}
-        En caso de que el curso haya sido creado por error, se puede eliminar (tanto en GEO como en Moodle).
-      {% endblocktranslate %}
-    </div>
-    <br />
-
-    <a href="{% url 'curso_delete' curso.id %}" aria-label="{% trans 'Eliminar' %}" class='btn btn-warning' role="button" %}>
-      <span aria-hidden="true" class="fas fa-trash-alt"></span> {% trans 'Eliminar' %}
-    </a>
-
-  {% endif %}
-
-</div>
 {% endblock content %}

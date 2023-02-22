@@ -5,45 +5,45 @@
 
 {% block content %}
 
-<div class="container-blanco">
-  <h1>{% trans "Solicitar curso no reglado" %} <small class="text-secondary">{{ curso }}</small></h1>
-  <hr />
-  <br />
+    <div class="container-blanco">
+        <h1>{% trans "Solicitar curso no reglado" %} <small class="text-secondary">{{ curso }}</small></h1>
+        <hr />
+        <br />
 
-  <div class="alert alert-info fade show">
-    <span class="fas fa-info-circle"></span>
-    <p>
-      {% blocktrans %}Por favor, asegúrese de que el curso solicitado no tiene asociado
-      ningún código SIGMA.{% endblocktrans %}
-    </p>
-    <p><strong>{% trans "NOTA IMPORTANTE:" %}</strong>
-      {% blocktrans %}Las solicitudes de cursos NO REGLADOS deben ser evaluadas
-      y se creará el curso solamente si se decide su aceptación
-      (en caso de denegación se comunicará la razón de la misma).
-      Por todo ello, se debe enviar la solicitud al menos 10 días antes de que comience
-      la actividad que motiva la solicitud.{% endblocktrans %}
-    </p>
-    <p>{% blocktrans %}Antes de hacer la solicitud, lea las
-      <a href="https://ayudica.unizar.es/otrs/public.pl?Action=PublicFAQZoom;ItemID=82"
-	 target="_blank" rel="noopener">FAQ sobre los cursos no reglados</a>.
-      {% endblocktrans %}
-    </p>
-  </div>
-  <br />
+        <div class="alert alert-info fade show">
+            <span class="fas fa-info-circle"></span>
+            <p>
+                {% blocktrans %}Por favor, asegúrese de que el curso solicitado no tiene asociado
+                    ningún código SIGMA.{% endblocktrans %}
+            </p>
+            <p><strong>{% trans "NOTA IMPORTANTE:" %}</strong>
+                {% blocktrans %}Las solicitudes de cursos NO REGLADOS deben ser evaluadas
+                    y se creará el curso solamente si se decide su aceptación
+                    (en caso de denegación se comunicará la razón de la misma).
+                    Por todo ello, se debe enviar la solicitud al menos 10 días antes de que comience
+                    la actividad que motiva la solicitud.{% endblocktrans %}
+            </p>
+            <p>{% blocktrans %}Antes de hacer la solicitud, lea las
+                <a href="https://ayudica.unizar.es/otrs/public.pl?Action=PublicFAQZoom;ItemID=82"
+                    target="_blank" rel="noopener">FAQ sobre los cursos no reglados</a>.
+            {% endblocktrans %}
+            </p>
+        </div>
+        <br />
 
-  <form action="{% url 'curso_solicitar' %}" id="solicitar-form" method="post">
-    {% csrf_token %}
-    {{ form | crispy }}
+        <form action="{% url 'curso_solicitar' %}" id="solicitar-form" method="post">
+            {% csrf_token %}
+            {{ form | crispy }}
 
-    <div class="btn-group" role="group" aria-label="Botones">
-      <a href="{% url 'mis_cursos' %}" class="btn btn-info">
-        <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
-      </a>
-      <button class="btn btn-warning" type="submit" title="{% trans 'Solicitar curso no reglado' %}">
-        <span class="fas fa-check"></span> {% trans 'Solicitar curso' %}
-      </button>
+            <div class="btn-group" role="group" aria-label="Botones">
+                <a href="{% url 'mis_cursos' %}" class="btn btn-info">
+                    <span class="fas fa-step-backward"></span> {% trans 'Retroceder' %}
+                </a>
+                <button class="btn btn-warning" type="submit" title="{% trans 'Solicitar curso no reglado' %}">
+                    <span class="fas fa-check"></span> {% trans 'Solicitar curso' %}
+                </button>
+            </div>
+        </form>
     </div>
-  </form>
-</div>
 
 {% endblock content %}

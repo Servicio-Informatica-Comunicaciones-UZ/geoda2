@@ -5,87 +5,87 @@
 {% block title %}{% trans "Todas las asignaturas" %}{% endblock title %}
 
 {% block content %}
-<div class="container-blanco">
-  <h1>{% trans "Todas las asignaturas" %} <small class="text-secondary">{{ curso }}</small></h1>
-  <hr />
-  <br />
+    <div class="container-blanco">
+        <h1>{% trans "Todas las asignaturas" %} <small class="text-secondary">{{ curso }}</small></h1>
+        <hr />
+        <br />
 
-  <div class="alert alert-info alert-dismissible fade show">
-    <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-      <span aria-hidden="true">&times;</span>
-    </button>
+        <div class="alert alert-info alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
+                <span aria-hidden="true">&times;</span>
+            </button>
 
-    <span class="fas fa-info-circle"></span>
-    {% blocktrans %} En esta página puede ver todas las asignaturas, aunque no las tenga asignadas en el POD.<br />
-    Para evitar errores se recomienda usar el
-    <a href="http://academico.unizar.es/cds/cds" target="_blank" rel="noopener noreferrer">código Sigma</a> de la
-    asignatura.<br /><br />
+            <span class="fas fa-info-circle"></span>
+            {% blocktrans %} En esta página puede ver todas las asignaturas, aunque no las tenga asignadas en el POD.<br />
+                Para evitar errores se recomienda usar el
+                <a href="http://academico.unizar.es/cds/cds" target="_blank" rel="noopener noreferrer">código Sigma</a> de la
+                asignatura.<br /><br />
 
-    Pulsando «Crear curso» se creará el curso en la plataforma, con la carga automática de los alumnos del grupo
-    correspondiente preparada pero desactivada.<br />
-    El curso se crea VISIBLE para los matriculados. Si lo desea puede
-    <a
-      href="https://ayudica.unizar.es/otrs/public.pl?Action=PublicFAQZoom;ItemID=532"
-      target="_blank"
-      rel="noopener noreferrer"
-      >ocultarlo</a
-    >
-    en los «Ajustes del curso» en la plataforma.<br />
-    Es posible que tenga que salir de la plataforma y volver a entrar para ver el nuevo curso.<br /><br />
+                Pulsando «Crear curso» se creará el curso en la plataforma, con la carga automática de los alumnos del grupo
+                correspondiente preparada pero desactivada.<br />
+                El curso se crea VISIBLE para los matriculados. Si lo desea puede
+                <a
+                    href="https://ayudica.unizar.es/otrs/public.pl?Action=PublicFAQZoom;ItemID=532"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >ocultarlo</a
+                    >
+                    en los «Ajustes del curso» en la plataforma.<br />
+                    Es posible que tenga que salir de la plataforma y volver a entrar para ver el nuevo curso.<br /><br />
 
-    Si el curso ya está creado puede consultar la ficha para ver qué profesor lo tiene asociado. {% endblocktrans %}
-  </div>
-  <br />
+                    Si el curso ya está creado puede consultar la ficha para ver qué profesor lo tiene asociado. {% endblocktrans %}
+        </div>
+        <br />
 
-  {% crispy filter.form filter.form.helper %}
-  <br />
-  {% render_table table %}
-</div>
-
-<!-- Diálogo modal -->
-<div
-  class="modal fade"
-  id="crearModal"
-  tabindex="-1"
-  role="dialog"
-  aria-labelledby="crearModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="crearModalLabel">{% trans '¿Seguro que desea crear este curso?' %}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="advertencia"></div> <!-- Rellenado por función JS -->
-      </div>
-      <div class="modal-footer">
-        <form action="#" id="crear-form" method="post">
-          {% csrf_token %}
-          <button type="button" class="btn btn-info" data-dismiss="modal">
-            <span class="fas fa-times"></span> {% trans 'Cancelar' %}
-          </button>
-          <button type="submit" class="btn btn-warning">
-            <span class="fas fa-plus"></span> {% trans 'Crear' %}
-          </button>
-        </form>
-      </div>
+        {% crispy filter.form filter.form.helper %}
+        <br />
+        {% render_table table %}
     </div>
-  </div>
-</div>
+
+    <!-- Diálogo modal -->
+    <div
+        class="modal fade"
+        id="crearModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="crearModalLabel"
+        aria-hidden="true"
+    >
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="crearModalLabel">{% trans '¿Seguro que desea crear este curso?' %}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="advertencia"></div> <!-- Rellenado por función JS -->
+                </div>
+                <div class="modal-footer">
+                    <form action="#" id="crear-form" method="post">
+                        {% csrf_token %}
+                        <button type="button" class="btn btn-info" data-dismiss="modal">
+                            <span class="fas fa-times"></span> {% trans 'Cancelar' %}
+                        </button>
+                        <button type="submit" class="btn btn-warning">
+                            <span class="fas fa-plus"></span> {% trans 'Crear' %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock content %}
 
 {% block extrajs %}
-<script type="text/javascript">
-  $(document).on("click", ".prepararCrear", function() {
-    $("#crearModal .advertencia").html(
-      "<p>¿Seguro que desea crear un curso para la asignatura «" + $(this).data("nombre") + "»?</p>"
-    );
-    $("#crear-form").attr("action", $(this).data('url'));
-  });
-</script>
+    <script type="text/javascript">
+        $(document).on("click", ".prepararCrear", function() {
+            $("#crearModal .advertencia").html(
+                "<p>¿Seguro que desea crear un curso para la asignatura «" + $(this).data("nombre") + "»?</p>"
+            );
+            $("#crear-form").attr("action", $(this).data('url'));
+        });
+    </script>
 {% endblock extrajs %}

@@ -1,252 +1,252 @@
 {% load custom_tags i18n static %}<!DOCTYPE html>
 {% now "Y" as anyo_actual %}
 <html lang="es">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-    <!-- Bootstrap CSS -->
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-      integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
-      crossorigin="anonymous"
-    >
-    {# SubResource Integrity: openssl dgst -sha384 -binary FICHERO | openssl base64 #}
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.14.0/css/all.css"
-      integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/iconos.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/latolatinfonts.css' %}" />
-    {% block extracss %}{% endblock extracss %}
+        <!-- Bootstrap CSS -->
+        <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+            integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+            crossorigin="anonymous"
+        >
+        {# SubResource Integrity: openssl dgst -sha384 -binary FICHERO | openssl base64 #}
+        <link
+            rel="stylesheet"
+            href="https://use.fontawesome.com/releases/v5.14.0/css/all.css"
+            integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc"
+            crossorigin="anonymous"
+        />
+        <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+        <link rel="stylesheet" href="{% static 'css/iconos.css' %}" />
+        <link rel="stylesheet" href="{% static 'css/latolatinfonts.css' %}" />
+        {% block extracss %}{% endblock extracss %}
 
-    <title>{% block title %}{% trans "Gestión de la Enseñanza Online" %}{% endblock title %}</title>
+        <title>{% block title %}{% trans "Gestión de la Enseñanza Online" %}{% endblock title %}</title>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicons/apple-touch-icon.png' %}" />
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicons/favicon-32x32.png' %}" />
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicons/favicon-16x16.png' %}" />
-    <link rel="manifest" href="{% static 'favicons/site.webmanifest' %}" />
-    <link rel="mask-icon" href="{% static 'favicons/safari-pinned-tab.svg' %}" color="#5bbad5" />
-    <meta name="apple-mobile-web-app-title" content="GEO" />
-    <meta name="application-name" content="GEO" />
-    <meta name="msapplication-TileColor" content="#da532c" />
-    <meta name="theme-color" content="#ddffff" />
-    <link rel="shortcut icon" href="{% static 'favicons/favicon.ico' %}" />
-    <meta name="msapplication-config" content="{% static 'favicons/browserconfig.xml' %}" />
+        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicons/apple-touch-icon.png' %}" />
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicons/favicon-32x32.png' %}" />
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicons/favicon-16x16.png' %}" />
+        <link rel="manifest" href="{% static 'favicons/site.webmanifest' %}" />
+        <link rel="mask-icon" href="{% static 'favicons/safari-pinned-tab.svg' %}" color="#5bbad5" />
+        <meta name="apple-mobile-web-app-title" content="GEO" />
+        <meta name="application-name" content="GEO" />
+        <meta name="msapplication-TileColor" content="#da532c" />
+        <meta name="theme-color" content="#ddffff" />
+        <link rel="shortcut icon" href="{% static 'favicons/favicon.ico' %}" />
+        <meta name="msapplication-config" content="{% static 'favicons/browserconfig.xml' %}" />
 
-    <meta
-      name="description"
-      content="{% block description %}{% trans 'Gestión de la enseñanza online' %}{% endblock description %}"
-    />
-    <meta
-      name="author"
-      content="Área de Aplicaciones. Servicio de Informática y Comunicaciones de la Universidad de Zaragoza."
-    />
-  </head>
+        <meta
+            name="description"
+            content="{% block description %}{% trans 'Gestión de la enseñanza online' %}{% endblock description %}"
+        />
+        <meta
+            name="author"
+            content="Área de Aplicaciones. Servicio de Informática y Comunicaciones de la Universidad de Zaragoza."
+        />
+    </head>
 
-  <body>
-    <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-azul mb-4">
-      <a class="navbar-brand" href="http://www.unizar.es">
-        <span class="icon-logoUZ"></span> <span class="screen-reader">{% trans "Universidad de Zaragoza" %}</span>
-      </a>
-
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarCollapse"
-        aria-controls="navbarCollapse"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarCollapse">
-        <ul class="navbar-nav" style="margin-left: 150px;">
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'home' %}">
-              <span class="fas fa-chalkboard-teacher"></span>&nbsp;
-              {% trans "Gestión de la Enseñanza Online" %}
+    <body>
+        <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-azul mb-4">
+            <a class="navbar-brand" href="http://www.unizar.es">
+                <span class="icon-logoUZ"></span> <span class="screen-reader">{% trans "Universidad de Zaragoza" %}</span>
             </a>
-          </li>
-        </ul>
 
-        <ul class="navbar-nav ml-auto">
-          {% if user.puede_usar_aplicacion %}
-            {% if user|has_group:"Gestores" %}
-              <li class="nav-item dropdown">
-                <a
-                  class="nav-link dropdown-toggle"
-                  href=""
-                  id="gestionMenu"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                >
-                  <span class="fas fa-cog"></span>&nbsp; {% trans "Gestión" %}
-                </a>
-                <div class="dropdown-menu" aria-labelledby="gestionMenu">
-                  <a class="dropdown-item" href="{% url 'curso_pendientes' %}">
-                    <span class="far fa-thumbs-up"></span>&nbsp; {% trans "Cursos por aprobar" %}
-                  </a>
-                  <a class="dropdown-item" href="{% url 'curso_todos' %}">
-                    <span class="fas fa-th-list"></span>&nbsp; {% trans "Todos los cursos" %}
-                  </a>
-                  <a class="dropdown-item" href="{% url 'forano_todos' %}">
-                    <span class="fas fa-user-check"></span>&nbsp; {% trans "Vinculaciones" %}
-                  </a>
-                  <a class="dropdown-item" href="{% url 'calendario' 'actual' %}">
-                    <span class="far fa-calendar-alt"></span>&nbsp; {% trans "Año académico actual" %}
-                  </a>
-                </div>
-              </li>
-            {% endif %}
-
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'forano_solicitar' %}">
-                <span class="fas fa-user-plus"></span>&nbsp; {% trans "Invitar" %}
-              </a>
-            </li>
-
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href=""
-                id="cursoMenu"
-                data-toggle="dropdown"
-                aria-haspopup="true"
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-toggle="collapse"
+                data-target="#navbarCollapse"
+                aria-controls="navbarCollapse"
                 aria-expanded="false"
-              >
-                <span class="fas fa-graduation-cap"></span>&nbsp; {% trans "Cursos" %}
-              </a>
-              <div class="dropdown-menu" aria-labelledby="cursoMenu">
-                <a class="dropdown-item" href="{% url 'mis_cursos' %}">
-                  <span class="fas fa-th-list"></span>&nbsp; {% trans "Mis cursos" %}
-                </a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="{% url 'mis_asignaturas' %}">
-                  <span class="fas fa-plus"></span>&nbsp; {% trans "Crear reglado" %}
-                </a>
-                <a class="dropdown-item" href="{% url 'curso_solicitar' %}">
-                  <span class="far fa-envelope-open"></span>&nbsp; {% trans "Solicitar no reglado" %}
-                </a>
-              </div>
-            </li>
-          {% endif %}
+                aria-label="Toggle navigation"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'ayuda' %}">
-              <span class="fas fa-question-circle"></span>&nbsp; {% trans "Ayuda" %}
-            </a>
-          </li>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav" style="margin-left: 150px;">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">
+                            <span class="fas fa-chalkboard-teacher"></span>&nbsp;
+                            {% trans "Gestión de la Enseñanza Online" %}
+                        </a>
+                    </li>
+                </ul>
 
-          {% if user.is_authenticated %}
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="userMenu"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                <span class="fas fa-user"></span>&nbsp; {{ user.username }}
-              </a>
-              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
-                {% if not user.social_auth.get %}
-                  <a class="dropdown-item" href="{% url 'password_change' %}">
-                    <span class="fas fa-key"></span> {% trans "Cambiar contraseña" %}
-                  </a>
-                  <div class="dropdown-divider"></div>
-                {% endif %}
-                {# Follow https://github.com/python-social-auth/social-core/issues/199 #}
-                <a class="dropdown-item" href="{% url 'logout' %}">
-                  <span class="fas fa-sign-out-alt"></span> {% trans "Cerrar sesión" %}
-                </a>
-              </div>
-            </li>
-          {% else %}
-            <li class="nav-item">
-              <a class="nav-link" href="{% lord_url %}">
-                <span class="fas fa-sign-in-alt"></span>&nbsp; {% trans "Iniciar sesión" %}
-              </a>
-            </li>
-          {% endif %}
-        </ul>
-      </div>
-    </nav>
+                <ul class="navbar-nav ml-auto">
+                    {% if user.puede_usar_aplicacion %}
+                        {% if user|has_group:"Gestores" %}
+                            <li class="nav-item dropdown">
+                                <a
+                                    class="nav-link dropdown-toggle"
+                                    href=""
+                                    id="gestionMenu"
+                                    data-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false"
+                                >
+                                    <span class="fas fa-cog"></span>&nbsp; {% trans "Gestión" %}
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="gestionMenu">
+                                    <a class="dropdown-item" href="{% url 'curso_pendientes' %}">
+                                        <span class="far fa-thumbs-up"></span>&nbsp; {% trans "Cursos por aprobar" %}
+                                    </a>
+                                    <a class="dropdown-item" href="{% url 'curso_todos' %}">
+                                        <span class="fas fa-th-list"></span>&nbsp; {% trans "Todos los cursos" %}
+                                    </a>
+                                    <a class="dropdown-item" href="{% url 'forano_todos' %}">
+                                        <span class="fas fa-user-check"></span>&nbsp; {% trans "Vinculaciones" %}
+                                    </a>
+                                    <a class="dropdown-item" href="{% url 'calendario' 'actual' %}">
+                                        <span class="far fa-calendar-alt"></span>&nbsp; {% trans "Año académico actual" %}
+                                    </a>
+                                </div>
+                            </li>
+                        {% endif %}
 
-    <div class="container">
-      {% include 'partials/messages.html' %}
-      {% block content %} {% endblock content %}
-    </div>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'forano_solicitar' %}">
+                                <span class="fas fa-user-plus"></span>&nbsp; {% trans "Invitar" %}
+                            </a>
+                        </li>
 
-    <footer class="footer">
-      <div class="container-fluid p-3 p-md-5">
-        <div class="row">
-          <div class="col-lg-8">
-            &copy; {{ anyo_actual }} {% trans "Universidad de Zaragoza" %}<br />
-            &copy; {{ anyo_actual }} {% trans "Servicio de Informática y Comunicaciones de la Universidad de Zaragoza" %} (<a href="http://sicuz.unizar.es">SICUZ</a>)
-          </div>
+                        <li class="nav-item dropdown">
+                            <a
+                                class="nav-link dropdown-toggle"
+                                href=""
+                                id="cursoMenu"
+                                data-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                            >
+                                <span class="fas fa-graduation-cap"></span>&nbsp; {% trans "Cursos" %}
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="cursoMenu">
+                                <a class="dropdown-item" href="{% url 'mis_cursos' %}">
+                                    <span class="fas fa-th-list"></span>&nbsp; {% trans "Mis cursos" %}
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'mis_asignaturas' %}">
+                                    <span class="fas fa-plus"></span>&nbsp; {% trans "Crear reglado" %}
+                                </a>
+                                <a class="dropdown-item" href="{% url 'curso_solicitar' %}">
+                                    <span class="far fa-envelope-open"></span>&nbsp; {% trans "Solicitar no reglado" %}
+                                </a>
+                            </div>
+                        </li>
+                    {% endif %}
 
-          <div class="col-lg-2" style="text-align: right;">
-            Universidad de Zaragoza<br />
-            C/ Pedro Cerbuna, 12<br />
-            ES-50009 Zaragoza<br />
-            España / Spain<br />
-            Tel: +34 976761000<br />
-            ciu@unizar.es<br />
-            Q-5018001-G<br />
-          </div>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'ayuda' %}">
+                            <span class="fas fa-question-circle"></span>&nbsp; {% trans "Ayuda" %}
+                        </a>
+                    </li>
 
-          <div class="col-lg-2">
-            <a href="http://www.unizar.es">
-              <span class="icon-logoUZ"></span><span class="screen-reader">{% trans "Universidad de Zaragoza" %}</span>
-            </a>
-          </div>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a
+                                class="nav-link dropdown-toggle"
+                                href="#"
+                                id="userMenu"
+                                data-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                            >
+                                <span class="fas fa-user"></span>&nbsp; {{ user.username }}
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
+                                {% if not user.social_auth.get %}
+                                    <a class="dropdown-item" href="{% url 'password_change' %}">
+                                        <span class="fas fa-key"></span> {% trans "Cambiar contraseña" %}
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                {% endif %}
+                                {# Follow https://github.com/python-social-auth/social-core/issues/199 #}
+                                <a class="dropdown-item" href="{% url 'logout' %}">
+                                    <span class="fas fa-sign-out-alt"></span> {% trans "Cerrar sesión" %}
+                                </a>
+                            </div>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% lord_url %}">
+                                <span class="fas fa-sign-in-alt"></span>&nbsp; {% trans "Iniciar sesión" %}
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+
+        <div class="container">
+            {% include 'partials/messages.html' %}
+            {% block content %} {% endblock content %}
         </div>
-        <hr style="border-color: #3b3b3b;" />
 
-        <ul class="footer-links">
-          <li><a href="http://www.unizar.es/aviso-legal" target="_blank" rel="noopener noreferrer">{% trans "Aviso legal" %}</a></li>
-          <li>
-            <a href="http://www.unizar.es/condiciones-generales-de-uso" target="_blank" rel="noopener noreferrer"
-              >{% trans "Condiciones generales de uso" %}</a
-            >
-          </li>
-          <li>
-            <a href="http://www.unizar.es/politica-de-privacidad" target="_blank" rel="noopener noreferrer"
-              >{% trans "Política de privacidad" %}</a
-            >
-          </li>
-        </ul>
-      </div>
-    </footer>
+        <footer class="footer">
+            <div class="container-fluid p-3 p-md-5">
+                <div class="row">
+                    <div class="col-lg-8">
+                        &copy; {{ anyo_actual }} {% trans "Universidad de Zaragoza" %}<br />
+                        &copy; {{ anyo_actual }} {% trans "Servicio de Informática y Comunicaciones de la Universidad de Zaragoza" %} (<a href="http://sicuz.unizar.es">SICUZ</a>)
+                    </div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script
-      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
-      integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
-      crossorigin="anonymous"
-    ></script>
-    <script src="{% static 'js/double-submit.js' %}"></script>
-    {% block extrajs %}{% endblock extrajs %}
-  </body>
-</html>
+                    <div class="col-lg-2" style="text-align: right;">
+                        Universidad de Zaragoza<br />
+                        C/ Pedro Cerbuna, 12<br />
+                        ES-50009 Zaragoza<br />
+                        España / Spain<br />
+                        Tel: +34 976761000<br />
+                        ciu@unizar.es<br />
+                        Q-5018001-G<br />
+                    </div>
+
+                    <div class="col-lg-2">
+                        <a href="http://www.unizar.es">
+                            <span class="icon-logoUZ"></span><span class="screen-reader">{% trans "Universidad de Zaragoza" %}</span>
+                        </a>
+                    </div>
+                </div>
+                <hr style="border-color: #3b3b3b;" />
+
+                <ul class="footer-links">
+                    <li><a href="http://www.unizar.es/aviso-legal" target="_blank" rel="noopener noreferrer">{% trans "Aviso legal" %}</a></li>
+                    <li>
+                        <a href="http://www.unizar.es/condiciones-generales-de-uso" target="_blank" rel="noopener noreferrer"
+                        >{% trans "Condiciones generales de uso" %}</a
+                            >
+                        </li>
+                        <li>
+                            <a href="http://www.unizar.es/politica-de-privacidad" target="_blank" rel="noopener noreferrer"
+                            >{% trans "Política de privacidad" %}</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                </footer>
+
+                <!-- Optional JavaScript -->
+                <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+                <script
+                    src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+                    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+                    crossorigin="anonymous"
+                ></script>
+                <script
+                    src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+                    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+                    crossorigin="anonymous"
+                ></script>
+                <script
+                    src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+                    integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+                    crossorigin="anonymous"
+                ></script>
+                <script src="{% static 'js/double-submit.js' %}"></script>
+                {% block extrajs %}{% endblock extrajs %}
+            </body>
+        </html>

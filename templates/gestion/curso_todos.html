@@ -5,24 +5,24 @@
 {% block title %}{% trans "Cursos" %} {{ curso }}{% endblock title %}
 
 {% block content %}
-<div class="container-blanco">
-  <h1>{% trans "Cursos" %} <small class="text-secondary">{{ curso }}</small></h1>
-  <hr />
+    <div class="container-blanco">
+        <h1>{% trans "Cursos" %} <small class="text-secondary">{{ curso }}</small></h1>
+        <hr />
 
-  <div class="alert alert-info alert-dismissible fade show">
-    <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-      <span aria-hidden="true">&times;</span>
-    </button>
+        <div class="alert alert-info alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
+                <span aria-hidden="true">&times;</span>
+            </button>
 
-    <span class="fas fa-info-circle"></span>
-    {% trans "En esta página puede ver todos los cursos de este año académico." %}
-    {% trans "Puede filtrarlos por su nombre y/o por su estado." %}
-  </div>
-  <br />
+            <span class="fas fa-info-circle"></span>
+            {% trans "En esta página puede ver todos los cursos de este año académico." %}
+            {% trans "Puede filtrarlos por su nombre y/o por su estado." %}
+        </div>
+        <br />
 
-  {% crispy filter.form filter.form.helper %}
-  <br />
+        {% crispy filter.form filter.form.helper %}
+        <br />
 
-  {% render_table table %}
-</div>
+        {% render_table table %}
+    </div>
 {% endblock content %}

@@ -4,38 +4,38 @@
 {% block description %}{% trans "Ayuda" %}{% endblock description %}
 
 {% block content %}
-<div class="container-blanco">
-  <h1>{% trans "Ayuda" %}</h1>
-  <hr />
-  <br />
+    <div class="container-blanco">
+        <h1>{% trans "Ayuda" %}</h1>
+        <hr />
+        <br />
 
-  <h2>{% trans "Preguntas más frecuentes" %}</h2>
+        <h2>{% trans "Preguntas más frecuentes" %}</h2>
 
-  <p>
-    <a
-      href="https://ayudica.unizar.es/otrs/public.pl?Action=PublicFAQExplorer;CategoryID=4"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      {% trans "FAQ en Ayudica" %}
-    </a>
-    <span class="fas fa-link"></span>
-  </p>
+        <p>
+            <a
+                href="https://ayudica.unizar.es/otrs/public.pl?Action=PublicFAQExplorer;CategoryID=4"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                {% trans "FAQ en Ayudica" %}
+            </a>
+            <span class="fas fa-link"></span>
+        </p>
 
-  <h2>{% trans "Soporte" %}</h2>
+        <h2>{% trans "Soporte" %}</h2>
 
-  <p>
-    {% blocktrans %}Para solicitar soporte sobre cualquier tema relacionado con las plataformas del Anillo Digital
-    Docente (gestión de usuarios y cursos, apoyo docente en el uso de las plataformas) debe acceder a la herramienta
-    <strong><a href="https://ayudica.unizar.es/otrs/customer.pl" target="_blank" rel="noopener noreferrer">Ayudica</a></strong>
-    con el usuario y contraseña del correo electrónico.{% endblocktrans %}
-  </p>
+        <p>
+            {% blocktrans %}Para solicitar soporte sobre cualquier tema relacionado con las plataformas del Anillo Digital
+                Docente (gestión de usuarios y cursos, apoyo docente en el uso de las plataformas) debe acceder a la herramienta
+                <strong><a href="https://ayudica.unizar.es/otrs/customer.pl" target="_blank" rel="noopener noreferrer">Ayudica</a></strong>
+                con el usuario y contraseña del correo electrónico.{% endblocktrans %}
+        </p>
 
-  <p>{% trans "Una vez haya iniciado la sesión, seleccione uno de los siguientes servicios:" %}</p>
+        <p>{% trans "Una vez haya iniciado la sesión, seleccione uno de los siguientes servicios:" %}</p>
 
-  <ul class="listado">
-    <li>{% trans "Anillo Digital Docente - Apoyo gestión usuarios/cursos del ADD" %}</li>
-    <li>{% trans "Anillo Digital Docente - Apoyo técnico/docente al ADD" %}</li>
-  </ul>
-</div>
+        <ul class="listado">
+            <li>{% trans "Anillo Digital Docente - Apoyo gestión usuarios/cursos del ADD" %}</li>
+            <li>{% trans "Anillo Digital Docente - Apoyo técnico/docente al ADD" %}</li>
+        </ul>
+    </div>
 {% endblock content %}

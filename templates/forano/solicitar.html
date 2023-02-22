@@ -5,56 +5,56 @@
 
 {% block content %}
 
-<div class="container-blanco">
-  <h1>{% trans "Invitar a un usuario externo" %}</h1>
-  <hr />
-  <br />
+    <div class="container-blanco">
+        <h1>{% trans "Invitar a un usuario externo" %}</h1>
+        <hr />
+        <br />
 
-  <div class="alert alert-info fade show">
-    <span class="fas fa-info-circle"></span>
-    {% blocktrans %}
-    <p>El PDI/PAS y los estudiantes matriculados tienen automáticamente acceso a Moodle.</p>
-    <p>Para que un usuario <strong>externo</strong> a la Universidad de Zaragoza pueda acceder a Moodle, debe:</p>
-    <ol>
-      <li>
-        <strong>Tener un NIP (identificador de usuario)</strong><br />
-        Si el usuario nunca ha estado vinculado a la UZ, puede obtener un NIP visitando la
-        <a href="https://identidad.unizar.es/autoregistro" target="_blank" rel="noopener noreferrer">página de
-          autorregistro</a>
-        <span class="fas fa-link" style="float: none; font-size: 100%;"></span>.
-      </li>
-      <li>
-        <strong>Estar vinculado a Moodle en el Sistema de Gestión de Identidades</strong><br />
-        Una vez que disponga de un NIP, el usuario debe comunicárselo a usted, para que solicite
-        su vinculación desde esta página. Usted se responsabiliza de dicha vinculación,
-        que será válida durante un año.
-      </li>
-    </ol>
-    <p>
-      En el motivo de la solicitud hay que indicar quién es el usuario externo, motivos por los
-      que solicita su vinculación a Moodle, así como el curso en el que participaría y con qué rol.
-    </p>
-    <p>
-      Una vez examinada y aprobada su solicitud, podrá proceder a incluir al invitado
-      en el curso Moodle que desee. Normalmente se resuelven en un plazo de 24 horas.
-    </p>
-    {% endblocktrans %}
-  </div>
-  <br />
+        <div class="alert alert-info fade show">
+            <span class="fas fa-info-circle"></span>
+            {% blocktrans %}
+                <p>El PDI/PAS y los estudiantes matriculados tienen automáticamente acceso a Moodle.</p>
+                <p>Para que un usuario <strong>externo</strong> a la Universidad de Zaragoza pueda acceder a Moodle, debe:</p>
+                <ol>
+                    <li>
+                        <strong>Tener un NIP (identificador de usuario)</strong><br />
+                        Si el usuario nunca ha estado vinculado a la UZ, puede obtener un NIP visitando la
+                        <a href="https://identidad.unizar.es/autoregistro" target="_blank" rel="noopener noreferrer">página de
+                            autorregistro</a>
+                        <span class="fas fa-link" style="float: none; font-size: 100%;"></span>.
+                    </li>
+                    <li>
+                        <strong>Estar vinculado a Moodle en el Sistema de Gestión de Identidades</strong><br />
+                        Una vez que disponga de un NIP, el usuario debe comunicárselo a usted, para que solicite
+                        su vinculación desde esta página. Usted se responsabiliza de dicha vinculación,
+                        que será válida durante un año.
+                    </li>
+                </ol>
+                <p>
+                    En el motivo de la solicitud hay que indicar quién es el usuario externo, motivos por los
+                    que solicita su vinculación a Moodle, así como el curso en el que participaría y con qué rol.
+                </p>
+                <p>
+                    Una vez examinada y aprobada su solicitud, podrá proceder a incluir al invitado
+                    en el curso Moodle que desee. Normalmente se resuelven en un plazo de 24 horas.
+                </p>
+            {% endblocktrans %}
+        </div>
+        <br />
 
-  <form action="{% url 'forano_solicitar' %}" id="solicitar-form" method="post">
-    {% csrf_token %}
-    {{ form | crispy }}
+        <form action="{% url 'forano_solicitar' %}" id="solicitar-form" method="post">
+            {% csrf_token %}
+            {{ form | crispy }}
 
-    <div class="btn-group" role="group" aria-label="Botones">
-      <a href="{% url 'mis_cursos' %}" class="btn btn-info">
-        <span class="fas fa-times"></span> {% trans 'Cancelar' %}
-      </a>
-      <button class="btn btn-warning" type="submit" title="{% trans 'Solicitar vinculación de usuario externo' %}">
-        <span class="fas fa-check"></span> {% trans 'Solicitar vinculación' %}
-      </button>
+            <div class="btn-group" role="group" aria-label="Botones">
+                <a href="{% url 'mis_cursos' %}" class="btn btn-info">
+                    <span class="fas fa-times"></span> {% trans 'Cancelar' %}
+                </a>
+                <button class="btn btn-warning" type="submit" title="{% trans 'Solicitar vinculación de usuario externo' %}">
+                    <span class="fas fa-check"></span> {% trans 'Solicitar vinculación' %}
+                </button>
+            </div>
+        </form>
     </div>
-  </form>
-</div>
 
 {% endblock content %}

@@ -4,59 +4,59 @@
 {% block title %}{% trans "Detalles de la solicitud de vinculación" %}{% endblock title %}
 
 {% block content %}
-<div class="container-blanco">
-  <h1 id="detalles">{% trans "Detalles del usuario externo" %}</h1>
-  <hr />
-  <br />
+    <div class="container-blanco">
+        <h1 id="detalles">{% trans "Detalles del usuario externo" %}</h1>
+        <hr />
+        <br />
 
-  <table class="table table-striped table-hover" aria-describedby="detalles">
-    <tr>
-      <th scope="row">{% trans "Id" %}</th>
-      <td>{{ forano.id }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "Solicitante" %}</th>
-      <td>{{ forano.solicitante.full_name }} &lt;{{ forano.solicitante.email }}&gt;</td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "Fecha de solicitud" %}</th>
-      <td>{{ forano.fecha_solicitud }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "NIP a vincular" %}</th>
-      <td>{{ forano.nip }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "Nombre del usuario externo" %}</th>
-      <td>{{ forano.nombre }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "Correo electrónico del usuario externo" %}</th>
-      <td>{{ forano.email | default_if_none:"—" }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "Motivación de la solicitud" %}</th>
-      <td>{{ forano.motivo_solicitud | linebreaks }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "Estado" %}</th>
-      <td>{{ forano.get_estado_display }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "Autorizador" %}</th>
-      <td>{{ forano.autorizador.full_name | default_if_none:"—" }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "Fecha de autorización" %}</th>
-      <td>{{ forano.fecha_autorizacion | default_if_none:"—" }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{% trans "Comentarios" %}</th>
-      <td>{{ forano.comentarios | default_if_none:"—" | linebreaks }}</td>
-    </tr>
-  </table>
+        <table class="table table-striped table-hover" aria-describedby="detalles">
+            <tr>
+                <th scope="row">{% trans "Id" %}</th>
+                <td>{{ forano.id }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Solicitante" %}</th>
+                <td>{{ forano.solicitante.full_name }} &lt;{{ forano.solicitante.email }}&gt;</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Fecha de solicitud" %}</th>
+                <td>{{ forano.fecha_solicitud }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "NIP a vincular" %}</th>
+                <td>{{ forano.nip }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Nombre del usuario externo" %}</th>
+                <td>{{ forano.nombre }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Correo electrónico del usuario externo" %}</th>
+                <td>{{ forano.email | default_if_none:"—" }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Motivación de la solicitud" %}</th>
+                <td>{{ forano.motivo_solicitud | linebreaks }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Estado" %}</th>
+                <td>{{ forano.get_estado_display }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Autorizador" %}</th>
+                <td>{{ forano.autorizador.full_name | default_if_none:"—" }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Fecha de autorización" %}</th>
+                <td>{{ forano.fecha_autorizacion | default_if_none:"—" }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Comentarios" %}</th>
+                <td>{{ forano.comentarios | default_if_none:"—" | linebreaks }}</td>
+            </tr>
+        </table>
 
-  {% comment %}
+        {% comment %}
   {% if forano.estado == forano.Estado.SOLICITADO.value and perms.geo.foranos_pendientes %}
     <br />
     <h2>{% trans "Resolver la solicitud" %}</h2>
@@ -103,5 +103,5 @@
   {% endif %}
   {% endcomment %}
 
-</div>
+    </div>
 {% endblock content %}
