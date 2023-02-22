@@ -15,23 +15,35 @@ def list_asignaturas(request, asignatura_id: int):
     return Asignatura.objects.filter(asignatura_id=asignatura_id, anyo_academico=anyo_academico)
 
 
-@api.delete('/matricula-automatica/{registro_id}', response={204: None})
+@api.delete('/matricula-automatica/{registro_id}', response={204: None, 403: None})
 def delete_matricula_automatica(request, registro_id: int):
     """Borra un registro de matrícula automática"""
     registro = get_object_or_404(MatriculaAutomatica, id=registro_id)
+    profesores_del_curso = registro.curso.profesores_activos
+    if request.user not in profesores_del_curso:
+        return 403, None  # Forbidden
+
     registro.delete()
     return 204, None  # No content
 
 
-@api.patch('/matricula-automatica-toggle/{registro_id}', response={200: dict, 404: NotFoundSchema})
+@api.patch(
+    '/matricula-automatica-toggle/{registro_id}',
+    response={200: dict, 403: None, 404: NotFoundSchema},
+)
 def toggle_matricula_automatica(request, registro_id: int):
     """Activa o desactiva un registro"""
     try:
         ma = MatriculaAutomatica.objects.get(pk=registro_id)
-        ma.active = not ma.active
-        ma.save()
     except ma.DoesNotExist:  # as e:
         return 404, {'message': 'No se encontró ese registro de matrícula automática.'}
+
+    profesores_del_curso = ma.curso.profesores_activos
+    if request.user not in profesores_del_curso:
+        return 403, None  # Forbidden
+
+    ma.active = not ma.active
+    ma.save()
 
     num_matriculados, num_no_encontrados = 0, 0
     if ma.active:

@@ -565,6 +565,10 @@ class MatriculaAutomatica(models.Model):
         asignatura = Asignatura.objects.filter(asignatura_id=self.asignatura_id).first()
         return asignatura.nombre_asignatura if asignatura else None
 
+    @property
+    def curso(self):
+        return Curso.objects.get(id_nk=self.courseid)
+
 
 class Matriculacion(models.Model):
     """Matriculación Sigma de un alumno en una asignatura"""

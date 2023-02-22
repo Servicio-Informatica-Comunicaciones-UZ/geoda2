@@ -19,8 +19,13 @@
                     { headers: { 'X-CSRFToken': csrftoken } }
                 );
                 document.getElementById(`registro_${registroId}`).remove();
-            } catch (e) {
-                console.error(e);
+            } catch (error) {
+                span_resultado = document.getElementById('span_resultado_matricula_automatica');
+                span_resultado.innerHTML = error.message;
+                div_resultado = document.getElementById('div_resultado_matricula_automatica');
+                div_resultado.classList.remove("alert-info");
+                div_resultado.classList.add("alert-danger");
+                div_resultado.style.display = 'block';
             }
         }
 
@@ -41,11 +46,18 @@
                     span_resultado.innerHTML = "Registro desactivado. No se desmatricula a los estudiantes ya matriculados.";
                 }
 
-                document.getElementById('div_resultado_matricula_automatica').style.display = 'block';
+                div_resultado = document.getElementById('div_resultado_matricula_automatica');
+                div_resultado.classList.remove("alert-danger");
+                div_resultado.classList.add("alert-info");
+                div_resultado.style.display = 'block';
             })
                 .catch(error => {
-                document.getElementById('div_resultado_matricula_automatica').style.display = 'none';
-                console.error(error);
+                span_resultado = document.getElementById('span_resultado_matricula_automatica');
+                span_resultado.innerHTML = error.message;
+                div_resultado = document.getElementById('div_resultado_matricula_automatica');
+                div_resultado.classList.remove("alert-info");
+                div_resultado.classList.add("alert-danger");
+                div_resultado.style.display = 'block';
             });
         }
 
@@ -366,9 +378,19 @@
                             <td>{{ registro.asignatura_id | default:'—' }}</td>
                             <td>{{ registro.get_nombre_asignatura | default:'Todas' }}</td>
                             <td>{{ registro.cod_grupo_asignatura | default:'Todos' }}</td>
-                            <td>{{ registro.centro.nombre | default:'Todos' }}</td>
+                            <td>{% if registro.centro %}
+                                {{ registro.centro.nombre | default:'Todos' }}
+                            {% else %}
+                                {% trans 'Todos' %}
+                            {% endif %}
+                            </td>
                             <td>{{ registro.plan_id | default:'—' }}</td>
-                            <td>{{ registro.plan.estudio.nombre | default:'Todos' }}</td>
+                            <td>{% if registro.plan %}
+                                {{ registro.plan.estudio.nombre | default:'Todos' }}
+                            {% else %}
+                                {% trans 'Todos' %}
+                            {% endif %}
+                            </td>
                             <td>
                                 <div class="custom-control custom-switch">
                                     <input type="checkbox" class="custom-control-input" id="active_switch_{{ registro.id }}"
