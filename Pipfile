@@ -6,8 +6,14 @@ verify_ssl = true
 [dev-packages]
 black = "*"
 django-debug-toolbar = "*"
+django-fastdev = "*"
+django-upgrade = "*"
+djhtml = "*"
+flake8 = "*"
+isort = "*"
 pre-commit = "*"
 pylint = "*"
+pyupgrade = "*"
 
 [packages]
 crispy-bootstrap4 = "*"
