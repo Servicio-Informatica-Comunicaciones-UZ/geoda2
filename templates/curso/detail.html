@@ -9,9 +9,11 @@
     <script>
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-        grupoNode = document.getElementById("div_id_cod_grupo_asignatura");
-        grupoNode.style.display = 'none';
+        const div_resultado = document.getElementById('div_resultado_matricula_automatica');
+        const div_icono = document.getElementById('icono_resultado_matricula_automatica');
+        const span_resultado = document.getElementById('span_resultado_matricula_automatica');
 
+        /* Elimina un registro de matrícula automática */
         const delRegistro = async registroId => {
             try {
                 const res = await axios.delete(
@@ -19,24 +21,28 @@
                     { headers: { 'X-CSRFToken': csrftoken } }
                 );
                 document.getElementById(`registro_${registroId}`).remove();
+                div_resultado.style.display = "none";
             } catch (error) {
-                span_resultado = document.getElementById('span_resultado_matricula_automatica');
                 span_resultado.innerHTML = error.message;
-                div_resultado = document.getElementById('div_resultado_matricula_automatica');
                 div_resultado.classList.remove("alert-info");
                 div_resultado.classList.add("alert-danger");
-                div_resultado.style.display = 'block';
+                div_resultado.style.display = "block";
             }
         }
 
+        /* Activa o desactiva un registro de matrícula automática */
         const toggleActive = registroId => {
-            document.getElementById('div_resultado_matricula_automatica').style.display = 'none';
+            div_icono.className = "loader";  // spinner throbber
+            span_resultado.innerHTML = "";
+            div_resultado.classList.remove("alert-danger");
+            div_resultado.classList.add("alert-info");
+            div_resultado.style.display = "block";
+
             axios.patch(
                 `/api/matricula-automatica-toggle/${registroId}`,
                 { headers: { 'X-CSRFToken': csrftoken } }
-            )
-                .then(response => {
-                span_resultado = document.getElementById('span_resultado_matricula_automatica');
+            ).then(response => {
+                div_icono.className = "fas fa-info-circle";
                 if (response.data.queda_activado) {
                     span_resultado.innerHTML = `Matriculados ${response.data.num_matriculados} estudiantes.`;
                     if (response.data.num_no_encontrados) {
@@ -45,23 +51,20 @@
                 } else {
                     span_resultado.innerHTML = "Registro desactivado. No se desmatricula a los estudiantes ya matriculados.";
                 }
-
-                div_resultado = document.getElementById('div_resultado_matricula_automatica');
-                div_resultado.classList.remove("alert-danger");
-                div_resultado.classList.add("alert-info");
-                div_resultado.style.display = 'block';
-            })
-                .catch(error => {
-                span_resultado = document.getElementById('span_resultado_matricula_automatica');
+            }).catch(error => {
                 span_resultado.innerHTML = error.message;
-                div_resultado = document.getElementById('div_resultado_matricula_automatica');
                 div_resultado.classList.remove("alert-info");
                 div_resultado.classList.add("alert-danger");
-                div_resultado.style.display = 'block';
+                div_icono.className = "fas fa-bomb";
             });
         }
 
+        // En el formulario no mostramos el campo del grupo si no hay asignatura
+        const grupoNode = document.getElementById("div_id_cod_grupo_asignatura");
+        grupoNode.style.display = 'none';
+        // Campo para mostrar el nombre de la asignatura que tiene el código introducido
         const asignaturaField = document.getElementById("id_asignatura_id");
+
         asignaturaField.addEventListener('change', event => {
             if (!event.target.value) {
                 document.getElementById("nombre_asignatura_node").innerHTML = "";
@@ -72,8 +75,7 @@
             axios.get(
                 `/api/asignaturas/${event.target.value}`,
                 { headers: { 'X-CSRFToken': csrftoken } }
-            )
-                .then(resp => {
+            ).then(resp => {
                 nombreNode = document.getElementById("nombre_asignatura_node");
                 if (!nombreNode) {
                     nombreNode = document.createElement('span');
@@ -91,8 +93,7 @@
                     nombreNode.setAttribute("class", "text-danger");
                     grupoNode.style.display = 'none';
                 }
-            })
-                .catch(error => {
+            }).catch(error => {
                 console.error(error);
             });
         });
@@ -411,7 +412,7 @@
             </table>
 
             <div id="div_resultado_matricula_automatica" class="alert alert-info fade show" style="display: none;">
-                <span class="fas fa-info-circle"></span>
+                <div id="icono_resultado_matricula_automatica"></div>
                 <span id="span_resultado_matricula_automatica"></span>
             </div>
 
