@@ -240,7 +240,8 @@ class CalendarioUpdate(
     template_name = 'gestion/calendario_form.html'
 
     # Tras cambiar el año hay que mover en Moodle
-    # las categorías «Varios» (5047) y «Escuela de Doctorado» (5021).
+    # las categorías «Varios» (5047) y «Escuela de Doctorado» (5021),
+    # así como la de cursos no reglados bianuales que toque.
 
     # NOTA: La Escuela de Doctorado tiene dos categorías:
     #
@@ -253,12 +254,13 @@ class CalendarioUpdate(
     # Example: Move the category with id 5021 to be in the category with id 6543:
     #     moosh category-move 5021 6543
 
-    # También hay que mover esas dos categorías en Geoda:
+    # También hay que mover esas tres categorías en Geoda:
     #
     # SELECT id, anyo_academico FROM categoria WHERE supercategoria_id IS NULL
     #   ORDER BY anyo_academico DESC LIMIT 1;  -- Obtener el `id` de la nueva supercategoría
     # UPDATE categoria SET anyo_academico=<anyo>, supercategoria_id=<id> WHERE id_nk=5047;
     # UPDATE categoria SET anyo_academico=<anyo>, supercategoria_id=<id> WHERE id_nk=5021;
+    # y la de cursos no reglados bianuales que toque.
 
     success_message = mark_safe(
         str(_('Se ha actualizado el curso académico actual.'))
@@ -268,7 +270,8 @@ class CalendarioUpdate(
         + str(
             _(
                 'Mover las categorías «Varios» y «Escuela de Doctorado» del año anterior '
-                'a la del año actual, tanto en GEO como en Moodle.'
+                'a la del año actual, tanto en GEO como en Moodle.<br>'
+                'Así como la de cursos no reglados bianuales que toque.'
             )
         )
         + '</li>\n<li>'
@@ -292,6 +295,8 @@ class CalendarioUpdate(
         # Crear las subcategorías de los estudios no reglados
         for nombre in Categoria.NO_REGLADAS:
             self._crear_categoria(anyo, nombre, cat_nr.id)
+        # Crear nueva categoría de cursos no reglados bianuales
+        self._crear_categoria(anyo, f'Bianuales {anyo}-{anyo+2}', cat_nr.id)
 
         return super().form_valid(form)
 
