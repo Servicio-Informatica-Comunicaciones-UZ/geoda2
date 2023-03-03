@@ -11,20 +11,19 @@
         <br />
 
         <div class="alert alert-info alert-dismissible fade show">
-            <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
 
             <span class="fas fa-info-circle"></span>
             {% blocktrans %} En esta página puede ver todas las asignaturas, aunque no las tenga asignadas en el POD.<br />
                 Para evitar errores se recomienda usar el
-                <a href="http://academico.unizar.es/cds/cds" target="_blank" rel="noopener noreferrer">código Sigma</a> de la
+                <a class="alert-link" href="http://academico.unizar.es/cds/cds" target="_blank" rel="noopener noreferrer">código Sigma</a> de la
                 asignatura.<br /><br />
 
                 Pulsando «Crear curso» se creará el curso en la plataforma, con la carga automática de los alumnos del grupo
                 correspondiente preparada pero desactivada.<br />
                 El curso se crea VISIBLE para los matriculados. Si lo desea puede
                 <a
+                    class="alert-link"
                     href="https://ayudica.unizar.es/otrs/public.pl?Action=PublicFAQZoom;ItemID=532"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -55,17 +54,15 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="crearModalLabel">{% trans '¿Seguro que desea crear este curso?' %}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Cerrar') }}"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="advertencia"></div> <!-- Rellenado por función JS -->
+                    <div class="advertencia" id="advertencia"></div> <!-- Contenido rellenado por función JS -->
                 </div>
                 <div class="modal-footer">
-                    <form action="#" id="crear-form" method="post">
+                    <form action="#" id="crear-form" method="post">  <!-- Action rellenada por función JS -->
                         {% csrf_token %}
-                        <button type="button" class="btn btn-info" data-dismiss="modal">
+                        <button type="button" class="btn btn-info" data-bs-dismiss="modal">
                             <span class="fas fa-times"></span> {% trans 'Cancelar' %}
                         </button>
                         <button type="submit" class="btn btn-warning">
@@ -81,11 +78,16 @@
 
 {% block extrajs %}
     <script type="text/javascript">
-        $(document).on("click", ".prepararCrear", function() {
-            $("#crearModal .advertencia").html(
-                "<p>¿Seguro que desea crear un curso para la asignatura «" + $(this).data("nombre") + "»?</p>"
-            );
-            $("#crear-form").attr("action", $(this).data('url'));
+        // var elements = document.getElementsByClassName('prepararCrear');  // HTMLCollection
+        // // [...elements].forEach(function(element) {
+        // Array.from(elements).forEach( element => {
+        document.querySelectorAll(".prepararCrear").forEach(element => {
+            element.addEventListener('click', ev => {
+                advertencia = document.getElementById("advertencia");
+                advertencia.innerHTML = "<p>¿Seguro que desea crear un curso para la asignatura «" + ev.target.getAttribute("data-nombre") + "»?</p>"
+
+                document.getElementById("crear-form").action = ev.target.getAttribute("data-url");
+            });
         });
     </script>
 {% endblock extrajs %}

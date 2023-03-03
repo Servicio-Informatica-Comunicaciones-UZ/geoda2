@@ -183,7 +183,7 @@
                                 {{ asignacion.profesor.full_name }} &lt;{{ asignacion.profesor.email }}&gt;
                                 {% if perms.geo.pc_anular %}
                                     <a href={% url "pc_anular" asignacion.id %} class='btn btn-warning btn-xs'
-                                        title='Dar de baja a este profesor en este curso'>
+                                       title='Dar de baja a este profesor en este curso'>
                                         <span class='fas fa-user-times' aria-hidden='true' style='display: inline;'></span>
                                         {% trans "Dar de baja" %}
                                     </a>
@@ -254,10 +254,6 @@
             <hr />
 
             {% crispy mp_form %}
-
-            <small id="hint_plan_id_nk" class="form-text text-muted">
-                {% trans 'Puede consultar el código del plan en la <a href="https://estudios.unizar.es">web de estudios</a>.' %}
-            </small>
         {% endif %}
 
         {% if curso.estado == curso.Estado.CREADO.value and puede_matricular_profesores %}
@@ -266,9 +262,7 @@
             <hr />
 
             <div class="alert alert-info alert-dismissible fade show">
-                <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
 
                 <span class="fas fa-info-circle"></span>
                 {% blocktranslate %}
@@ -281,15 +275,13 @@
             <br />
 
             {% crispy pc_form %}
-
             <br /><br />
+
             <h2>{% trans "Rematricular profesorado" %}</h2>
             <hr />
 
             <div class="alert alert-info alert-dismissible fade show">
-                <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
 
                 <span class="fas fa-info-circle"></span>
                 {% blocktranslate %}
@@ -299,7 +291,7 @@
             </div>
             <br />
 
-            <form action="{% url 'curso_rematricular' %}" class="form-inline" id="rematricular-form" method="post">
+            <form action="{% url 'curso_rematricular' %}" id="rematricular-form" method="post">
                 {% csrf_token %}
                 <input type="hidden" id="curso_id" name="curso_id" value="{{ curso.id }}">
                 <div class="btn-group" role="group" aria-label="Botones">
@@ -341,9 +333,7 @@
             <hr />
 
             <div class="alert alert-info alert-dismissible fade show">
-                <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
 
                 <span class="fas fa-info-circle"></span>
                 {% blocktranslate %}
@@ -393,12 +383,12 @@
                             {% endif %}
                             </td>
                             <td>
-                                <div class="custom-control custom-switch">
-                                    <input type="checkbox" class="custom-control-input" id="active_switch_{{ registro.id }}"
-                                        {% if registro.active %}checked{% endif %}
-                                        onchange="toggleActive({{ registro.id }})"
+                                <div class="form-check form-switch">
+                                    <input type="checkbox" class="form-check-input" role="switch" id="active_switch_{{ registro.id }}"
+                                           {% if registro.active %}checked{% endif %}
+                                           onchange="toggleActive({{ registro.id }})"
                                     >
-                                    <label class="custom-control-label" for="active_switch_{{ registro.id }}"></label>
+                                    <label class="form-check-label" for="active_switch_{{ registro.id }}"></label>
                                 </div>
                             </td>
                             <td>
@@ -435,9 +425,7 @@
             <hr />
 
             <div class="alert alert-info alert-dismissible fade show">
-                <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
 
                 <span class="fas fa-info-circle"></span>
                 {% blocktranslate %}
@@ -457,24 +445,19 @@
                 <input type="hidden" id="curso_id" name="curso_id" value="{{ curso.id }}">
 
                 <div class="mb-2">
-                    <div class="form-control custom-file" style="border:0">
-                        <input type="file" name="file" class="custom-file-input clearablefileinput form-control-file" id="id_file" required accept=".csv,.tsv,.txt">
-                        <label class="custom-file-label text-truncate" for="id_file">---</label>
+                    <div class="mb-3">
+                        <label for="id_file" class="form-label">{% trans 'Fichero NIPs' %}</label>
+                        <input class="form-control" type="file" id="id_file" name="file" required accept=".csv,.tsv,.txt">
+
                         <script type="text/javascript" id="script-id_file">
                             const max_upload_size = 10 * 1024;  // 10 KiB
 
-                            document.getElementById("script-id_file").parentNode.querySelector('.custom-file-input').onchange = function (e) {
+                            document.getElementById("id_file").onchange = function (e) {
                                 // Comprobar tamaño del fichero - <https://stackoverflow.com/questions/5697605/limit-the-size-of-a-file-upload-html-input-element>
                                 if (this.files[0].size > max_upload_size) {
                                     alert("El fichero es demasiado grande (máx: 10 KiB).");
                                     this.value = "";
                                 }
-                                // Mostrar el nombre del fichero(s), estilo crispy forms
-                                let filenames = "";
-                                for (let i=0; i<e.target.files.length; i++) {
-                                    filenames += (i>0 ? ", " : "") + e.target.files[i].name;
-                                }
-                                e.target.parentNode.querySelector('.custom-file-label').textContent=filenames;
                             }
                         </script>
                     </div>
@@ -495,9 +478,7 @@
             <hr />
 
             <div class="alert alert-info alert-dismissible fade show">
-                <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Cerrar') }}">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
 
                 <span class="fas fa-info-circle"></span>
                 {% blocktranslate %}

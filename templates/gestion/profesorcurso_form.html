@@ -20,12 +20,12 @@
             </tr>
         </table>
 
-        <form action="#" class="form-inline" method="post">
+        <form action="#" method="post">
             {% csrf_token %}
             <!--
         <div class="form-group">
             <strong><label for="fecha_baja">{% trans "Fecha de baja" %}</label></strong>
-            <input type="date" name="fecha_baja" min="1542-09-10" max="2039-06-06" class="form-control margin-left-1"
+            <input type="date" name="fecha_baja" min="1542-09-10" max="2039-06-06" class="form-control ms-1"
             required id="fecha_baja" value="{{ profesorcurso.fecha_baja | date:"Y-m-d"}}">
         </div>
         -->
@@ -34,7 +34,7 @@
              See <https://jira.mariadb.org/browse/MDEV-11829> -->
             <input type="hidden" name="fecha_baja" id="fecha_baja" value="{% now "Y-m-d H:i:s" %}">
 
-            <div class="btn-group margin-left-1" role="group" aria-label="Botones">
+            <div class="btn-group" role="group" aria-label="Botones">
                 <button class="btn btn-warning" title="Guardar fecha de baja" type="submit">
                     <span class="fas fa-check"></span> {% trans 'Dar de baja' %}
                 </button>

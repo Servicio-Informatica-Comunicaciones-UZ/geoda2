@@ -104,7 +104,7 @@ repos:
         exclude: manage.py|setup.py|docker-entrypoint.sh|mariadb-backup.sh|email2nip.py|e2n_est_curso.py
 
   - repo: https://github.com/rtts/djhtml
-    rev: "v1.5.2" # replace with the latest tag on GitHub
+    rev: "3.0.2" # replace with the latest tag on GitHub
     hooks:
       - id: djhtml
       - id: djcss

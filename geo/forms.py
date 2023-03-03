@@ -1,5 +1,5 @@
 # Third-party
-from crispy_forms.bootstrap import FormActions, InlineField, StrictButton
+from crispy_forms.bootstrap import InlineField, StrictButton
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import ButtonHolder, Div, Fieldset, Layout, Submit
 
@@ -19,7 +19,7 @@ class AsignaturaFilterFormHelper(FormHelper):
     Ver https://django-crispy-forms.readthedocs.io/en/latest/form_helper.html
     """
 
-    form_class = 'form form-inline'
+    form_class = 'form row align-items-center'
     form_id = 'asignatura-search-form'
     form_method = 'GET'
     form_tag = True
@@ -31,7 +31,7 @@ class AsignaturaFilterFormHelper(FormHelper):
                 InlineField('nombre_estudio__icontains', wrapper_class='col-4'),
                 InlineField('nombre_centro__icontains', wrapper_class='col-4'),
                 InlineField('plan_id_nk', wrapper_class='col-4'),
-                css_class='row margin-bottom-1',
+                css_class='row mb-3',
             ),
             Div(
                 InlineField('asignatura_id', wrapper_class='col-4'),
@@ -41,7 +41,14 @@ class AsignaturaFilterFormHelper(FormHelper):
             ),
             css_class='col-10 border p-3',
         ),
-        ButtonHolder(Submit('submit', _('Filtrar')), css_class='col-2 text-center'),
+        Div(
+            ButtonHolder(
+                Submit('submit', _('Filtrar')),
+                # css_class='position-relative top-50 start-50 translate-middle text-center',
+                css_class='text-center',
+            ),
+            css_class='col-2',
+        ),
     )
 
 
@@ -52,7 +59,7 @@ class CursoFilterFormHelper(FormHelper):
     Ver https://django-crispy-forms.readthedocs.io/en/latest/form_helper.html
     """
 
-    form_class = 'form form-inline'
+    form_class = 'form row align-items-center'
     form_id = 'curso-search-form'
     form_method = 'GET'
     form_tag = True
@@ -63,7 +70,7 @@ class CursoFilterFormHelper(FormHelper):
             Div(
                 InlineField('nombre__icontains', wrapper_class='col-8'),
                 InlineField('estado', wrapper_class='col-4'),
-                css_class='row margin-bottom-1',
+                css_class='row mb-3',
             ),
             Div(
                 InlineField('profesores__username', wrapper_class='col-4'),
@@ -73,7 +80,10 @@ class CursoFilterFormHelper(FormHelper):
             ),
             css_class='col-10 border p-3',
         ),
-        ButtonHolder(Submit('submit', _('Filtrar')), css_class='col-2 text-center'),
+        Div(
+            ButtonHolder(Submit('submit', _('Filtrar')), css_class='text-center'),
+            css_class='col-2',
+        ),
     )
 
 
@@ -127,7 +137,7 @@ class CursoSolicitarForm(forms.ModelForm):
         self.instance.plataforma_id = 1
         curso = super().save(commit=commit)
 
-        # Añadimos por omisión al profesor que solicita el curso a la lista de profesores del curso.
+        # Añadimos por omisión al profesor que solicita el curso a la lista de profesores del curso
         # Si el curso es autorizado, se le matriculará como profesor al crearse el curso en Moodle.
         profesor_curso = ProfesorCurso(curso=curso, profesor=self.user, fecha_alta=timezone.now())
         profesor_curso.save()
@@ -142,27 +152,25 @@ class ForanoFilterFormHelper(FormHelper):
     Ver https://django-crispy-forms.readthedocs.io/en/latest/form_helper.html
     """
 
-    form_class = 'form form-inline'
+    form_class = 'form row align-items-center'
     form_id = 'forano-search-form'
     form_method = 'GET'
     form_tag = True
     html5_required = True
     layout = Layout(
+        Fieldset(
+            "<span class='fa fa-search'></span> " + str(_('Buscar solicitud de vinculación')),
+            Div(
+                InlineField('nip', wrapper_class='col-6'),
+                # InlineField('estado', wrapper_class='col-6'),
+                css_class='row',
+            ),
+            css_class='col-10 border p-3',
+        ),
         Div(
-            Fieldset(
-                "<span class='fa fa-search'></span> " + str(_('Buscar solicitud de vinculación')),
-                Div(
-                    InlineField('nip', wrapper_class='col-6'),
-                    # InlineField('estado', wrapper_class='col-6'),
-                    css_class='row',
-                ),
-                css_class='col-10 border p-3',
-            ),
-            FormActions(
-                Submit('submit', _('Filtrar')), css_class='col-2 text-right align-self-center'
-            ),
-            css_class='row',
-        )
+            ButtonHolder(Submit('submit', _('Filtrar')), css_class='text-center'),
+            css_class='col-2',
+        ),
     )
 
 
@@ -175,6 +183,12 @@ class MatriculaAutomaticaForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # If you pass FormHelper constructor a form instance
+        # It builds a default layout with all its fields
+        self.helper = FormHelper(self)
+        self.helper.field_template = 'bootstrap5/layout/floating_field.html'
+        self.helper.wrapper_class = 'form-floating'
+
         self.fields['centro'].empty_label = _('Todos')
         self.fields['plan'].empty_label = _('Todos')
 
@@ -185,7 +199,8 @@ class MatricularPlanForm(forms.Form):
     curso_id = forms.IntegerField(widget=forms.HiddenInput())
     plan_id_nk = forms.IntegerField(
         help_text=_(
-            'Puede consultar el código del plan en la <a href="https://estudios.unizar.es">web de estudios</a>.'
+            'Puede consultar el código del plan'
+            ' en la <a href="https://estudios.unizar.es">web de estudios</a>.'
         ),
         label=_('Código del plan'),
         min_value=0,
@@ -198,21 +213,26 @@ class MatricularPlanForm(forms.Form):
         self.helper = FormHelper()
 
         self.helper.form_action = 'matricular_plan'
-        self.helper.form_class = 'form-inline'
-        self.helper.field_template = 'bootstrap4/layout/inline_field.html'
+        self.helper.form_class = 'row align-items-center'
+        self.helper.wrapper_class = 'col-4'
+        self.helper.field_template = 'bootstrap5/layout/floating_field.html'
         self.helper.layout = Layout(
-            'curso_id',
+            'curso_id',  # hidden
             'plan_id_nk',
-            ButtonHolder(
-                StrictButton(
-                    f"<span class='fas fa-user-graduate'></span> {_('Matricular')}",
-                    title=_(
-                        'Matricular en este curso a todos los alumnos de alguna de las asignaturas del plan'
+            Div(
+                ButtonHolder(
+                    StrictButton(
+                        f"<span class='fas fa-user-graduate'></span> {_('Matricular')}",
+                        title=_(
+                            'Matricular en este curso a todos los alumnos'
+                            ' de alguna de las asignaturas del plan'
+                        ),
+                        css_class='btn btn-warning',
+                        type='submit',
                     ),
-                    css_class='btn btn-warning',
-                    type='submit',
+                    css_class='ms-1',
                 ),
-                css_class='margin-left-1',
+                css_class='col-2 mb-4',
             ),
         )
 
@@ -222,7 +242,7 @@ class ProfesorCursoAddForm(forms.Form):
 
     curso_id = forms.IntegerField(widget=forms.HiddenInput())
     nip = forms.IntegerField(
-        # help_text=_('Número de Identificación Personal del profesor'),
+        help_text=_('Número de Identificación Personal del nuevo profesor'),
         label=_('NIP del nuevo profesor'),
         min_value=0,
         max_value=9999999,
@@ -234,21 +254,25 @@ class ProfesorCursoAddForm(forms.Form):
         self.helper = FormHelper()
 
         self.helper.form_action = 'pc_anyadir'
-        self.helper.form_class = 'form-inline'
-        # self.helper.wrapper_class = 'col-7'
-        # self.helper.label_class = 'margin-right-1'
-        # self.helper.field_class = 'margin-right-1'
-        self.helper.field_template = 'bootstrap4/layout/inline_field.html'
+        self.helper.form_class = 'row align-items-center'  # form-horizontal
+        self.helper.wrapper_class = 'col-4'
+        # self.helper.label_class = 'me-1'
+        # self.helper.field_class = 'col-4'
+        self.helper.field_template = 'bootstrap5/layout/floating_field.html'
         self.helper.layout = Layout(
-            'curso_id',
+            'curso_id',  # hidden
+            # Field('nip', css_class='col-4', placeholder="NIP"),
             'nip',
-            ButtonHolder(
-                StrictButton(
-                    f"<span class='fas fa-user-plus'></span> {_('Añadir')}",
-                    css_class='btn btn-warning',
-                    title=_('Añadir al titular de este NIP como profesor del curso'),
-                    type='submit',
+            Div(
+                ButtonHolder(
+                    StrictButton(
+                        f"<span class='fas fa-user-plus'></span> {_('Añadir')}",
+                        css_class='btn btn-warning',
+                        title=_('Añadir al titular de este NIP como profesor del curso'),
+                        type='submit',
+                    ),
+                    css_class='margin-start-1',
                 ),
-                css_class='margin-left-1',
+                css_class='col-2 mb-4',
             ),
         )

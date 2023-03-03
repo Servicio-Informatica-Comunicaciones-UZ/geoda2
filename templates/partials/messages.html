@@ -1,10 +1,9 @@
 {% load custom_tags %}
 {% if messages %}
     {% for message in messages %}
-        <div class="alert {% alert_style message.tags %} alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
-                <span aria-hidden="true">&times;</span>
-            </button>
+        <div class="alert {% alert_style message.tags %} alert-dismissible fade show" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
+
             {% alert_icon message.tags %}
             {{ message }}
         </div>

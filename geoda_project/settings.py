@@ -94,7 +94,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     # 3rd Party
     'crispy_forms',  # https://github.com/django-crispy-forms/django-crispy-forms
-    'crispy_bootstrap4',  # https://pypi.org/project/crispy-bootstrap4/
+    'crispy_bootstrap5',  # https://pypi.org/project/crispy-bootstrap5/
     'django_filters',  # https://pypi.org/project/django-filter/
     'django_tables2',  # https://github.com/jieter/django-tables2
     'social_django',  # https://github.com/python-social-auth/social-app-django
@@ -179,8 +179,8 @@ TEMPLATES = [
 ]
 
 # http://django-crispy-forms.readthedocs.io/en/latest/install.html#template-packs
-CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap4'
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 # SECURITY
 # ------------------------------------------------------------------------------
