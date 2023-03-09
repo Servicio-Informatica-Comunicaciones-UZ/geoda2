@@ -195,6 +195,9 @@ class WSClient:
 
     def matricular_alumnos(self, nips, curso):
         """Matricula una lista de usuarios como alumnos de un curso de Moodle."""
+        if not nips:
+            return 0
+
         usuarios_moodle = self.buscar_usuarios_nip(nips)
         if usuarios_moodle:
             # Preparamos payload con todos los usuarios de la lista de NIPs encontrados en Moodle
