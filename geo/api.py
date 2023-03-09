@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 from django.shortcuts import get_object_or_404
 from ninja import NinjaAPI
 
@@ -20,7 +21,9 @@ def delete_matricula_automatica(request, registro_id: int):
     """Borra un registro de matrícula automática"""
     registro = get_object_or_404(MatriculaAutomatica, id=registro_id)
     profesores_del_curso = registro.curso.profesores_activos
-    if request.user not in profesores_del_curso:
+    grupo_gestores = Group.objects.get(name='Gestores')
+    gestores = grupo_gestores.user_set.all()
+    if request.user not in profesores_del_curso and request.user not in gestores:
         return 403, None  # Forbidden
 
     registro.delete()
@@ -39,7 +42,9 @@ def toggle_matricula_automatica(request, registro_id: int):
         return 404, {'message': 'No se encontró ese registro de matrícula automática.'}
 
     profesores_del_curso = ma.curso.profesores_activos
-    if request.user not in profesores_del_curso:
+    grupo_gestores = Group.objects.get(name='Gestores')
+    gestores = grupo_gestores.user_set.all()
+    if request.user not in profesores_del_curso and request.user not in gestores:
         return 403, None  # Forbidden
 
     ma.active = not ma.active
