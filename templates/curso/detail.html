@@ -375,7 +375,7 @@
                                 {% trans 'Todos' %}
                             {% endif %}
                             </td>
-                            <td>{{ registro.plan_id | default:'—' }}</td>
+                            <td>{{ registro.plan_id | default:'Todos' }}</td>
                             <td>{% if registro.plan %}
                                 {{ registro.plan.estudio.nombre | default:'Todos' }}
                             {% else %}
