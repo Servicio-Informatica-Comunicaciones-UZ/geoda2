@@ -138,16 +138,16 @@ class WSClient:
 
     def buscar_usuarios_nip(self, nips):
         """Busca en Moodle los usuariosNip correspondientes a los NIPs indicados."""
-        usuarios = []
-        no_encontrados = []
-        for nip in nips:
-            usuario_moodle = self.buscar_usuario_nip_or_None(nip)
-            if usuario_moodle:
-                usuarios.append(usuario_moodle)
-            else:
-                no_encontrados.append(nip)
+        # Doc de `get_users_by_field`` en <sitio_moodle>/admin/webservice/documentation.php
+        payload = {'field': 'username'}
 
-        return usuarios, no_encontrados
+        for i, nip in enumerate(nips):
+            payload.update({f'values[{i}]': str(nip)})
+
+        usuarios = self._request_url(
+            'POST', 'core_user_get_users_by_field', self.geo_token, payload
+        )
+        return usuarios
 
     def desmatricular(self, usuario, curso):
         """Desmatricula a un usuario de un curso."""
@@ -195,7 +195,7 @@ class WSClient:
 
     def matricular_alumnos(self, nips, curso):
         """Matricula una lista de usuarios como alumnos de un curso de Moodle."""
-        usuarios_moodle, usuarios_no_encontrados = self.buscar_usuarios_nip(nips)
+        usuarios_moodle = self.buscar_usuarios_nip(nips)
         if usuarios_moodle:
             # Preparamos payload con todos los usuarios de la lista de NIPs encontrados en Moodle
             payload = {}
@@ -210,7 +210,8 @@ class WSClient:
                 )
             # Matriculamos en el curso a los usuarios encontrados
             self._request_url('POST', 'enrol_manual_enrol_users', self.geo_token, payload)
-        return len(usuarios_moodle), usuarios_no_encontrados
+
+        return len(usuarios_moodle)
 
     def _request_url(self, verb, wsfunction, token, data=None):  # noqa: C901
         """Envía una petición al Web Service."""

@@ -50,14 +50,13 @@ def toggle_matricula_automatica(request, registro_id: int):
     ma.active = not ma.active
     ma.save()
 
-    num_matriculados, num_no_encontrados = 0, 0
+    num_matriculados = 0
     if ma.active:
-        num_matriculados, num_no_encontrados = matricular_grupo_sigma(
+        num_matriculados = matricular_grupo_sigma(
             ma.courseid, ma.asignatura_id, ma.cod_grupo_asignatura, ma.centro_id, ma.plan_id
         )
 
     return 200, {
         'num_matriculados': num_matriculados,
-        'num_no_encontrados': num_no_encontrados,
         'queda_activado': ma.active,
     }  # OK
