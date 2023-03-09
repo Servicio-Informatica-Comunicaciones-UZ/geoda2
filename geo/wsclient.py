@@ -197,6 +197,7 @@ class WSClient:
         """Matricula una lista de usuarios como alumnos de un curso de Moodle."""
         usuarios_moodle, usuarios_no_encontrados = self.buscar_usuarios_nip(nips)
         if usuarios_moodle:
+            # Preparamos payload con todos los usuarios de la lista de NIPs encontrados en Moodle
             payload = {}
             for i, usuario in enumerate(usuarios_moodle):
                 payload.update(
@@ -207,6 +208,7 @@ class WSClient:
                         f'enrolments[{i}][timestart]': int(timezone.now().timestamp()),
                     }
                 )
+            # Matriculamos en el curso a los usuarios encontrados
             self._request_url('POST', 'enrol_manual_enrol_users', self.geo_token, payload)
         return len(usuarios_moodle), usuarios_no_encontrados
 
@@ -215,14 +217,16 @@ class WSClient:
         try:
             if verb == 'POST':
                 resp = requests.post(
-                    f'{self.api_url}?wstoken={token}&wsfunction={wsfunction}&moodlewsrestformat=json',
+                    f'{self.api_url}?wstoken={token}&wsfunction={wsfunction}'
+                    '&moodlewsrestformat=json',
                     data=data,
                 )
                 resp.raise_for_status()
 
             elif verb == 'GET':
                 resp = requests.get(
-                    f'{self.api_url}?wstoken={token}&wsfunction={wsfunction}&moodlewsrestformat=json',
+                    f'{self.api_url}?wstoken={token}&wsfunction={wsfunction}'
+                    '&moodlewsrestformat=json',
                     params=data,
                 )
                 resp.raise_for_status()

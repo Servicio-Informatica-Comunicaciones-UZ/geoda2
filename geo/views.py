@@ -64,7 +64,7 @@ from .tables import (
     CursoTable,
     ForanoTodosTable,
 )
-from .utils import PagedFilteredTableView
+from .utils import PagedFilteredTableView, matricular_grupo_sigma
 from .wsclient import WSClient
 
 
@@ -1001,6 +1001,16 @@ class MatriculaAutomaticaAnyadirView(LoginRequiredMixin, ChecksMixin, View):
             ma = formulario.save(commit=False)
             ma.courseid = curso.id_nk
             ma.save()
+
+            # Matricular en Moodle a los estudiantes del nuevo registro de matrícula automática.
+            num_matriculados, num_no_encontrados = matricular_grupo_sigma(
+                ma.courseid, ma.asignatura_id, ma.cod_grupo_asignatura, ma.centro_id, ma.plan_id
+            )
+            mensaje = _(f'Matriculados {num_matriculados} estudiantes.')
+            if num_no_encontrados:
+                mensaje += _(f'No se encontraron {num_no_encontrados} estudiantes.')
+            messages.info(request, mensaje)
+
         else:
             messages.error(request, formulario.errors)
             return redirect('curso_detail', curso_id)
