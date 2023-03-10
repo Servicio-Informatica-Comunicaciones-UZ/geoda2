@@ -14,7 +14,6 @@ def add_permission_to_group(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [('geo', '0006_auto_20190827_1258')]
 
     operations = [migrations.RunPython(add_permission_to_group)]

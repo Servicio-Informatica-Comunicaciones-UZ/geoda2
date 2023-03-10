@@ -16,7 +16,6 @@ def add_managers_group(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [('geo', '0002_auto_20190628_1214')]
 
     operations = [migrations.RunPython(add_managers_group)]

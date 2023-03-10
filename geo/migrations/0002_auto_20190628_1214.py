@@ -24,7 +24,6 @@ def geo_post_migrate_signal(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [('geo', '0001_initial')]
 
     operations = [

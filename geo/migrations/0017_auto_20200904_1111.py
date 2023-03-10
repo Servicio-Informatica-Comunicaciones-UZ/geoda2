@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('geo', '0016_auto_20200415_1455'),
     ]
@@ -25,7 +24,9 @@ class Migration(migrations.Migration):
             model_name='forano',
             name='motivo_solicitud',
             field=models.TextField(
-                help_text='Quién es el usuario externo, motivos por los que solicita su vinculación a Moodle, así como el curso en el que participaría y con qué rol.',
+                help_text='Quién es el usuario externo, motivos por los que solicita'
+                ' su vinculación a Moodle, así como el curso en el que participaría'
+                ' y con qué rol.',
                 verbose_name='Motivación de la solicitud',
             ),
         ),

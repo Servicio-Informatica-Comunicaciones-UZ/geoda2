@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('geo', '0024_alter_asignatura_cod_grupo_asignatura_and_more'),
     ]

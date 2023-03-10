@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('geo', '0023_centro_estudio_alter_asignatura_id_and_more'),
     ]
@@ -40,7 +39,8 @@ class Migration(migrations.Migration):
             name='asignatura_id',
             field=models.IntegerField(
                 blank=True,
-                help_text='Puede consultar el código de una asignatura en la <a href="https://estudios.unizar.es">web de estudios</a>.',
+                help_text='Puede consultar el código de una asignatura'
+                ' en la <a href="https://estudios.unizar.es">web de estudios</a>.',
                 null=True,
                 validators=[
                     django.core.validators.MinValueValidator(10001),

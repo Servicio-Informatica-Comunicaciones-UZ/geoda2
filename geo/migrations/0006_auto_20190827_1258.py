@@ -20,7 +20,6 @@ def migrate_permissions(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [('geo', '0005_auto_20190821_0955')]
 
     operations = [

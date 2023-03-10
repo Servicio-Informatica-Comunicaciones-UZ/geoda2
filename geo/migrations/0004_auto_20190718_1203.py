@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [('geo', '0003_auto_20190628_1220')]
 
     sql = """CREATE VIEW "MoodleProfesores" AS
