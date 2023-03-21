@@ -156,8 +156,20 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
             return redirect('curso_detail', curso.id)
         curso.actualizar_tras_creacion(datos_recibidos)
 
+        # TODO: Dejar de rellenar la tabla `sigma`, y usar la tabla `matricula_automatica` local
         mensaje = cliente.automatricular(asignatura, curso)
         messages.info(request, mensaje)
+        # Crear registro desactivado en la tabla `matricula_automatica` local
+        ma = MatriculaAutomatica(
+            courseid=curso.id_nk,
+            asignatura_id=asignatura.asignatura_id,
+            cod_grupo_asignatura=asignatura.cod_grupo_asignatura,
+            centro_id=asignatura.centro_id,
+            plan_id=asignatura.plan_id_nk,
+            active=False,
+            fijo=True,
+        )
+        ma.save()
 
         profesores = asignatura.get_profesores()
         profesores.append(usuario)
