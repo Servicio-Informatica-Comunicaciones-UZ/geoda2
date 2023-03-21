@@ -5,7 +5,7 @@
 # Update this file:
 #   pre-commit autoupdate
 default_language_version:
-    python: python3.10
+    python: python3.11
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
@@ -37,7 +37,7 @@ repos:
         args:
           - --django
         exclude: ^tests/testapp|^tests/management/|^tests/collisions/|^tests/pythonrc.py
-      - id: pretty-format-json # Sets a standard for formatting json files
+      # - id: pretty-format-json # Sets a standard for formatting json files
       - id: trailing-whitespace # Trims trailing whitespace
         exclude: ".md$|.email$"
 
@@ -45,13 +45,13 @@ repos:
     rev: v3.3.1
     hooks:
       - id: pyupgrade
-        args: [--py310-plus]
+        args: [--py311-plus]
 
   - repo: https://github.com/psf/black
     rev: 23.1.0
     hooks:
       - id: black
-        language_version: python3.10
+        language_version: python3.11
 
   - repo: https://github.com/asottile/blacken-docs
     rev: 1.13.0
@@ -60,7 +60,7 @@ repos:
         additional_dependencies: [black==22.3.0]
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: 'v0.0.254'
+    rev: 'v0.0.257'
     hooks:
       - id: ruff
         args:
@@ -114,7 +114,7 @@ repos:
         exclude: manage.py|setup.py|docker-entrypoint.sh|mariadb-backup.sh|email2nip.py|e2n_est_curso.py
 
   - repo: https://github.com/rtts/djhtml
-    rev: "3.0.2" # replace with the latest tag on GitHub
+    rev: "3.0.6" # replace with the latest tag on GitHub
     hooks:
       - id: djhtml
       - id: djcss
