@@ -167,7 +167,8 @@ class WSClient:
         respuestas = []
         for ueid in ueids:
             # Con `core_enrol_edit_user_enrolment` podríamos establecer una fecha de finalización,
-            # pero esta función fue deprecated en la versión 3.6, por lo que dejará de funcionar en el futuro.
+            # pero esta función fue deprecated en la versión 3.6,
+            # por lo que dejará de funcionar en el futuro.
             # En su lugar se podría usar `core_enrol_submit_user_enrolment`,
             # pero todavía no existía en la versión 3.5 LTS que es la que usamos.
             respuesta = self._request_url(

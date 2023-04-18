@@ -182,9 +182,9 @@
                             <li>
                                 {{ asignacion.profesor.full_name }} &lt;{{ asignacion.profesor.email }}&gt;
                                 {% if perms.geo.pc_anular %}
-                                    <a href={% url "pc_anular" asignacion.id %} class='btn btn-warning btn-xs'
-                                       title='Dar de baja a este profesor en este curso'>
-                                        <span class='fas fa-user-times' aria-hidden='true' style='display: inline;'></span>
+                                    <a href="{% url 'pc_anular' asignacion.id %}" class="btn btn-warning btn-xs"
+                                       title="Dar de baja a este profesor en este curso">
+                                        <span class="fas fa-user-times" aria-hidden="true" style="display: inline;"></span>
                                         {% trans "Dar de baja" %}
                                     </a>
                                 {% endif %}
@@ -208,7 +208,7 @@
             <hr />
             <form action="{% url 'curso_resolver' %}" id="resolver-form" method="post">
                 {% csrf_token %}
-                <input type='hidden' id='id' name='id' value='{{ curso.id }}'>
+                <input type="hidden" id="id" name="id" value="{{ curso.id }}">
                 <div><strong>{% trans "Decisión" %}</strong></div>
                 <div class="form-check-inline">
                     <label class="form-check-label">
@@ -227,7 +227,7 @@
                     <label for="id_comentarios" class="col-form-label">
                         <strong>{% trans "Comentarios" %}</strong>
                     </label>
-                    <div class="">
+                    <div>
                         <textarea name="comentarios" cols="40" rows="10" class="textarea form-control" id="id_comentarios"
                         ></textarea>
                         <small id="hint_id_comentarios" class="form-text text-muted">
@@ -303,7 +303,6 @@
 
         {% endif %}
 
-
         {% if curso.estado == curso.Estado.CREADO.value and perms.geo.curso_historial %}
             <br /><br />
             <h2>{% trans "Historial de profesores del curso" %}</h2>
@@ -324,7 +323,6 @@
                 {% endfor %}
             </table>
         {% endif %}
-
 
         {% if curso.estado == curso.Estado.CREADO.value and puede_matricular_alumnos %}
 
@@ -419,7 +417,6 @@
                 </div>
             </form>
 
-
             <br /><br />
             <h2>{% trans "Matricular alumnos en masa" %}</h2>
             <hr />
@@ -471,7 +468,6 @@
             </form>
         {% endif %}
 
-
         {% if perms.geo.curso_delete %}
             <br /><br />
             <h2>{% trans "Eliminar el curso" %}</h2>
@@ -487,7 +483,7 @@
             </div>
             <br />
 
-            <a href="{% url 'curso_delete' curso.id %}" aria-label="{% trans 'Eliminar' %}" class='btn btn-warning' role="button" %}>
+            <a href="{% url 'curso_delete' curso.id %}" aria-label="{% trans 'Eliminar' %}" class="btn btn-warning" role="button" %}>
                 <span aria-hidden="true" class="fas fa-trash-alt"></span> {% trans 'Eliminar' %}
             </a>
 

@@ -41,8 +41,8 @@
             <p>{% trans "En estos momentos no tiene asignada ninguna asignatura en el POD." %}</p>
         {% endif %}
 
-        <div><a href={% url "as_todas" %} class='btn btn-warning btn-xs' title='Ver todas las asignaturas'>
-            <span class='far fa-eye' aria-hidden='true' style='display: inline;'></span>&nbsp;{% trans "Ver todas" %}
+        <div><a href="{% url 'as_todas' %}" class="btn btn-warning btn-xs" title="Ver todas las asignaturas">
+            <span class="far fa-eye" aria-hidden="true" style="display: inline;"></span>&nbsp;{% trans "Ver todas" %}
         </a></div>
     </div>
 
