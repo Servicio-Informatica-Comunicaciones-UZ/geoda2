@@ -13,10 +13,10 @@
 
         <p>
             <a
-                href="https://ayudica.unizar.es/otrs/public.pl?Action=PublicFAQExplorer;CategoryID=4"
+                href="https://cau.unizar.es/osticket/kb/faq.php?cid=115"
                 target="_blank"
                 rel="noopener noreferrer"
-            >{% trans "FAQ en Ayudica" %}</a>
+            >{% trans "FAQ en el Centro de Atención a Usuari@s" %}</a>
             <span class="fas fa-link"></span>
         </p>
 
@@ -24,17 +24,12 @@
 
         <p>
             {% blocktrans %}Para solicitar soporte sobre cualquier tema relacionado con las plataformas del Anillo Digital
-                Docente (gestión de usuarios y cursos, apoyo docente en el uso de las plataformas) debe acceder a la herramienta
-                <strong><a href="https://ayudica.unizar.es/otrs/customer.pl" target="_blank" rel="noopener noreferrer">Ayudica</a></strong>
+                Docente (gestión de usuarios y cursos, apoyo docente en el uso de las plataformas) debe acceder al
+                <strong><a href="https://cau.unizar.es/" target="_blank" rel="noopener noreferrer">Centro de Atención a Usuari@s</a></strong> (CAU)
                 <span class="fas fa-link"></span>
-                con el usuario y contraseña del correo electrónico.{% endblocktrans %}
+                con su NIP y contraseña administrativa.{% endblocktrans %}
         </p>
 
-        <p>{% trans "Una vez haya iniciado la sesión, seleccione uno de los siguientes servicios:" %}</p>
-
-        <ul class="listado">
-            <li>{% trans "Anillo Digital Docente - Apoyo gestión usuarios/cursos del ADD" %}</li>
-            <li>{% trans "Anillo Digital Docente - Apoyo técnico/docente al ADD" %}</li>
-        </ul>
+        <p>{% trans 'Seleccione el tema de ayuda «Anillo Digital Docente ADD, Moodle».' %}</p>
     </div>
 {% endblock content %}
