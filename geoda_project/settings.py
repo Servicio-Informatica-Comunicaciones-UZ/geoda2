@@ -45,8 +45,6 @@ TIME_ZONE = os.environ.get('TZ', 'Europe/Madrid')
 LANGUAGE_CODE = 'es-es'
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-i18n
 USE_I18N = True
-# https://docs.djangoproject.com/en/dev/ref/settings/#use-l10n
-USE_L10N = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
 USE_TZ = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#locale-paths
@@ -151,7 +149,11 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage',
+    },
+}
 
 # TEMPLATES
 # ------------------------------------------------------------------------------
