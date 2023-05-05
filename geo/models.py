@@ -432,6 +432,10 @@ class Estudio(models.Model):
 
     id = models.PositiveSmallIntegerField(_('Cód. estudio'), primary_key=True)
     nombre = models.CharField(max_length=255)
+    # Los EEPP tienen un código (tablas TCS de Sigma) pero no tienen realmente planes ni estudios.
+    # Creamos un estudio ficticio para cada estudio propio,
+    # dándole como `id` el `cod_ep` precedido de un `9` para evitar posibles colisiones.
+    cod_ep = models.PositiveSmallIntegerField(_('Cód. estudio propio'), null=True)
     esta_activo = models.BooleanField(_('¿Activo?'), default=True)
 
     class Meta:
@@ -605,6 +609,10 @@ class Plan(models.Model):
     esta_activo = models.BooleanField(_('¿Activo?'), default=True)
     centro = models.ForeignKey('Centro', on_delete=models.PROTECT, related_name='planes')
     estudio = models.ForeignKey('Estudio', on_delete=models.PROTECT, related_name='planes')
+    # Los EEPP tienen un código (tablas TCS de Sigma) pero no tienen realmente planes ni estudios.
+    # Creamos un plan ficticio para cada estudio propio,
+    # dándole como `id` el `cod_ep` precedido de un `9` para evitar posibles colisiones.
+    cod_ep = models.PositiveSmallIntegerField(_('Cód. estudio propio'), null=True)
 
     class Meta:
         db_table = 'plan'
@@ -621,8 +629,10 @@ class Pod(models.Model):
     La tabla se carga mediante una tarea ETL (Pentaho Spoon).
     """
 
+    # `id` en la tabla `plan`
     plan_id_nk = models.IntegerField(blank=True, null=True, verbose_name='Cód. plan')
     centro_id = models.IntegerField(blank=True, null=True, verbose_name='Cód. centro')
+    # `asignatura_id` en la tabla `asignatura`
     asignatura_id = models.IntegerField(blank=True, null=True, verbose_name='Cód. asignatura')
     cod_grupo_asignatura = models.IntegerField(
         blank=True, null=True, verbose_name='Cód. grupo de la asignatura'

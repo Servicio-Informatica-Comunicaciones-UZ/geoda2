@@ -162,7 +162,7 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
         # Crear registro desactivado en la tabla `matricula_automatica` local
         ma = MatriculaAutomatica(
             courseid=curso.id_nk,
-            asignatura_id=asignatura.asignatura_id,
+            asignatura_id=asignatura.asignatura_id,  # Cód. Sigma de la asignatura
             cod_grupo_asignatura=asignatura.cod_grupo_asignatura,
             centro_id=asignatura.centro_id,
             plan_id=asignatura.plan_id_nk,
