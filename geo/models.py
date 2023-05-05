@@ -430,7 +430,7 @@ class Estudio(models.Model):
     `id` es el código del estudio en Sigma.
     """
 
-    id = models.PositiveSmallIntegerField(_('Cód. estudio'), primary_key=True)
+    id = models.PositiveIntegerField(_('Cód. estudio'), primary_key=True)
     nombre = models.CharField(max_length=255)
     # Los EEPP tienen un código (tablas TCS de Sigma) pero no tienen realmente planes ni estudios.
     # Creamos un estudio ficticio para cada estudio propio,
@@ -605,7 +605,7 @@ class Plan(models.Model):
     El campo `id` es el código del plan en Sigma.
     """
 
-    id = models.PositiveSmallIntegerField(_('Cód. plan'), primary_key=True)
+    id = models.PositiveIntegerField(_('Cód. plan'), primary_key=True)
     esta_activo = models.BooleanField(_('¿Activo?'), default=True)
     centro = models.ForeignKey('Centro', on_delete=models.PROTECT, related_name='planes')
     estudio = models.ForeignKey('Estudio', on_delete=models.PROTECT, related_name='planes')
