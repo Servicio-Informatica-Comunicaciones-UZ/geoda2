@@ -147,7 +147,8 @@ class WSClient:
         usuarios = self._request_url(
             'POST', 'core_user_get_users_by_field', self.geo_token, payload
         )
-        return usuarios
+        # TODO: Devolver NIPs de usuarios no encontrados
+        return usuarios, []
 
     def desmatricular(self, usuario, curso):
         """Desmatricula a un usuario de un curso."""
@@ -199,7 +200,7 @@ class WSClient:
         if not nips:
             return 0
 
-        usuarios_moodle = self.buscar_usuarios_nip(nips)
+        usuarios_moodle, usuarios_no_encontrados = self.buscar_usuarios_nip(nips)
         if usuarios_moodle:
             # Preparamos payload con todos los usuarios de la lista de NIPs encontrados en Moodle
             payload = {}
@@ -215,7 +216,7 @@ class WSClient:
             # Matriculamos en el curso a los usuarios encontrados
             self._request_url('POST', 'enrol_manual_enrol_users', self.geo_token, payload)
 
-        return len(usuarios_moodle)
+        return len(usuarios_moodle), usuarios_no_encontrados
 
     def _request_url(self, verb, wsfunction, token, data=None):  # noqa: C901
         """Envía una petición al Web Service."""

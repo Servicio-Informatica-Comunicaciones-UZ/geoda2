@@ -56,7 +56,7 @@ def matricular_grupo_sigma(
         return 0, 0
 
     cliente = WSClient()
-    num_matriculados = cliente.matricular_alumnos(nips, curso)
+    num_matriculados, _ = cliente.matricular_alumnos(nips, curso)
 
     print(f'Matriculados {num_matriculados} estudiantes en el curso Moodle #{courseid}.')
     print(

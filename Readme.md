@@ -140,7 +140,7 @@ Instalación sobre contenedores Docker
 El servidor Moodle debe tener instalado el plugin GeodaWS.
 Además, en Site administration → Plugins → Web services → External Services debe haber
 un servicio personalizado (geo) con las funciones necesarias (`core_course_create_categories`,
-`core_course_create_courses`, `core_user_get_users`, `enrol_manual_enrol_users`,
+`core_course_create_courses`, `core_user_get_users`, `core_user_get_users_by_field`, `enrol_manual_enrol_users`,
 `core_enrol_unenrol_user_enrolment`).
 
 1. Copiar o renombrar los ficheros `env/common.env-sample` y `env/geoda2.env-sample`.
