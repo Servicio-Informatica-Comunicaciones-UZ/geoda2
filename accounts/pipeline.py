@@ -38,7 +38,7 @@ def get_identidad(strategy, response, user, *args, **kwargs):
 
     if response.error:
         # La comunicación con el WS fue correcta, pero éste devolvió un error. Finalizamos.
-        raise Exception(response.descripcionResultado)
+        raise Exception('WS Identidad: ' + response.descripcionResultado)
 
     identidad = response.identidad
     user.first_name = identidad.nombre
@@ -66,7 +66,7 @@ def get_identidad(strategy, response, user, *args, **kwargs):
         colectivos.append('ADS')
     if any(cod_adscritos in cods_vinculaciones for cod_adscritos in (25, 61)):
         colectivos.append('INV')  # Investigadores sin contrato pero con docencia
-    user.colectivos = json.dumps(colectivos)
+    user.colectivos = json.dumps(list(set(colectivos)))
 
     # user.save()
     strategy.storage.user.changed(user)
