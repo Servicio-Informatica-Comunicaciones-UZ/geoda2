@@ -42,6 +42,8 @@ services:
             ofelia.job-exec.profesores.command: "python manage.py crear_usuarios"
             ofelia.job-exec.matriculas.schedule: "0 40 06 * * *"
             ofelia.job-exec.matriculas.command: "python manage.py matricular_pod"
+            ofelia.job-exec.grupossigma.schedule: "0 45 06 * * *"
+            ofelia.job-exec.grupossigma.command: "python manage.py matricular_grupo_sigma"
         networks:
             geoda2_net:
                 ipv4_address: 172.101.0.3
