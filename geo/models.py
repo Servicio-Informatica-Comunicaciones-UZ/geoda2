@@ -532,7 +532,7 @@ class MatriculaAutomatica(models.Model):
         validators=[MinValueValidator(10_001), MaxValueValidator(999_999)],
         help_text=_(
             'Puede consultar el código de una asignatura'
-            ' en la <a href="https://estudios.unizar.es">web de estudios</a>'
+            ' en la <a href="https://estudios.unizar.es" target="_blank">web de estudios</a>'
             ' <span class="fas fa-link"></span>.'
         ),
     )
