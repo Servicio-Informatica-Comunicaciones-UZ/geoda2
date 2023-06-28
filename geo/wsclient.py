@@ -195,10 +195,10 @@ class WSClient:
         mensaje = self._request_url('POST', 'enrol_manual_enrol_users', self.geo_token, payload)
         return mensaje
 
-    def matricular_alumnos(self, nips, curso):
+    def matricular_alumnos(self, nips, curso) -> tuple[int, list]:
         """Matricula una lista de usuarios como alumnos de un curso de Moodle."""
         if not nips:
-            return 0
+            return 0, []
 
         usuarios_moodle, usuarios_no_encontrados = self.buscar_usuarios_nip(nips)
         if usuarios_moodle:
