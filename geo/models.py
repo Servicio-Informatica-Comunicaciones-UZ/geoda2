@@ -561,7 +561,7 @@ class MatriculaAutomatica(models.Model):
         db_table = 'matricula_automatica'
         unique_together = (
             ('asignatura_id', 'cod_grupo_asignatura', 'plan', 'courseid', 'centro'),
-            ('sigmacourseid', 'sigmagroupid', 'sigmatitu', 'courseid', 'sigmacentro'),
+            # ('sigmacourseid', 'sigmagroupid', 'sigmatitu', 'courseid', 'sigmacentro'),
         )
 
     def get_nombre_asignatura(self):
