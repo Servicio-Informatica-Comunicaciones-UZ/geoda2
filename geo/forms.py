@@ -200,7 +200,7 @@ class MatricularPlanForm(forms.Form):
     plan_id_nk = forms.IntegerField(
         help_text=_(
             'Puede consultar el código del plan'
-            ' en la <a href="https://estudios.unizar.es">web de estudios</a>.'
+            ' en la <a href="https://estudios.unizar.es" target="_blank">web de estudios</a>.'
         ),
         label=_('Código del plan'),
         min_value=0,

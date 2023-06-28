@@ -1035,6 +1035,17 @@ class MatriculaAutomaticaAnyadirView(LoginRequiredMixin, ChecksMixin, View):
         )
 
 
+class MatriculaAutomaticaLinkView(LoginRequiredMixin, RedirectView):
+    """
+    Autenticar al usuario y redirigir al ancla de matrícula automática,
+
+    Si se va directamente a la URL sin estar autenticado, al pasar por el SSO se pierde el ancla.
+    """
+
+    def get_redirect_url(self, *args, **kwargs):
+        return reverse('curso_detail', kwargs={'pk': kwargs['pk']}) + '#matriculacion-automatica'
+
+
 class ProfesorCursoAnularView(
     LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, UpdateView
 ):
