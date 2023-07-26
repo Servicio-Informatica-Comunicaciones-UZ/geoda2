@@ -374,7 +374,7 @@ class Curso(models.Model):
         self.save()
 
     def anyadir_profesor(self, usuario):
-        """Añade al usuario a la lista de profesores del curso y lo matricula en Moodle."""
+        """Añade al usuario a la lista de profesores del curso en GEO, y lo matricula en Moodle."""
         cliente = WSClient()
         cliente.matricular_profesor(usuario, self)
         pc = ProfesorCurso.objects.create(curso=self, profesor=usuario, fecha_alta=timezone.now())

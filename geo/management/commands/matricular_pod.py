@@ -10,7 +10,8 @@ class Command(BaseCommand):
     help = 'Matricula en los cursos los NIPs que aparecen en el POD, si no lo estaban.'
 
     def handle(self, *args, **options):
-        # Obtenemos los NIPs que figuran en el POD pero que no están matriculados en el curso
+        # Obtenemos los NIPs que figuran en el POD
+        # pero que no están en la lista de profesores del curso en GEO.
         with connection.cursor() as cursor:
             cursor.execute(
                 '''
@@ -24,7 +25,7 @@ class Command(BaseCommand):
                               AND a.plan_id_nk = p.plan_id_nk
                 JOIN accounts_customuser ac ON ac.username = p.nip
                 LEFT JOIN profesor_curso pc ON c.id = pc.curso_id AND ac.id=pc.profesor_id
-                WHERE c.anyo_academico = 2022 AND c.asignatura_id IS NOT NULL
+                WHERE c.anyo_academico = p.anyo_academico AND c.asignatura_id IS NOT NULL
                    AND (profesor_id IS NULL OR fecha_baja < NOW())
                 ORDER BY c.id, ac.username
                 '''
@@ -38,6 +39,8 @@ class Command(BaseCommand):
             profesor = get_object_or_None(User, username=nip)
             if curso and profesor and profesor not in curso.profesores_activos:
                 try:
+                    # Añade al usuario a la lista de profesores del curso en GEO,
+                    # y lo matricula en Moodle.
                     curso.anyadir_profesor(profesor)
                 except Exception as ex:
                     print('ERROR: %s' % str(ex))

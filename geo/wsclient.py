@@ -121,7 +121,9 @@ class WSClient:
         """Busca en Moodle el usuarioNip correspondiente al usuario de Geoda indicado."""
         usuario_nip = self.buscar_usuario_nip_or_None(usuario.username)
         if not usuario_nip:
-            raise Exception(f'Usuario {usuario.full_name} no encontrado en Moodle.')
+            raise Exception(
+                f'Usuario {usuario.full_name} (NIP {usuario.username}) no encontrado en Moodle.'
+            )
         return usuario_nip
 
     def buscar_usuario_nip_or_None(self, nip):
