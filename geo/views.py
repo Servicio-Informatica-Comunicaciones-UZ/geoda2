@@ -354,6 +354,10 @@ class CursoDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
             for pc in curso.profesorcurso_set.all():
                 pc.delete()
 
+        # Innecesario porque el registro será eliminado de la tabla.
+        # curso.estado = Curso.Estado.BORRADO
+        # curso.save()
+
         messages.success(
             request,
             _('El curso «%(nombre)s» ha sido borrado con éxito.') % {'nombre': curso.nombre},

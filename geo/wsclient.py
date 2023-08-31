@@ -28,8 +28,11 @@ class WSClient:
     def crear_categoria(self, datos_categoria):
         """Crea una nueva categoría en Moodle con los datos indicados.
 
-        Consultar Administration → Site Administration → Plugins → Web Services →
-                  API Documentation → core_course_create_categories
+        Consultar:
+        3.x: Administration → Site Administration → Plugins → Web Services →
+                API Documentation → core_course_create_categories
+        4.x: Administración del Sitio → Servidor → Servicios Web →
+                Documentación de API → core_course_create_categories
         """
         payload = {}
         for clave, valor in datos_categoria.items():
@@ -249,6 +252,8 @@ class WSClient:
         except requests.exceptions.ConnectionError:
             raise requests.exceptions.ConnectionError('No fue posible conectar con Moodle')
         except requests.exceptions.HTTPError:
+            # print(sys.exc_info()[0].http_error_msg)
+            # print(sys.exc_info()[0].reason)
             raise requests.exceptions.HTTPError('Moodle devolvió una respuesta HTTP no válida')
         except requests.exceptions.Timeout:
             raise requests.exceptions.Timeout('Moodle no respondió')

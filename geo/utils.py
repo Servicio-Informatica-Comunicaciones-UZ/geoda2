@@ -23,7 +23,7 @@ class PagedFilteredTableView(SingleTableView):
 
 def matricular_grupo_sigma(
     courseid, asignatura_id, cod_grupo_asignatura, centro_id, plan_id
-) -> tuple[int, int]:
+) -> int:
     """Matricula en un curso Moodle los NIPs matriculados en Sigma que cumplan los filtros."""
 
     # Buscamos los NIPs matriculados en Sigma que cumplan los filtros
@@ -53,7 +53,7 @@ def matricular_grupo_sigma(
         curso = Curso.objects.get(id_nk=courseid)
     except Exception:  # as ex:
         print(f'Curso #{courseid} no encontrado.')
-        return 0, 0
+        return 0
 
     cliente = WSClient()
     num_matriculados, _ = cliente.matricular_alumnos(nips, curso)
