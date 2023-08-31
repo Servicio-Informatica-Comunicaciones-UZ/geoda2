@@ -540,7 +540,7 @@ class MatriculaAutomatica(models.Model):
         _('Cód. grupo de la asignatura'),
         blank=True,
         null=True,
-        help_text=_('Déjelo en blanco para seleccionar todos los grupos.'),
+        help_text=_('Déjelo en blanco para seleccionar <strong>todos</strong> los grupos.'),
     )
     plan = models.ForeignKey(
         'Plan',
