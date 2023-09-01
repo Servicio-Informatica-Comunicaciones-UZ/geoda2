@@ -44,7 +44,7 @@
             ).then(response => {
                 div_icono.className = "fas fa-info-circle";
                 if (response.data.queda_activado) {
-                    span_resultado.innerHTML = `Matriculados ${response.data.num_matriculados} estudiantes.`;
+                    span_resultado.innerHTML = `Se ha matriculado a ${response.data.num_matriculados} nuevos estudiantes.`;
                     if (response.data.num_no_encontrados) {
                         span_resultado.innerHTML += ` No se encontraron ${response.data.num_no_encontrados} estudiantes.`;
                     }

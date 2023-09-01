@@ -1022,7 +1022,7 @@ class MatriculaAutomaticaAnyadirView(LoginRequiredMixin, ChecksMixin, View):
             num_matriculados = matricular_grupo_sigma(
                 ma.courseid, ma.asignatura_id, ma.cod_grupo_asignatura, ma.centro_id, ma.plan_id
             )
-            mensaje = _(f'Matriculados {num_matriculados} estudiantes.')
+            mensaje = _(f'Se ha matriculado a {num_matriculados} estudiantes.')
             messages.info(request, mensaje)
 
         else:
