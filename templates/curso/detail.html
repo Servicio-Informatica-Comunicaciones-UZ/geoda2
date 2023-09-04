@@ -61,14 +61,14 @@
 
         // En el formulario no mostramos el campo del grupo si no hay asignatura
         const grupoNode = document.getElementById("div_id_cod_grupo_asignatura");
-        grupoNode.style.display = 'none';
+        // grupoNode.style.display = 'none';  // EDIT: Lo mostramos desde el principio, porque si no se quita el foco del campo asignatura, no se llega a mostrar.
         // Campo para mostrar el nombre de la asignatura que tiene el código introducido
         const asignaturaField = document.getElementById("id_asignatura_id");
 
         asignaturaField.addEventListener('change', event => {
             if (!event.target.value) {
                 document.getElementById("nombre_asignatura_node").innerHTML = "";
-                grupoNode.style.display = 'none';
+                // grupoNode.style.display = 'none';
                 return;
             }
 
@@ -87,11 +87,11 @@
                 if (registros.length) {
                     nombreNode.innerHTML = registros[0].nombre_asignatura
                     nombreNode.setAttribute("class", "text-success");
-                    grupoNode.style.display = 'block';
+                    // grupoNode.style.display = 'block';
                 } else {
                     nombreNode.innerHTML = 'No se encontró esa asignatura.';
                     nombreNode.setAttribute("class", "text-danger");
-                    grupoNode.style.display = 'none';
+                    // grupoNode.style.display = 'none';
                 }
             }).catch(error => {
                 console.error(error);
