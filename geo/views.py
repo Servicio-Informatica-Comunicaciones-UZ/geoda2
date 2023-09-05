@@ -1016,7 +1016,18 @@ class MatriculaAutomaticaAnyadirView(LoginRequiredMixin, ChecksMixin, View):
 
             ma = formulario.save(commit=False)
             ma.courseid = curso.id_nk
-            ma.save()
+            try:
+                ma.save()
+            except Exception as ex:
+                mensaje = mark_safe(
+                    _(
+                        'Error al guardar el registro. ¿Seguro que no existe ya?<br>\n'
+                        'ERROR: %(ex)s.'
+                    )
+                    % {'ex': ex}
+                )
+                messages.error(request, mensaje)
+                return redirect('curso_detail', curso_id)
 
             # Matricular en Moodle a los estudiantes del nuevo registro de matrícula automática.
             num_matriculados = matricular_grupo_sigma(
