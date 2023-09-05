@@ -9,7 +9,7 @@ from .models import Asignatura, Curso, Forano
 
 
 class AsignaturasTable(tables.Table):
-    enlace = tables.Column(empty_values=(), verbose_name=_('Acción'))
+    enlace = tables.Column(empty_values=(), order_by=('curso'), verbose_name=_('Acción'))
     cod_grupo_asignatura = tables.Column(verbose_name=_('Grupo'))
 
     def render_enlace(self, record):
