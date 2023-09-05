@@ -38,7 +38,7 @@ def toggle_matricula_automatica(request, registro_id: int):
     """Activa o desactiva un registro"""
     try:
         ma = MatriculaAutomatica.objects.get(pk=registro_id)
-    except ma.DoesNotExist:  # as e:
+    except MatriculaAutomatica.DoesNotExist:  # as e:
         return 404, {'message': 'No se encontró ese registro de matrícula automática.'}
 
     profesores_del_curso = ma.curso.profesores_activos
