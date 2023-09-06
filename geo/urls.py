@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import (  # ForanoResolverView,
+from .views import (  # ForanoResolverView,; MatricularPlanView,
     ASCrearCursoView,
     ASTodasView,
     AyudaView,
@@ -18,7 +18,6 @@ from .views import (  # ForanoResolverView,
     HomePageView,
     MatriculaAutomaticaAnyadirView,
     MatriculaAutomaticaLinkView,
-    MatricularPlanView,
     MisAsignaturasView,
     MisCursosView,
     ProfesorCursoAnularView,
@@ -42,7 +41,7 @@ urlpatterns = [
     path('gestion/forano/<int:pk>/', ForanoDetailView.as_view(), name='forano_detail'),
     path('gestion/forano/', ForanoTodosView.as_view(), name='forano_todos'),
     # path('gestion/forano/resolver/', ForanoResolverView.as_view(), name='forano_resolver'),
-    path('gestion/matricular-plan/', MatricularPlanView.as_view(), name='matricular_plan'),
+    # path('gestion/matricular-plan/', MatricularPlanView.as_view(), name='matricular_plan'),
     path('gestion/profesor-curso/', ProfesorCursoAnyadirView.as_view(), name='pc_anyadir'),
     path(
         'gestion/profesor-curso/<int:pk>/anular',

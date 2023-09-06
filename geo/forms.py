@@ -193,8 +193,9 @@ class MatriculaAutomaticaForm(forms.ModelForm):
         self.fields['plan'].empty_label = _('Todos')
 
 
+"""
 class MatricularPlanForm(forms.Form):
-    """Formulario para matricular en un curso a todos los matriculados en un plan."""
+    # Formulario para matricular en un curso a todos los matriculados en un plan.
 
     curso_id = forms.IntegerField(widget=forms.HiddenInput())
     plan_id_nk = forms.IntegerField(
@@ -235,6 +236,7 @@ class MatricularPlanForm(forms.Form):
                 css_class='col-2 mb-4',
             ),
         )
+"""
 
 
 class ProfesorCursoAddForm(forms.Form):

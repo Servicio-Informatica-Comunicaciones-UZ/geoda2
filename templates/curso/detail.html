@@ -248,6 +248,8 @@
             </form>
         {% endif %}
 
+        {% comment %}
+        {# Ya no usamos esto, ahora se puede hacer desde la sección de matrícula automática. #}
         {% if curso.estado == curso.Estado.CREADO.value and not curso.asignatura_id and perms.geo.matricular_plan %}
             <br />
             <h2>{% trans "Matricular a todos los alumnos de un plan" %}</h2>
@@ -255,6 +257,7 @@
 
             {% crispy mp_form %}
         {% endif %}
+        {% endcomment %}
 
         {% if curso.estado == curso.Estado.CREADO.value and puede_matricular_profesores %}
             <br /><br />
@@ -324,6 +327,9 @@
             </table>
         {% endif %}
 
+        {# Anteriormente había una sección para matricular a todos los alumnos de un plan. #}
+        {# Vista MatricularPlanView, permiso matricular_plan, formulario MatricularPlanForm #}
+        {# Ahora se puede hacer desde aquí. #}
         {% if curso.estado == curso.Estado.CREADO.value and puede_matricular_alumnos %}
 
             <a id="matriculacion-automatica"></a><br /><br />

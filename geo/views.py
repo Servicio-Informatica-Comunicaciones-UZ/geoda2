@@ -38,13 +38,12 @@ from templated_email import send_templated_mail
 
 # local Django
 from .filters import AsignaturaListFilter, CursoFilter, ForanoFilter
-from .forms import (
+from .forms import (  # MatricularPlanForm,
     AsignaturaFilterFormHelper,
     CursoFilterFormHelper,
     CursoSolicitarForm,
     ForanoFilterFormHelper,
     MatriculaAutomaticaForm,
-    MatricularPlanForm,
     ProfesorCursoAddForm,
 )
 from .models import (
@@ -156,9 +155,10 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
             return redirect('curso_detail', curso.id)
         curso.actualizar_tras_creacion(datos_recibidos)
 
-        # TODO: Dejar de rellenar la tabla `sigma`, y usar la tabla `matricula_automatica` local
-        mensaje = cliente.automatricular(asignatura, curso)
-        messages.info(request, mensaje)
+        # Dejamos de rellenar la tabla `sigma`: usamos la tabla `matricula_automatica` local
+        # mensaje = cliente.automatricular(asignatura, curso)
+        # messages.info(request, mensaje)
+
         # Crear registro desactivado en la tabla `matricula_automatica` local
         ma = MatriculaAutomatica(
             courseid=curso.id_nk,
@@ -381,11 +381,11 @@ class CursoDetailView(LoginRequiredMixin, DetailView):
         profesores = [asignacion.profesor for asignacion in asignaciones]
         es_profesor_del_curso = self.request.user in profesores
 
-        mp_form = MatricularPlanForm()
+        # mp_form = MatricularPlanForm()
         # Inicializo aquí el valor de `curso_id` en el formulario.
         # No lo paso como un diccionario al crear el formulario, porque entonces
         # `is_bound` sería True, y el campo `nip` se marcaría como `is_invalid`.
-        mp_form.fields['curso_id'].initial = curso_id
+        # mp_form.fields['curso_id'].initial = curso_id
 
         pc_form = ProfesorCursoAddForm()
         pc_form.fields['curso_id'].initial = curso_id
@@ -397,7 +397,7 @@ class CursoDetailView(LoginRequiredMixin, DetailView):
                     courseid=self.object.id_nk
                 ),
                 'ma_form': MatriculaAutomaticaForm,
-                'mp_form': mp_form,
+                # 'mp_form': mp_form,
                 'pc_form': pc_form,
                 'puede_matricular_profesores': es_profesor_del_curso
                 or self.request.user.has_perm('geo.anyadir_profesorcurso'),
@@ -537,8 +537,9 @@ class CursosPendientesView(LoginRequiredMixin, PermissionRequiredMixin, SingleTa
     template_name = 'gestion/curso_pendientes.html'
 
 
+"""
 class MatricularPlanView(LoginRequiredMixin, PermissionRequiredMixin, View):
-    """Matricula en un curso a todos los alumnos del plan indicado."""
+    # Matricula en un curso a todos los alumnos del plan indicado.
 
     permission_required = 'geo.matricular_plan'
     permission_denied_message = _('Sólo los gestores pueden acceder a esta página.')
@@ -578,6 +579,7 @@ class MatricularPlanView(LoginRequiredMixin, PermissionRequiredMixin, View):
         )
 
         return redirect('curso_detail', curso_id)
+"""
 
 
 class MisAsignaturasView(LoginRequiredMixin, ChecksMixin, SingleTableView):
