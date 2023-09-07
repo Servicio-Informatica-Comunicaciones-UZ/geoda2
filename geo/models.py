@@ -37,9 +37,11 @@ class Asignatura(models.Model):
     nombre_tipo_estudio = models.CharField(
         max_length=30, blank=True, null=True, verbose_name=_('Tipo de estudio')
     )
-    asignatura_id = models.IntegerField(blank=True, null=True, verbose_name=_('Cód. asignatura'))
+    asignatura_id = models.IntegerField(
+        blank=True, db_index=True, null=True, verbose_name=_('Cód. asignatura')
+    )
     nombre_asignatura = models.CharField(
-        max_length=120, blank=True, null=True, verbose_name=_('Asignatura')
+        blank=True, db_index=True, max_length=120, null=True, verbose_name=_('Asignatura')
     )
     prela_cu = models.CharField(max_length=5, blank=True, null=True)
     tipo_periodo = models.CharField(
@@ -517,7 +519,7 @@ class MatriculaAutomatica(models.Model):
     """Matrícula automática en cursos de Moodle con los datos de matriculación de Sigma"""
 
     id = models.BigAutoField(primary_key=True)
-    courseid = models.PositiveBigIntegerField()
+    courseid = models.PositiveBigIntegerField(db_index=True)
     sigmacourseid = models.CharField(max_length=10)
     sigmagroupid = models.CharField(max_length=5)
     active = models.BooleanField(_('¿Activo?'), default=True)
@@ -528,6 +530,7 @@ class MatriculaAutomatica(models.Model):
     asignatura_id = models.IntegerField(
         _('Cód. asignatura'),
         blank=True,
+        db_index=True,
         null=True,
         validators=[MinValueValidator(10_001), MaxValueValidator(999_999)],
         help_text=_(
