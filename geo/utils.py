@@ -26,6 +26,11 @@ def matricular_grupo_sigma(
 ) -> int:
     """Matricula en un curso Moodle los NIPs matriculados en Sigma que cumplan los filtros."""
 
+    print(
+        f'Asignatura: {asignatura_id}  Grupo: {cod_grupo_asignatura}'
+        f'  Centro: {centro_id}  Plan: {plan_id}'
+    )
+
     # Buscamos los NIPs matriculados en Sigma que cumplan los filtros
     consulta = '''
     SELECT nip
@@ -52,16 +57,23 @@ def matricular_grupo_sigma(
     try:
         curso = Curso.objects.get(id_nk=courseid)
     except Exception:  # as ex:
-        print(f'Curso #{courseid} no encontrado.')
+        print(f'ERROR: Curso #{courseid} no encontrado en Moodle!')
         return 0
 
-    cliente = WSClient()
-    num_matriculados, _ = cliente.matricular_alumnos(nips, curso)
-
-    print(f'Matriculados {num_matriculados} estudiantes en el curso Moodle #{courseid}.')
+    num_a_matricular = len(nips)
     print(
-        f'Asignatura: {asignatura_id}  Grupo: {cod_grupo_asignatura}'
-        f'  Centro: {centro_id}  Plan: {plan_id}'
+        f'Se va a intentar matricular a {num_a_matricular} estudiantes'
+        f' en el curso Moodle #{courseid}.'
     )
+
+    cliente = WSClient()
+    try:
+        num_matriculados, _ = cliente.matricular_alumnos(nips, curso)
+        print(f'Matriculados {num_matriculados} estudiantes en el curso Moodle #{courseid}.')
+        if num_a_matricular != num_matriculados:
+            print('AVISO:', num_a_matricular - num_matriculados, 'estudiantes no matriculados!')
+    except Exception:
+        print("ERROR al intentar matricular estudiantes en el curso de Moodle #{courseid}.")
+        return 0
 
     return num_matriculados
