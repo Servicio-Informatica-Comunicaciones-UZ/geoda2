@@ -226,6 +226,7 @@ class WSClient:
     def _request_url(self, verb, wsfunction, token, data=None):  # noqa: C901
         """Envía una petición al Web Service."""
         try:
+            # https://docs.python-requests.org/en/latest/user/quickstart/#errors-and-exceptions
             if verb == 'POST':
                 resp = requests.post(
                     f'{self.api_url}?wstoken={token}&wsfunction={wsfunction}'
@@ -251,10 +252,15 @@ class WSClient:
             )
         except requests.exceptions.ConnectionError:
             raise requests.exceptions.ConnectionError('No fue posible conectar con Moodle')
-        except requests.exceptions.HTTPError:
-            # print(sys.exc_info()[0].http_error_msg)
-            # print(sys.exc_info()[0].reason)
-            raise requests.exceptions.HTTPError('Moodle devolvió una respuesta HTTP no válida')
+        except requests.exceptions.HTTPError as err:
+            # print(repr(sys.exc_info()))
+            # print(repr(sys.exc_info()[0]))  # str
+            print(err.response.status_code)
+            print(err.response.text)
+            raise requests.exceptions.HTTPError(
+                _('Moodle devolvió un código de estado HTTP sin éxito (%(code)s')
+                % {'code': err.response.status_code}
+            )
         except requests.exceptions.Timeout:
             raise requests.exceptions.Timeout('Moodle no respondió')
         except requests.exceptions.TooManyRedirects:
@@ -274,6 +280,8 @@ class WSClient:
             )
 
         if isinstance(received_data, dict) and received_data.get('exception', None):
+            print('DATA:', repr(data))
+            print('RECEIVED DATA:', repr(received_data))
             raise Exception(received_data.get('message'))
 
         return received_data
