@@ -1196,3 +1196,7 @@ class ProfesorCursoAnyadirView(LoginRequiredMixin, ChecksMixin, View):
         return self.es_profesor_del_curso(
             self.request.POST.get('curso_id')
         ) or self.request.user.has_perm('geo.anyadir_profesorcurso')
+
+
+def teapot(request, whatever):
+    return HttpResponse('I\'m a teapot', status=418)
