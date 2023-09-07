@@ -88,7 +88,8 @@
                 advertencia = document.getElementById("advertencia");
                 advertencia.innerHTML = "<p>¿Seguro que desea crear un curso para la asignatura «" + ev.target.getAttribute("data-nombre") + "»?</p>"
 
-                document.getElementById("crear-form").action = ev.target.getAttribute("data-url");
+                url = ev.target.getAttribute("data-url");
+                if (url) { document.getElementById("crear-form").action = url; }
             });
         });
     </script>
