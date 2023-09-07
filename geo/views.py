@@ -354,6 +354,10 @@ class CursoDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
             for pc in curso.profesorcurso_set.all():
                 pc.delete()
 
+            matriculas_automaticas = MatriculaAutomatica.objects.filter(courseid=curso.id_nk)
+            for ma in matriculas_automaticas:
+                ma.delete()
+
         # Innecesario porque el registro será eliminado de la tabla.
         # curso.estado = Curso.Estado.BORRADO
         # curso.save()
