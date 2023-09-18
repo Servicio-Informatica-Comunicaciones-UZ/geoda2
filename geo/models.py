@@ -551,6 +551,10 @@ class MatriculaAutomatica(models.Model):
         blank=True,
         null=True,
         limit_choices_to={'esta_activo': True},
+        help_text=_(
+            'Tenga en cuenta que un mismo código de asignatura'
+            ' se puede impartir en varios planes.'
+        ),
     )
     centro = models.ForeignKey(
         'Centro',
@@ -558,6 +562,10 @@ class MatriculaAutomatica(models.Model):
         blank=True,
         null=True,
         limit_choices_to={'esta_activo': True},
+        help_text=_(
+            'Tenga en cuenta que un mismo código de asignatura'
+            ' se puede impartir en varios centros.'
+        ),
     )
 
     class Meta:
