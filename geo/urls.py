@@ -64,7 +64,6 @@ urlpatterns = [
     path('curso/rematricular/', CursoRematricularView.as_view(), name='curso_rematricular'),
     path('curso/solicitar/', SolicitarCursoNoRegladoView.as_view(), name='curso_solicitar'),
     path('usuario-externo/solicitar/', ForanoSolicitarView.as_view(), name='forano_solicitar'),
-    path('wp/<str:whatever>', teapot),
-    path('wp<str:whatever>', teapot),
-    path('<str:whatever>php', teapot),
+    path('wp<path:whatever>', teapot),
+    path('<path:whatever>php', teapot),
 ]
