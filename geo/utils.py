@@ -27,9 +27,16 @@ def matricular_grupo_sigma(
     """Matricula en un curso Moodle los NIPs matriculados en Sigma que cumplan los filtros."""
 
     print(
-        f'Asignatura: {asignatura_id}  Grupo: {cod_grupo_asignatura}'
+        f'Curso Moodle: {courseid}'
+        f'  Asignatura: {asignatura_id}  Grupo: {cod_grupo_asignatura}'
         f'  Centro: {centro_id}  Plan: {plan_id}'
     )
+
+    try:
+        curso = Curso.objects.get(id_nk=courseid)
+    except Exception:  # as ex:
+        print(f'ERROR: Curso #{courseid} no encontrado en Moodle!')
+        return 0
 
     # Buscamos los NIPs matriculados en Sigma que cumplan los filtros
     consulta = '''
@@ -51,24 +58,26 @@ def matricular_grupo_sigma(
     with connection.cursor() as cursor:
         cursor.execute(consulta)
         filas = cursor.fetchall()
+    nips_en_sigma = [str(fila[0]) for fila in filas]
 
-    # Matriculamos en el curso Moodle indicado los NIPs encontrados
-    nips = [fila[0] for fila in filas]
-    try:
-        curso = Curso.objects.get(id_nk=courseid)
-    except Exception:  # as ex:
-        print(f'ERROR: Curso #{courseid} no encontrado en Moodle!')
+    if len(nips_en_sigma) == 0:
+        print("No hay estudiantes en Sigma que cumplan los criterios indicados.")
         return 0
 
-    num_a_matricular = len(nips)
+    cliente = WSClient()
+    usuarios_ya_matriculados = cliente.buscar_alumnos(curso)
+    nips_ya_matriculados = [u.get('username') for u in usuarios_ya_matriculados]
+    nips_a_matricular = set(nips_en_sigma) - set(nips_ya_matriculados)
+
+    # Matriculamos en el curso Moodle indicado los NIPs de Sigma que todavía no lo estén
+    num_a_matricular = len(nips_a_matricular)
     print(
         f'Se va a intentar matricular a {num_a_matricular} estudiantes'
         f' en el curso Moodle #{courseid}.'
     )
 
-    cliente = WSClient()
     try:
-        num_matriculados, _ = cliente.matricular_alumnos(nips, curso)
+        num_matriculados, _ = cliente.matricular_alumnos(nips_a_matricular, curso)
         print(f'Matriculados {num_matriculados} estudiantes en el curso Moodle #{courseid}.')
         if num_a_matricular != num_matriculados:
             print('AVISO:', num_a_matricular - num_matriculados, 'estudiantes no matriculados!')

@@ -14,7 +14,8 @@ class Command(BaseCommand):
                 '''
                 SELECT courseid, asignatura_id, cod_grupo_asignatura, centro_id, plan_id
                 FROM matricula_automatica
-                WHERE active = 1;
+                WHERE active = 1
+                ORDER BY courseid, asignatura_id;
                 '''
             )
             registros = cursor.fetchall()

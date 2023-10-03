@@ -80,6 +80,15 @@ class WSClient:
         )
         return respuesta
 
+    def buscar_alumnos(self, curso):
+        """Obtiene de Moodle los alumnos matriculados en el curso indicado."""
+        # Doc de `core_enrol_get_enrolled_users` en <web_moodle>/admin/webservice/documentation.php
+        payload = {'courseid': curso.id_nk}
+        alumnos_matriculados = self._request_url(
+            'POST', 'core_enrol_get_enrolled_users', self.geo_token, payload
+        )
+        return alumnos_matriculados
+
     def buscar_usuario_correo(self, usuario):
         """Busca en Moodle el usuarioCorreo correspondiente al usuario de Geoda indicado."""
         # Buscamos a un usuarioCorreo con ese NIP (idnumber) y dirección de correo.
