@@ -71,6 +71,10 @@ def matricular_grupo_sigma(
 
     # Matriculamos en el curso Moodle indicado los NIPs de Sigma que todavía no lo estén
     num_a_matricular = len(nips_a_matricular)
+    if num_a_matricular == 0:
+        print('Todos los alumnos de Sigma están ya matriculados en el curso Moodle.')
+        return 0
+
     print(
         f'Se va a intentar matricular a {num_a_matricular} estudiantes'
         f' en el curso Moodle #{courseid}.'
