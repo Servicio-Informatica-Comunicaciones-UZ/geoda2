@@ -348,12 +348,16 @@
                     <br />
                     Si desea matricular automáticamente en Moodle alumnos de otros grupos o asignaturas,
                     puede añadir registros adicionales.<br />
-                    Para el caso de los <strong>programas conjuntos</strong> que se imparten en dos centros,
-                    verifique en Sigma en qué centro aparecen matriculados los estudiantes.<br />
                     Los nuevos registros se crearán activados, y tendrán efecto <strong>inmediato</strong>.<br />
                     <br />
+                    Para el caso de los <strong>programas conjuntos</strong> que se imparten en dos centros,
+                    verifique en Sigm@ en qué centro aparecen matriculados los estudiantes.<br />
+                    Para el caso del <strong>Máster Universitario en Profesorado</strong> verifique en el Campus Docente Sigm@
+                    (<a href="https://sia.unizar.es/cosmos/Controlador/?apl=Uninavs&gu=d&idNav=inicio&NuevaSesionUsuario=true">CDS</a>)
+                    en qué plan aparecen matriculados los estudiantes.<br />
+                    <br />
                     Para los registros activos, se revisará diariamente si hay nuevos alumnos matriculados en Sigm@.<br />
-                    Si desactiva o borra un registro, <em>no</em> se desmatriculará del curso Moodle
+                    Si desactiva o borra un registro, <strong>no se desmatriculará</strong> del curso Moodle
                     a los alumnos que ya estén matriculados en él.
                 {% endblocktranslate %}
             </div>
@@ -494,10 +498,9 @@
             </div>
             <br />
 
-            <a href="{% url 'curso_delete' curso.id %}" aria-label="{% trans 'Eliminar' %}" class="btn btn-warning" role="button" %}>
+            <a href="{% url 'curso_delete' curso.id %}" aria-label="{% trans 'Eliminar' %}" class="btn btn-warning" role="button">
                 <span aria-hidden="true" class="fas fa-trash-alt"></span> {% trans 'Eliminar' %}
             </a>
-
         {% endif %}
 
     </div>
