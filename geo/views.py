@@ -53,6 +53,7 @@ from .models import (
     Curso,
     Forano,
     MatriculaAutomatica,
+    Plan,
     Pod,
     ProfesorCurso,
 )
@@ -135,17 +136,27 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
             return redirect('mis_asignaturas')
 
         asignatura = get_object_or_404(Asignatura, id=kwargs['pk'])
+        plan = get_object_or_None(Plan, id=asignatura.plan_id_nk)
+        if not plan:
+            messages.error(
+                request,
+                _('ERROR: No se encontró el plan %d en la tabla de planes de GEO.')
+                % asignatura.plan_id_nk,
+            )
+            return redirect('mis_asignaturas')
+
         try:
             curso = self._cargar_asignatura_en_curso(asignatura, usuario)
         except Exception as ex:
             messages.error(request, _('ERROR: %(ex)s') % {'ex': ex})
-            return redirect('curso_detail', asignatura.curso.id)
+            return redirect('mis_asignaturas')
 
         # Comprobar si existe la categoría en la plataforma, y si no, crearla.
         categoria = curso.categoria
         if not categoria.id_nk:
             categoria.crear_en_plataforma()
 
+        # Crear el curso en la plataforma
         cliente = WSClient()
         datos_curso = curso.get_datos()
         try:
@@ -160,16 +171,22 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
         # messages.info(request, mensaje)
 
         # Crear registro desactivado en la tabla `matricula_automatica` local
-        ma = MatriculaAutomatica(
-            courseid=curso.id_nk,
-            asignatura_id=asignatura.asignatura_id,  # Cód. Sigma de la asignatura
-            cod_grupo_asignatura=asignatura.cod_grupo_asignatura,
-            centro_id=asignatura.centro_id,
-            plan_id=asignatura.plan_id_nk,
-            active=False,
-            fijo=True,
-        )
-        ma.save()
+        try:
+            ma = MatriculaAutomatica(
+                courseid=curso.id_nk,
+                asignatura_id=asignatura.asignatura_id,  # Cód. Sigma de la asignatura
+                cod_grupo_asignatura=asignatura.cod_grupo_asignatura,
+                centro_id=asignatura.centro_id,
+                plan_id=asignatura.plan_id_nk,
+                active=False,
+                fijo=True,
+            )
+            ma.save()
+        except Exception:
+            messages.warning(
+                request,
+                _('AVISO: No fue posible crear el registro de matrícula automática.'),
+            )
 
         profesores = asignatura.get_profesores()
         profesores.append(usuario)
