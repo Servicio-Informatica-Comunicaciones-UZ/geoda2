@@ -520,11 +520,7 @@ class MatriculaAutomatica(models.Model):
 
     id = models.BigAutoField(primary_key=True)
     courseid = models.PositiveBigIntegerField(db_index=True)
-    sigmacourseid = models.CharField(max_length=10)
-    sigmagroupid = models.CharField(max_length=5)
     active = models.BooleanField(_('¿Activo?'), default=True)
-    sigmatitu = models.CharField(max_length=10)
-    sigmacentro = models.CharField(max_length=10)
     fijo = models.BooleanField(_('¿Registro predefinido?'), default=False)
 
     asignatura_id = models.IntegerField(
@@ -572,7 +568,6 @@ class MatriculaAutomatica(models.Model):
         db_table = 'matricula_automatica'
         unique_together = (
             ('asignatura_id', 'cod_grupo_asignatura', 'plan', 'courseid', 'centro'),
-            # ('sigmacourseid', 'sigmagroupid', 'sigmatitu', 'courseid', 'sigmacentro'),
         )
 
     def get_nombre_asignatura(self):
