@@ -458,6 +458,8 @@ class Forano(models.Model):
         DENEGADO = 2, _('Denegado')
         AUTORIZADO = 3, _('Autorizado')
 
+        __empty__ = _('Cualquiera')
+
     nip = models.PositiveIntegerField(
         verbose_name=_('NIP a vincular'),
         help_text=_('Número de Identificación Personal del usuario a vincular.'),
@@ -508,7 +510,7 @@ class Forano(models.Model):
 
     class Meta:
         db_table = 'forano'
-        ordering = ('fecha_solicitud',)
+        ordering = ('-fecha_solicitud',)
         permissions = [('forano', _('Puede ver y resolver las solicitudes de vinculación.'))]
 
     def get_absolute_url(self):

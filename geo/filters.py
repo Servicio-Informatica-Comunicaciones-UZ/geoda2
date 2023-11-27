@@ -39,5 +39,5 @@ class ForanoFilter(django_filters.FilterSet):
 
     class Meta:
         model = Forano
-        fields = {'nip': ['exact'], 'estado': ['exact']}
-        order_by = ['fecha_solicitud']
+        fields = {'nip': ['exact'], 'solicitante__username': ['exact'], 'estado': ['exact']}
+        order_by = ['-fecha_solicitud']

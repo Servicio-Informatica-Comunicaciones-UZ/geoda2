@@ -161,6 +161,9 @@ class ForanoFilterFormHelper(FormHelper):
         Fieldset(
             "<span class='fa fa-search'></span> " + str(_('Buscar solicitud de vinculación')),
             Div(
+                # TODO: Averiguar cómo hacer que aparezca "NIP del solicitante"
+                # en vez del automático "Solicitante NIP"
+                InlineField('solicitante__username', wrapper_class='col-6'),
                 InlineField('nip', wrapper_class='col-6'),
                 # InlineField('estado', wrapper_class='col-6'),
                 css_class='row',

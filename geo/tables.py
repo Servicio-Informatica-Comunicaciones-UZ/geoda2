@@ -120,6 +120,12 @@ class CursoTable(tables.Table):
 
 class ForanoTodosTable(tables.Table):
     enlace = tables.Column(empty_values=(), verbose_name='')
+    # solicitante__full_name = tables.Column(orderable=False)
+    solicitante__full_name = tables.Column(
+        order_by=('solicitante.first_name', 'solicitante.last_name', 'solicitante.last_name_2')
+    )
+    # def order_solicitante__full_name(self, queryset, is_descending):
+    #     ...
 
     def render_enlace(self, record):
         estilo = (None, 'btn-info', 'btn-danger', 'btn-success')[record.estado]
