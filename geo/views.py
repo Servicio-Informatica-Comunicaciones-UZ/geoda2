@@ -1216,4 +1216,5 @@ class ProfesorCursoAnyadirView(LoginRequiredMixin, ChecksMixin, View):
 
 
 def teapot(request, whatever):
+    """Pasarle a Django direcciones PHP es como pedirle a una tetera que haga café."""
     return HttpResponse('I\'m a teapot', status=418)
