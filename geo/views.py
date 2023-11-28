@@ -873,6 +873,8 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
                 messages.warning(request, response.descripcionAviso)
 
             if response.error:
+                forano.comentarios = response.descripcionResultado
+                forano.save()
                 messages.error(request, response.descripcionResultado)
             else:
                 forano.autorizador = request.user  # Auto
