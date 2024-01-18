@@ -1,12 +1,12 @@
-# Pull base image
-FROM python:3.11-slim-bullseye
+# Pull base image from <https://hub.docker.com/_/python>
+FROM python:3.12-slim-bullseye
 LABEL maintainer="Enrique Matías Sánchez <quique@unizar.es>"
 
 # Set environment variables
 # Don't write .pyc files
 # All output to stdout will be flushed immediately
 ENV PYTHONDONTWRITEBYTECODE 1 \
-    PYTHONUNBUFFERED 1
+  PYTHONUNBUFFERED 1
 
 # Install packages needed to run your application (not build deps):
 #   libmagic1 -- determine the type of data in a file
@@ -15,15 +15,15 @@ ENV PYTHONDONTWRITEBYTECODE 1 \
 #   xmlsec1 -- required for SAML auth
 #   mime-support -- for mime types when serving static files
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-      libmagic1 \
-      libmariadb3 \
-      libpcre3 \
-      libxmlsec1-openssl \
-      mime-support \
-      # pandoc \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+  && apt-get install -y --no-install-recommends \
+  libmagic1 \
+  libmariadb3 \
+  libpcre3 \
+  libxmlsec1-openssl \
+  mime-support \
+  # pandoc \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
 # Copy the requirements file to the container image
 COPY requirements.txt ./
@@ -34,12 +34,12 @@ COPY requirements.txt ./
 # All in a single step, so that Docker cache it as a single layer.
 RUN set -ex \
   && BUILD_DEPS=" \
-    gcc \
-    libmariadb-dev \
-    libmariadb-dev-compat \
-    libpcre3-dev \
-    libxmlsec1-dev \
-    pkg-config" \
+  gcc \
+  libmariadb-dev \
+  libmariadb-dev-compat \
+  libpcre3-dev \
+  libxmlsec1-dev \
+  pkg-config" \
   && apt-get update \
   && apt-get install -y --no-install-recommends $BUILD_DEPS \
   && pip install --no-cache-dir -r requirements.txt \
