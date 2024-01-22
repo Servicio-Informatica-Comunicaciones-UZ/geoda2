@@ -123,6 +123,7 @@ class Categoria(models.Model):
     """
 
     NO_REGLADAS = (
+        'Actividades académicas complementarias',
         'Biblioteca',
         'CIFICE',
         'CIRCE',
