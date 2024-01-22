@@ -682,7 +682,11 @@ class ResolverSolicitudCursoView(LoginRequiredMixin, PermissionRequiredMixin, Re
                 return redirect('curso_detail', id_recibido)
 
             curso.actualizar_tras_creacion(datos_recibidos)
-            cliente.matricular_profesor(curso.profesores.first(), curso)
+            try:
+                cliente.matricular_profesor(curso.profesores.first(), curso)
+            except Exception as ex:
+                messages.warning(self.request, _('AVISO: %(ex)s.') % {'ex': ex})
+
             messages.info(
                 request,
                 _('El curso «%(nombre)s» ha sido autorizado y creado.') % {'nombre': curso.nombre},
