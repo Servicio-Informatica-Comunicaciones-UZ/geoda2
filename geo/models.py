@@ -334,7 +334,7 @@ class Curso(models.Model):
         related_name='curso',
         verbose_name=_('Asignatura'),
     )
-    estado = models.IntegerField(choices=Estado.choices, verbose_name=_('Estado'))
+    estado = models.IntegerField(choices=Estado, verbose_name=_('Estado'))
     motivo_solicitud = models.TextField(
         blank=True,
         null=True,
@@ -482,7 +482,7 @@ class Forano(models.Model):
     fecha_autorizacion = models.DateTimeField(
         blank=True, null=True, verbose_name=_('Fecha de autorización')
     )
-    estado = models.IntegerField(choices=Estado.choices, verbose_name=_('Estado'))
+    estado = models.IntegerField(choices=Estado, verbose_name=_('Estado'))
     motivo_solicitud = models.TextField(
         verbose_name=_('Motivación de la solicitud'),
         help_text=_(
