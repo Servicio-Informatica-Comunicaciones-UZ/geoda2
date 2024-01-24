@@ -352,15 +352,32 @@
                     <br />
                     Para el caso de los <strong>programas conjuntos</strong> que se imparten en dos centros,
                     verifique en Sigm@ en qué centro aparecen matriculados los estudiantes.<br />
+                    <!--
                     Para el caso del <strong>Máster Universitario en Profesorado</strong> verifique en el Campus Docente Sigm@
                     (<a href="https://sia.unizar.es/cosmos/Controlador/?apl=Uninavs&gu=d&idNav=inicio&NuevaSesionUsuario=true">CDS</a>)
                     en qué plan aparecen matriculados los estudiantes.<br />
+                    -->
                     <br />
                     Para los registros activos, se revisará diariamente si hay nuevos alumnos matriculados en Sigm@.<br />
                     Si desactiva o borra un registro, <strong>no se desmatriculará</strong> del curso Moodle
                     a los alumnos que ya estén matriculados en él.
                 {% endblocktranslate %}
             </div>
+
+            {% if curso.asignatura.plan_id_nk == 584 %}
+                {# Máster Universitario en Profesorado de Educación Secundaria Obligatoria #}
+                <div class="alert alert-warning alert-dismissible fade show">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
+
+                    <span class="fas fa-exclamation-triangle"></span>
+                    {% blocktranslate %}
+                        Para el caso del <strong>Máster Universitario en Profesorado</strong> verifique en el Campus Docente Sigm@
+                        (<a href="https://sia.unizar.es/cosmos/Controlador/?apl=Uninavs&gu=d&idNav=inicio&NuevaSesionUsuario=true">CDS</a>)
+                        en qué plan aparecen matriculados los estudiantes.
+                    {% endblocktranslate %}
+                </div>
+            {% endif %}
+
             <br />
 
             <table class="table table-striped table-hover" aria-describedby="matriculación automática">
