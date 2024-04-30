@@ -150,8 +150,8 @@ debe haber un servicio personalizado (geo) con las funciones necesarias:
 - `core_enrol_get_enrolled_users`   - Get enrolled users by course id
 - `core_enrol_unenrol_user_enrolment` - External function that unenrols a given user enrolment
 
-1. Copiar o renombrar los ficheros `env/common.env-sample` y `env/geoda2.env-sample`.
-2. Configurar los ajustes de la base de datos, servidor de correo, la URL del sitio,
+1. Copiar o renombrar los ficheros `.env-sample`, `env/common.env-sample` y `env/geoda2.env-sample`.
+2. Configurar el ID de usuario y grupo, los ajustes de la base de datos, servidor de correo, la URL del sitio,
    _Single Sign On_ (SAML) y las direcciones de los _Web services_ de Moodle y de
    Gestión de Identidades en los ficheros `.env`.
 3. Levantar los contenedores:
