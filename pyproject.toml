@@ -1,7 +1,7 @@
 [tool.black]
 skip-string-normalization = true
 line-length = 99
-target-version = ['py310']
+target-version = ['py312']
 include = '\.pyi?$'
 exclude = '''
 
@@ -24,8 +24,10 @@ exclude = '''
 '''
 
 [tool.djlint]
-ignore="H021,T002"
-profile="django"
+# H021 - Inline styles should be avoided.
+# T002 - Double quotes should be used in tags. Ex {% extends "this.html" %}
+ignore = "H021,T002"
+profile = "django"
 
 [tool.isort]
 multi_line_output = 3
@@ -42,4 +44,33 @@ disable = "C0330, C0326"
 max-line-length = "99"
 
 [tool.ruff]
+# <https://docs.astral.sh/ruff/configuration/>
+include = ["**/*.py", "**/*.pyi", "**/pyproject.toml"]
 line-length = 99
+
+[tool.ruff.format]
+# Use single quotes for non-triple-quoted strings.
+quote-style = "single"
+
+[tool.ruff.lint]
+# <https://flakes.orsinium.dev/>
+ignore = [
+    "A003", # Allow shadowing class attribute: django uses id.
+    "B904", # Allow unchained exceptions: it's fine to raise 404 in django.
+    "E712", # Allow using if x == False, as it's not always equivalent to if x.
+    # "E501", # line-too-long
+    # "W191", # tab-indentation
+]
+select = [
+    "A",  # prevent using keywords that clobber python builtins
+    "B",  # flake8-bugbear: security warnings
+    "C",  # flake8-coding, flake8-comprehensions, flake8-commas
+    "E",  # pycodestyle - Error
+    "F",  # Pyflakes
+    "I",  # isort
+    "W",  # pycodestyle - Warning
+    "UP", # pyupgrade
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
