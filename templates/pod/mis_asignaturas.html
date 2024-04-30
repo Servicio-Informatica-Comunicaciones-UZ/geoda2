@@ -2,11 +2,11 @@
 {% load i18n %}
 {% load render_table from django_tables2 %}
 
-{% block title %}{% trans "Mis asignaturas" %}{% endblock title %}
+{% block title %}{% translate "Mis asignaturas" %}{% endblock title %}
 
 {% block content %}
     <div class="container-blanco">
-        <h1>{% trans "Mis asignaturas" %} <small class="text-secondary">{{ curso }}</small></h1>
+        <h1>{% translate 'Mis asignaturas' %} <small class="text-secondary">{{ curso }}</small></h1>
         <hr />
         <br />
 
@@ -14,7 +14,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
 
             <span class="fas fa-info-circle"></span>
-            {% blocktrans %}
+            {% blocktranslate %}
                 En esta página puede ver las asignaturas que tiene asignadas en el Plan de
                 Ordenación Docente.<br /><br />
 
@@ -25,24 +25,24 @@
                     class="alert-link"
                     href="https://cau.unizar.es/osticket/kb/faq.php?id=130"
                     target="_blank" rel="noopener noreferrer"
-                >ocultarlo</a
-                    >
-                    en los «Ajustes del curso» en la plataforma.<br />
-                    Es posible que tenga que salir de la plataforma y volver a entrar para ver el nuevo curso.<br /><br />
+                >ocultarlo</a>
+                en los «Ajustes del curso» en la plataforma.<br />
+                Es posible que tenga que salir de la plataforma y volver a entrar para ver el nuevo curso.<br /><br />
 
-                    Si el curso ya está creado puede consultar la ficha para ver qué profesor lo tiene asociado.
-            {% endblocktrans %}
+                Si el curso ya está creado puede consultar la ficha para ver qué profesor lo tiene asociado.<br />
+                En los cursos reglados se matricula automáticamente como profesor a quienes figuren en el POD.
+            {% endblocktranslate %}
         </div>
         <br />
 
         {% if table.data|length > 0 %}
             {% render_table table %}
         {% else %}
-            <p>{% trans "En estos momentos no tiene asignada ninguna asignatura en el POD." %}</p>
+            <p>{% translate 'En estos momentos no tiene asignada ninguna asignatura en el POD.' %}</p>
         {% endif %}
 
         <div><a href="{% url 'as_todas' %}" class="btn btn-warning btn-xs" title="Ver todas las asignaturas">
-            <span class="far fa-eye" aria-hidden="true" style="display: inline;"></span>&nbsp;{% trans "Ver todas" %}
+            <span class="far fa-eye" aria-hidden="true" style="display: inline;"></span>&nbsp;{% translate 'Ver todas' %}
         </a></div>
     </div>
 
@@ -58,7 +58,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="crearModalLabel">{% trans '¿Seguro que desea crear este curso?' %}</h5>
+                    <h5 class="modal-title" id="crearModalLabel">{% translate '¿Seguro que desea crear este curso?' %}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Cerrar') }}"></button>
                 </div>
                 <div class="modal-body">
@@ -68,10 +68,10 @@
                     <form action="#" id="crear-form" method="post">  <!-- Action rellenada por función JS -->
                         {% csrf_token %}
                         <button type="button" class="btn btn-info" data-bs-dismiss="modal">
-                            <span class="fas fa-times"></span> {% trans 'Cancelar' %}
+                            <span class="fas fa-times"></span> {% translate 'Cancelar' %}
                         </button>
                         <button type="submit" class="btn btn-warning">
-                            <span class="fas fa-plus"></span> {% trans 'Crear' %}
+                            <span class="fas fa-plus"></span> {% translate 'Crear' %}
                         </button>
                     </form>
                 </div>
