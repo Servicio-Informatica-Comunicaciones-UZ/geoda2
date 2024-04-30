@@ -23,6 +23,7 @@ services:
         ports:
             - '3307:3306'
         restart: always
+        user: "${UID}:${GID}"
         volumes:
             - ./data:/var/lib/mysql
 

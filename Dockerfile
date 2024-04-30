@@ -70,8 +70,8 @@ RUN python3 manage.py collectstatic --no-input
 # Tell uWSGI where to find your wsgi file:
 ENV UWSGI_WSGI_FILE=geoda_project/wsgi.py
 
-# Base uWSGI configuration (you shouldn't need to change these):
-ENV UWSGI_HTTP=:8001 UWSGI_MASTER=1 UWSGI_HTTP_AUTO_CHUNKED=1 UWSGI_HTTP_KEEPALIVE=1 UWSGI_UID=1000 UWSGI_GID=2000 UWSGI_LAZY_APPS=1 UWSGI_WSGI_ENV_BEHAVIOR=holy
+# Base uWSGI configuration (use the appropriate UID and GID for your system):
+ENV UWSGI_HTTP=:8001 UWSGI_MASTER=1 UWSGI_HTTP_AUTO_CHUNKED=1 UWSGI_HTTP_KEEPALIVE=1 UWSGI_UID=1501 UWSGI_GID=1501 UWSGI_LAZY_APPS=1 UWSGI_WSGI_ENV_BEHAVIOR=holy
 
 # Number of uWSGI workers and threads per worker (customize as needed):
 ENV UWSGI_WORKERS=4 UWSGI_THREADS=1
