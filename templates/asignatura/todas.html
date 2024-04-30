@@ -6,7 +6,7 @@
 
 {% block content %}
     <div class="container-blanco">
-        <h1>{% trans "Todas las asignaturas" %} <small class="text-secondary">{{ curso }}</small></h1>
+        <h1>{% translate 'Todas las asignaturas' %} <small class="text-secondary">{{ curso }}</small></h1>
         <hr />
         <br />
 
@@ -14,7 +14,8 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
 
             <span class="fas fa-info-circle"></span>
-            {% blocktrans %} En esta página puede ver todas las asignaturas, aunque no las tenga asignadas en el POD.<br />
+            {% blocktranslate %}
+                En esta página puede ver todas las asignaturas, aunque no las tenga asignadas en el POD.<br />
                 Para evitar errores se recomienda usar el
                 <a class="alert-link" href="http://academico.unizar.es/cds/cds" target="_blank" rel="noopener noreferrer">código Sigma</a> de la
                 asignatura.<br /><br />
@@ -27,12 +28,13 @@
                     href="https://cau.unizar.es/osticket/kb/faq.php?id=130"
                     target="_blank"
                     rel="noopener noreferrer"
-                >ocultarlo</a
-                    >
-                    en los «Ajustes del curso» en la plataforma.<br />
-                    Es posible que tenga que salir de la plataforma y volver a entrar para ver el nuevo curso.<br /><br />
+                >ocultarlo</a>
+                en los «Ajustes del curso» en la plataforma.<br />
+                Es posible que tenga que salir de la plataforma y volver a entrar para ver el nuevo curso.<br /><br />
 
-                    Si el curso ya está creado puede consultar la ficha para ver qué profesor lo tiene asociado. {% endblocktrans %}
+                Si el curso ya está creado, puede consultar la ficha para ver qué profesor lo tiene asociado,
+                y contactar con él si necesita que le matricule en el curso.
+            {% endblocktranslate %}
         </div>
         <br />
 
@@ -53,7 +55,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="crearModalLabel">{% trans '¿Seguro que desea crear este curso?' %}</h5>
+                    <h5 class="modal-title" id="crearModalLabel">{% translate '¿Seguro que desea crear este curso?' %}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Cerrar') }}"></button>
                 </div>
                 <div class="modal-body">
@@ -63,10 +65,10 @@
                     <form action="#" id="crear-form" method="post">  <!-- Action rellenada por función JS -->
                         {% csrf_token %}
                         <button type="button" class="btn btn-info" data-bs-dismiss="modal">
-                            <span class="fas fa-times"></span> {% trans 'Cancelar' %}
+                            <span class="fas fa-times"></span> {% translate 'Cancelar' %}
                         </button>
                         <button type="submit" class="btn btn-warning">
-                            <span class="fas fa-plus"></span> {% trans 'Crear' %}
+                            <span class="fas fa-plus"></span> {% translate 'Crear' %}
                         </button>
                     </form>
                 </div>
