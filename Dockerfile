@@ -1,5 +1,5 @@
 # Pull base image from <https://hub.docker.com/_/python>
-FROM python:3.12-slim-bullseye
+FROM python:3.12-slim-bookworm
 LABEL maintainer="Enrique Matías Sánchez <quique@unizar.es>"
 
 # Set environment variables
@@ -8,9 +8,9 @@ LABEL maintainer="Enrique Matías Sánchez <quique@unizar.es>"
 ENV PYTHONDONTWRITEBYTECODE 1 \
   PYTHONUNBUFFERED 1
 
-# Install packages needed to run your application (not build deps):
+# Install packages needed to run our application (not build deps)
 #   libmagic1 -- determine the type of data in a file
-#   libmariadbclient-client -- for running database commands
+#   libmariadb3 -- for running database commands
 #   libpcre3 -- for uWSGI internal routing support
 #   xmlsec1 -- required for SAML auth
 #   mime-support -- for mime types when serving static files
@@ -38,7 +38,6 @@ RUN set -ex \
   libmariadb-dev \
   libmariadb-dev-compat \
   libpcre3-dev \
-  libxmlsec1-dev \
   pkg-config" \
   && apt-get update \
   && apt-get install -y --no-install-recommends $BUILD_DEPS \
@@ -54,7 +53,7 @@ RUN set -ex \
 WORKDIR /code
 COPY . /code
 
-# The WSGI server will listen on this port
+# Expose port 8001 - The WSGI server will listen on this port
 EXPOSE 8001
 
 # Add any static environment variables needed by Django or your settings file here:
