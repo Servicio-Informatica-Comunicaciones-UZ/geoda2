@@ -1,6 +1,4 @@
 ---
-version: "3.5"
-
 networks:
     geoda2_net:
         ipam:
@@ -21,7 +19,7 @@ services:
             geoda2_net:
                 ipv4_address: 172.101.0.2
         ports:
-            - '3307:3306'
+            - "3307:3306"
         restart: always
         user: "${UID}:${GID}"
         volumes:
