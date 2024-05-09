@@ -31,7 +31,7 @@ COPY requirements.txt ./
 # - Install the build dependencies needed
 # - Run `pip install` to install the requirements
 # - Then remove unneeded build deps (C compiler, etc)
-# All in a single step, so that Docker cache it as a single layer.
+# All in a single step, so that Docker caches it as a single layer.
 RUN set -ex \
   && BUILD_DEPS=" \
   gcc \

@@ -457,15 +457,24 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
 
                 <span class="fas fa-info-circle"></span>
-                {% blocktranslate %}
-                    Para los cursos reglados, se prepara la carga automática de los alumnos
-                    del grupo correspondiente (si bien deberá activarla en la sección anterior).<br />
-                    Para los cursos no reglados, desde aquí puede matricular alumnos masivamente subiendo
-                    un fichero de texto (.txt o .csv) con los NIPs de los alumnos (un NIP por línea).
-                    Los alumnos que ya estuvieran matriculados en el curso, seguirán matriculados.<br />
-                    Para evitar errores, es recomendable que este fichero haya sigo generado desde
-                    una base de datos u otro programa informático.
-                {% endblocktranslate %}
+                <p>
+                    {% blocktranslate %}
+                        Para los cursos reglados, se prepara la carga automática de los alumnos
+                        del grupo correspondiente (si bien deberá activarla en la sección anterior).
+                    {% endblocktranslate %}
+                </p>
+
+                <p>
+                    {% blocktranslate %}
+                        Para los cursos no reglados, desde aquí puede matricular alumnos masivamente
+                        subiendo un fichero de texto (.txt o .csv) con los NIPs de los alumnos (un NIP por línea).
+                        Los alumnos que ya estuvieran matriculados en el curso, seguirán matriculados.<br />
+                        Para evitar errores, es recomendable que este fichero haya sigo generado desde una base de datos
+                        u otro programa informático.<br />
+                        Si algún usuario no es PDI/PTGAS/estudiante de la universidad,
+                        previamente debe vincularlo como usuario externo desde el menú «Invitar».
+                    {% endblocktranslate %}
+                </p>
             </div>
             <br />
 
