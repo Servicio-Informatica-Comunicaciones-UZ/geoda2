@@ -53,6 +53,7 @@ from .models import (
     Curso,
     Forano,
     MatriculaAutomatica,
+    Matriculacion,
     Plan,
     Pod,
     ProfesorCurso,
@@ -316,8 +317,12 @@ class CalendarioUpdate(
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
         anyo = int(self.request.POST.get('anyo'))
+        anyo_anterior = anyo - 1
         siguiente_anyo = anyo + 1
         nombre_cat_anyo = f'Cursos {anyo}-{siguiente_anyo}'
+
+        # Eliminar de la tabla `matriculacion` los alumnos del año anterior, si los hubiera.
+        Matriculacion.objects.filter(anyo_academico=anyo_anterior).delete()
 
         # Crear categoría para el año académico. Vg: «Cursos 2019-2020»
         cat_anyo = self._crear_categoria(anyo, nombre_cat_anyo, None)
@@ -374,8 +379,7 @@ class CursoDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
                 pc.delete()
 
             matriculas_automaticas = MatriculaAutomatica.objects.filter(courseid=curso.id_nk)
-            for ma in matriculas_automaticas:
-                ma.delete()
+            matriculas_automaticas.delete()
 
         # Innecesario porque el registro será eliminado de la tabla.
         # curso.estado = Curso.Estado.BORRADO
