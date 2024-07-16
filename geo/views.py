@@ -96,9 +96,7 @@ class ChecksMixin(UserPassesTestMixin):
 
     def test_func(self):
         raise NotImplementedError(
-            '{} carece de la implementación del método test_func().'.format(
-                self.__class__.__name__
-            )
+            f'{self.__class__.__name__} carece de la implementación del método test_func().'
         )
 
 
@@ -120,7 +118,7 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
     Si la creación tiene éxito, el navegador es redirigido a la ficha del curso.
     """
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):  # noqa: lint.ignore=C901
         usuario = self.request.user
         if not usuario.email:
             messages.error(
@@ -195,7 +193,7 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
             try:
                 curso.anyadir_profesor(profesor)
             except Exception as ex:
-                messages.error(request, 'ERROR: %s' % str(ex))
+                messages.error(request, 'ERROR: {excepcion}'.format(excepcion=ex))
                 return redirect('curso_detail', curso.id)
 
         messages.success(request, _('Curso creado correctamente en Moodle.'))
@@ -289,7 +287,11 @@ class CalendarioUpdate(
     #   ORDER BY anyo_academico DESC LIMIT 1;  -- Obtener el `id` de la nueva supercategoría
     # UPDATE categoria SET anyo_academico=<anyo>, supercategoria_id=<id> WHERE id_nk=5047;
     # UPDATE categoria SET anyo_academico=<anyo>, supercategoria_id=<id> WHERE id_nk=5021;
-    # y la de cursos no reglados bianuales que toque.
+    # y la de cursos no reglados bianuales que toque:
+    # SELECT * FROM categoria WHERE nombre LIKE 'Bianuales%'
+    #   ORDER BY anyo_academico DESC LIMIT 1,1; -- Obtener el id_nk de la penúltima bianual
+    # SELECT * FROM categoria WHERE nombre = 'No reglada' AND anyo_academico = <anyo>; -- id
+    # UPDATE categoria SET anyo_academico=<anyo>, supercategoria_id=<id> WHERE id_nk=<id_nk>;
 
     success_message = mark_safe(
         str(_('Se ha actualizado el curso académico actual.'))
@@ -717,7 +719,7 @@ class ResolverSolicitudCursoView(LoginRequiredMixin, PermissionRequiredMixin, Re
         """Envía un correo al solicitante del curso y los gestores informando de la resolución."""
         grupo_gestores = Group.objects.get(name='Gestores')
         gestores = grupo_gestores.user_set.all()
-        correos_gestores = list(map(lambda g: g.email, gestores))
+        correos_gestores = [g.email for g in gestores]
         send_templated_mail(
             template_name='resolucion',
             from_email=None,  # settings.DEFAULT_FROM_EMAIL
@@ -788,7 +790,7 @@ class SolicitarCursoNoRegladoView(LoginRequiredMixin, ChecksMixin, CreateView):
         """Envía email a los Gestores informando de la solicitud de curso no reglado."""
         grupo_gestores = Group.objects.get(name='Gestores')
         gestores = grupo_gestores.user_set.all()
-        destinatarios = list(map(lambda g: g.email, gestores))
+        destinatarios = [g.email for g in gestores]
         send_templated_mail(
             template_name='solicitud',
             from_email=None,  # settings.DEFAULT_FROM_EMAIL
@@ -907,7 +909,7 @@ class ForanoSolicitarView(LoginRequiredMixin, ChecksMixin, CreateView):
         """Envía email a los Gestores informando de la solicitud de vinculación."""
         grupo_gestores = Group.objects.get(name='Gestores')
         gestores = grupo_gestores.user_set.all()
-        destinatarios = list(map(lambda g: g.email, gestores))
+        destinatarios = [g.email for g in gestores]
         send_templated_mail(
             template_name='solicitud_forano',
             from_email=None,  # settings.DEFAULT_FROM_EMAIL
@@ -1146,7 +1148,7 @@ class ProfesorCursoAnyadirView(LoginRequiredMixin, ChecksMixin, View):
     Crea el usuario si no existe, y crea una asignación profesor-curso.
     """
 
-    def post(self, request, *args, **kwargs):  # noqa: ignore=C901
+    def post(self, request, *args, **kwargs):  # noqa: lint.ignore=C901
         curso_id = request.POST.get('curso_id')
         curso = get_object_or_404(Curso, pk=curso_id)
 
@@ -1160,7 +1162,7 @@ class ProfesorCursoAnyadirView(LoginRequiredMixin, ChecksMixin, View):
             try:
                 profesor = User.crear_usuario(request, nip)
             except Exception as ex:
-                messages.error(request, 'ERROR: %s' % ex.args[0])
+                messages.error(request, 'ERROR: {excepcion}'.format(excepcion=ex.args[0]))
                 return redirect('curso_detail', curso_id)
         else:
             # El usuario existe. Actualizamos sus datos con los de Gestión de Identidades.
@@ -1209,7 +1211,7 @@ class ProfesorCursoAnyadirView(LoginRequiredMixin, ChecksMixin, View):
         try:
             curso.anyadir_profesor(profesor)
         except Exception as ex:
-            messages.error(request, 'ERROR: %s' % str(ex))
+            messages.error(request, 'ERROR: {excepcion}'.format(excepcion=ex))
             return redirect('curso_detail', curso_id)
 
         messages.success(request, _('Se ha añadido el profesor al curso.'))

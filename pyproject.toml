@@ -59,6 +59,7 @@ ignore = [
     "B904", # Allow unchained exceptions: it's fine to raise 404 in django.
     "E712", # Allow using if x == False, as it's not always equivalent to if x.
     # "E501", # line-too-long
+    "UP032", # Python f-strings are not yet supported by xgettext
     # "W191", # tab-indentation
 ]
 select = [

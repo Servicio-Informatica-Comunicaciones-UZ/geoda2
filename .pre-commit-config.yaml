@@ -45,11 +45,11 @@ repos:
       - id: trailing-whitespace # Trims trailing whitespace
         exclude: ".md$|.email$"
 
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.16.0
-    hooks:
-      - id: pyupgrade
-        args: [--py311-plus]
+          #  - repo: https://github.com/asottile/pyupgrade
+          #    rev: v3.16.0
+          #    hooks:
+          #      - id: pyupgrade
+          #        args: [--py311-plus]
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: "v0.5.2"
