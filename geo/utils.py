@@ -21,14 +21,14 @@ class PagedFilteredTableView(SingleTableView):
         return context
 
 
-def matricular_grupo_sigma(
-    courseid, asignatura_id, cod_grupo_asignatura, centro_id, plan_id
+def matricular_grupo_sigma(  # noqa: C901
+    courseid, asignatura_nk, cod_grupo_asignatura, centro_id, plan_id
 ) -> int:
     """Matricula en un curso Moodle los NIPs matriculados en Sigma que cumplan los filtros."""
 
     print(
         f'Curso Moodle: {courseid}'
-        f'  Asignatura: {asignatura_id}  Grupo: {cod_grupo_asignatura}'
+        f'  Asignatura: {asignatura_nk}  Grupo: {cod_grupo_asignatura}'
         f'  Centro: {centro_id}  Plan: {plan_id}'
     )
 
@@ -44,8 +44,8 @@ def matricular_grupo_sigma(
     FROM matriculacion
     WHERE 1=1
     '''
-    if asignatura_id:
-        consulta += f' AND asignatura_id = {asignatura_id}'
+    if asignatura_nk:
+        consulta += f' AND asignatura_id = {asignatura_nk}'
     if cod_grupo_asignatura:
         consulta += f' AND cod_grupo_asignatura = {cod_grupo_asignatura}'
     if centro_id:

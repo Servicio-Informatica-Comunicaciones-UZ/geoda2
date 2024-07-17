@@ -5,6 +5,12 @@ from geo.utils import matricular_grupo_sigma
 
 
 class Command(BaseCommand):
+    """
+    Esta orden es lanzada por Ofelia (<https://github.com/taraspos/ofelia/>),
+    según esté configurado en `docker-compose.yml`.
+    Por ejemplo, cada día a las 06:45:00.
+    """
+
     help = 'Matricula en los cursos Moodle los NIPs matriculados en Sigma que cumplan los filtros.'
 
     def handle(self, *args, **options):
@@ -12,10 +18,13 @@ class Command(BaseCommand):
         with connection.cursor() as cursor:
             cursor.execute(
                 '''
-                SELECT courseid, asignatura_id, cod_grupo_asignatura, centro_id, plan_id
+                SELECT courseid, asignatura_nk, cod_grupo_asignatura, centro_id, plan_id
                 FROM matricula_automatica
-                WHERE active = 1
-                ORDER BY courseid, asignatura_id;
+                JOIN curso ON matricula_automatica.curso_id = curso.id
+                JOIN calendario ON curso.anyo_academico = calendario.anyo
+                WHERE matricula_automatica.active = 1
+                  AND calendario.slug = 'actual'
+                ORDER BY courseid, asignatura_nk;
                 '''
             )
             registros = cursor.fetchall()

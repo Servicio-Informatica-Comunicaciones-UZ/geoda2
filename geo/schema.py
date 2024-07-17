@@ -19,7 +19,7 @@ class MatriculaAutomaticaSchema(ModelSchema):
             'courseid',
             'active',
             'fijo',
-            'asignatura_id',
+            'asignatura_nk',
             'cod_grupo_asignatura',
             'plan',
             'centro',

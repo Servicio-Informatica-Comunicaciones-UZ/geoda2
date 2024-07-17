@@ -173,7 +173,7 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
         try:
             ma = MatriculaAutomatica(
                 courseid=curso.id_nk,
-                asignatura_id=asignatura.asignatura_id,  # Cód. Sigma de la asignatura
+                asignatura_nk=asignatura.asignatura_id,  # Cód. Sigma de la asignatura
                 cod_grupo_asignatura=asignatura.cod_grupo_asignatura,
                 centro_id=asignatura.centro_id,
                 plan_id=asignatura.plan_id_nk,
@@ -1025,12 +1025,12 @@ class MatriculaAutomaticaAnyadirView(LoginRequiredMixin, ChecksMixin, View):
             data = formulario.cleaned_data
             # Los gestores pueden matricular a todo un plan o centro,
             # pero el PDI debe elegir una asignatura.
-            if not self.request.user.has_perm('geo.anyadir_alumnos') and not data['asignatura_id']:
+            if not self.request.user.has_perm('geo.anyadir_alumnos') and not data['asignatura_nk']:
                 messages.error(request, _("No ha seleccionado ninguna asignatura."))
                 return redirect('curso_detail', curso_id)
 
             # No se puede matricular a todos los estudiantes de la Universidad.
-            if not data['asignatura_id'] and not data['centro'] and not data['plan']:
+            if not data['asignatura_nk'] and not data['centro'] and not data['plan']:
                 messages.error(
                     request, _("No ha seleccionado ninguna asignatura, centro ni plan.")
                 )
@@ -1038,7 +1038,7 @@ class MatriculaAutomaticaAnyadirView(LoginRequiredMixin, ChecksMixin, View):
 
             # Introducir un grupo de asignatura no tiene sentido sin una asignatura, centro y plan.
             if data['cod_grupo_asignatura'] and not (
-                data['asignatura_id'] and data['centro'] and data['plan']
+                data['asignatura_nk'] and data['centro'] and data['plan']
             ):
                 messages.error(
                     request,
@@ -1050,7 +1050,8 @@ class MatriculaAutomaticaAnyadirView(LoginRequiredMixin, ChecksMixin, View):
                 return redirect('curso_detail', curso_id)
 
             ma = formulario.save(commit=False)
-            ma.courseid = curso.id_nk
+            ma.curso_id = curso.id  # id en GEO
+            ma.courseid = curso.id_nk  # id en Moodle
             try:
                 ma.save()
             except Exception as ex:
@@ -1066,7 +1067,7 @@ class MatriculaAutomaticaAnyadirView(LoginRequiredMixin, ChecksMixin, View):
 
             # Matricular en Moodle a los estudiantes del nuevo registro de matrícula automática.
             num_matriculados = matricular_grupo_sigma(
-                ma.courseid, ma.asignatura_id, ma.cod_grupo_asignatura, ma.centro_id, ma.plan_id
+                ma.courseid, ma.asignatura_nk, ma.cod_grupo_asignatura, ma.centro_id, ma.plan_id
             )
             mensaje = _(f'Se ha matriculado a {num_matriculados} estudiantes.')
             messages.info(request, mensaje)

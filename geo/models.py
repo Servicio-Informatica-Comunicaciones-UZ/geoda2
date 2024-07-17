@@ -37,6 +37,8 @@ class Asignatura(models.Model):
     nombre_tipo_estudio = models.CharField(
         max_length=30, blank=True, null=True, verbose_name=_('Tipo de estudio')
     )
+    # `asignatura_id` es el código Sigma. Se repite en la tabla al impartirse en distintos años,
+    # o en un mismo año si tiene varios grupos.
     asignatura_id = models.IntegerField(
         blank=True, db_index=True, null=True, verbose_name=_('Cód. asignatura')
     )
@@ -318,6 +320,9 @@ class Curso(models.Model):
     id_nk = models.CharField(
         max_length=45, blank=True, null=True, verbose_name=_('Código en plataforma')
     )
+    # nk = models.PositiveBigIntegerField(
+    #    blank=True, null=True, unique=True, verbose_name=_('Código en plataforma')
+    # )
     fecha_creacion = models.DateTimeField(
         blank=True, null=True, verbose_name=_('Fecha de creación')
     )
@@ -404,9 +409,10 @@ class Curso(models.Model):
         """
 
         return {
-            'fullname': f'{self.nombre} ({self.curso_academico})'
-            if self.asignatura
-            else f'{self.nombre}',  # A los cursos no reglados no se les añade el curso académico
+            # A los cursos no reglados no se les añade el curso académico
+            'fullname': (
+                f'{self.nombre} ({self.curso_academico})' if self.asignatura else f'{self.nombre}'
+            ),
             'shortname': self.asignatura.get_shortname() if self.asignatura else f'NR_{self.id}',
             'categoryid': self.categoria.id_nk,  # id de la categoría en Moodle
             'idnumber': self.id,
@@ -522,11 +528,12 @@ class MatriculaAutomatica(models.Model):
     """Matrícula automática en cursos de Moodle con los datos de matriculación de Sigma"""
 
     id = models.BigAutoField(primary_key=True)
-    courseid = models.PositiveBigIntegerField(db_index=True)
+    curso = models.ForeignKey('Curso', on_delete=models.PROTECT)  # id en GEO
+    courseid = models.PositiveBigIntegerField(db_index=True)  # id en Moodle
     active = models.BooleanField(_('¿Activo?'), default=True)
     fijo = models.BooleanField(_('¿Registro predefinido?'), default=False)
 
-    asignatura_id = models.IntegerField(
+    asignatura_nk = models.IntegerField(
         _('Cód. asignatura'),
         blank=True,
         db_index=True,
@@ -570,18 +577,14 @@ class MatriculaAutomatica(models.Model):
     class Meta:
         db_table = 'matricula_automatica'
         unique_together = (
-            ('asignatura_id', 'cod_grupo_asignatura', 'plan', 'courseid', 'centro'),
+            ('asignatura_nk', 'cod_grupo_asignatura', 'plan', 'courseid', 'centro'),
         )
 
     def get_nombre_asignatura(self):
         # TODO: Renombrar Asignatura a GrupoAsignatura,
         # y crear un modelo Asignatura con sus id y nombres
-        asignatura = Asignatura.objects.filter(asignatura_id=self.asignatura_id).first()
+        asignatura = Asignatura.objects.filter(asignatura_id=self.asignatura_nk).first()
         return asignatura.nombre_asignatura if asignatura else None
-
-    @property
-    def curso(self):
-        return Curso.objects.get(id_nk=self.courseid)
 
 
 class Matriculacion(models.Model):

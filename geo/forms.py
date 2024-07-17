@@ -14,7 +14,7 @@ from .models import Calendario, Categoria, Curso, MatriculaAutomatica, ProfesorC
 
 class AsignaturaFilterFormHelper(FormHelper):
     """
-    Formulario para filtrar el listado de todas las asignaturas.
+    Formulario para filtrar el listado de todos los grupos de asignatura.
 
     Ver https://django-crispy-forms.readthedocs.io/en/latest/form_helper.html
     """
@@ -182,7 +182,7 @@ class MatriculaAutomaticaForm(forms.ModelForm):
 
     class Meta:
         model = MatriculaAutomatica
-        fields = ('asignatura_id', 'centro', 'plan', 'cod_grupo_asignatura')
+        fields = ('asignatura_nk', 'centro', 'plan', 'cod_grupo_asignatura')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

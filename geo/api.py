@@ -9,11 +9,11 @@ from .utils import matricular_grupo_sigma
 api = NinjaAPI()
 
 
-@api.get('/asignaturas/{asignatura_id}', response=list[AsignaturaSchema])
-def list_asignaturas(request, asignatura_id: int):
+@api.get('/asignaturas/{asignatura_nk}', response=list[AsignaturaSchema])
+def list_asignaturas(request, asignatura_nk: int):
     """Devuelve los registros de la tabla `asignatura` de un código de asignatura"""
     anyo_academico = Calendario.objects.get(slug='actual').anyo
-    return Asignatura.objects.filter(asignatura_id=asignatura_id, anyo_academico=anyo_academico)
+    return Asignatura.objects.filter(asignatura_id=asignatura_nk, anyo_academico=anyo_academico)
 
 
 @api.delete('/matricula-automatica/{registro_id}', response={204: None, 403: None})
@@ -53,7 +53,7 @@ def toggle_matricula_automatica(request, registro_id: int):
     num_matriculados = 0
     if ma.active:
         num_matriculados = matricular_grupo_sigma(
-            ma.courseid, ma.asignatura_id, ma.cod_grupo_asignatura, ma.centro_id, ma.plan_id
+            ma.courseid, ma.asignatura_nk, ma.cod_grupo_asignatura, ma.centro_id, ma.plan_id
         )
 
     return 200, {

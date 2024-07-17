@@ -63,7 +63,7 @@
         const grupoNode = document.getElementById("div_id_cod_grupo_asignatura");
         // grupoNode.style.display = 'none';  // EDIT: Lo mostramos desde el principio, porque si no se quita el foco del campo asignatura, no se llega a mostrar.
         // Campo para mostrar el nombre de la asignatura que tiene el código introducido
-        const asignaturaField = document.getElementById("id_asignatura_id");
+        const asignaturaField = document.getElementById("id_asignatura_nk");
 
         asignaturaField.addEventListener('change', event => {
             if (!event.target.value) {
@@ -396,7 +396,7 @@
                 <tbody>
                     {% for registro in matriculas_automaticas %}
                         <tr id="registro_{{ registro.id }}">
-                            <td>{{ registro.asignatura_id | default:'—' }}</td>
+                            <td>{{ registro.asignatura_nk | default:'—' }}</td>
                             <td>{{ registro.get_nombre_asignatura | default:'Todas' }}</td>
                             <td>{{ registro.cod_grupo_asignatura | default:'Todos' }}</td>
                             <td>{% if registro.centro %}
