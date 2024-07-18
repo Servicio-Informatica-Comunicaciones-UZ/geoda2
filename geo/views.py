@@ -1049,6 +1049,14 @@ class MatriculaAutomaticaAnyadirView(LoginRequiredMixin, ChecksMixin, View):
                 )
                 return redirect('curso_detail', curso_id)
 
+            anyo_academico = Calendario.objects.get(slug='actual').anyo
+            if curso.anyo_academico < anyo_academico:
+                messages.error(
+                    request,
+                    _('No se puede añadir registros a cursos antiguos.'),
+                )
+                return redirect('curso_detail', curso_id)
+
             ma = formulario.save(commit=False)
             ma.curso_id = curso.id  # id en GEO
             ma.courseid = curso.id_nk  # id en Moodle
