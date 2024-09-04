@@ -126,6 +126,7 @@ class Categoria(models.Model):
 
     NO_REGLADAS = (
         'Actividades académicas complementarias',
+        'Asignaturas optativas transversales',
         'Biblioteca',
         'CIFICE',
         'CIRCE',
@@ -658,7 +659,7 @@ class Pod(models.Model):
         max_length=32, blank=True, null=True, verbose_name='Segundo apellido'
     )
     nombre = models.CharField(max_length=32, blank=True, null=True, verbose_name='Nombre')
-    tipo_docencia = models.IntegerField(_("Tipo de docencia"))
+    tipo_docencia = models.IntegerField(_('Tipo de docencia'))
 
     class Meta:
         db_table = 'pod'
