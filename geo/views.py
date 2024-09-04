@@ -194,7 +194,7 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
             try:
                 curso.anyadir_profesor(profesor)
             except Exception as ex:
-                messages.error(request, 'ERROR: {excepcion}'.format(excepcion=ex))
+                messages.error(request, f'ERROR: {ex}')
                 return redirect('curso_detail', curso.id)
 
         messages.success(request, _('Curso creado correctamente en Moodle.'))
@@ -1175,7 +1175,7 @@ class ProfesorCursoAnyadirView(LoginRequiredMixin, ChecksMixin, View):
             try:
                 profesor = User.crear_usuario(request, nip)
             except Exception as ex:
-                messages.error(request, 'ERROR: {excepcion}'.format(excepcion=ex.args[0]))
+                messages.error(request, f'ERROR: {ex.args[0]}')
                 return redirect('curso_detail', curso_id)
         else:
             # El usuario existe. Actualizamos sus datos con los de Gestión de Identidades.
@@ -1224,7 +1224,7 @@ class ProfesorCursoAnyadirView(LoginRequiredMixin, ChecksMixin, View):
         try:
             curso.anyadir_profesor(profesor)
         except Exception as ex:
-            messages.error(request, 'ERROR: {excepcion}'.format(excepcion=ex))
+            messages.error(request, f'ERROR: {ex}')
             return redirect('curso_detail', curso_id)
 
         messages.success(request, _('Se ha añadido el profesor al curso.'))
