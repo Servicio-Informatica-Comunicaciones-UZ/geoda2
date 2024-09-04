@@ -179,12 +179,17 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
                 plan_id=asignatura.plan_id_nk,
                 active=False,
                 fijo=True,
+                curso_id=curso.id,
             )
             ma.save()
-        except Exception:
+        except Exception as ex:
             messages.warning(
                 request,
-                _('AVISO: No fue posible crear el registro de matrícula automática.'),
+                _(
+                    'AVISO: No fue posible crear el registro de matrícula automática. {ex}'.format(
+                        ex=ex
+                    )
+                ),
             )
 
         profesores = asignatura.get_profesores()
@@ -1026,13 +1031,13 @@ class MatriculaAutomaticaAnyadirView(LoginRequiredMixin, ChecksMixin, View):
             # Los gestores pueden matricular a todo un plan o centro,
             # pero el PDI debe elegir una asignatura.
             if not self.request.user.has_perm('geo.anyadir_alumnos') and not data['asignatura_nk']:
-                messages.error(request, _("No ha seleccionado ninguna asignatura."))
+                messages.error(request, _('No ha seleccionado ninguna asignatura.'))
                 return redirect('curso_detail', curso_id)
 
             # No se puede matricular a todos los estudiantes de la Universidad.
             if not data['asignatura_nk'] and not data['centro'] and not data['plan']:
                 messages.error(
-                    request, _("No ha seleccionado ninguna asignatura, centro ni plan.")
+                    request, _('No ha seleccionado ninguna asignatura, centro ni plan.')
                 )
                 return redirect('curso_detail', curso_id)
 
@@ -1238,4 +1243,4 @@ class ProfesorCursoAnyadirView(LoginRequiredMixin, ChecksMixin, View):
 
 def teapot(request, whatever):
     """Pasarle a Django direcciones PHP es como pedirle a una tetera que haga café."""
-    return HttpResponse('I\'m a teapot', status=418)
+    return HttpResponse("I'm a teapot", status=418)
