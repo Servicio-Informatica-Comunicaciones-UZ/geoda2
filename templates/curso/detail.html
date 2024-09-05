@@ -120,6 +120,18 @@
                 <td>{{ curso.curso_academico }}</td>
             </tr>
             <tr>
+                <th scope="row">{% trans "Estudio" %}</th>
+                <td>{{ curso.asignatura.nombre_estudio | default_if_none:"—" }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Cód. plan" %}</th>
+                <td>{{ curso.asignatura.plan_id_nk | default_if_none:"—" }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Centro" %}</th>
+                <td>{{ curso.asignatura.nombre_centro | default_if_none:"—" }}</td>
+            </tr>
+            <tr>
                 <th scope="row">{% trans "Cód. asignatura Sigma" %}</th>
                 <td>{{ curso.asignatura.asignatura_id | default_if_none:"—" }}</td>
             </tr>
