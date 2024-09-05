@@ -663,7 +663,9 @@ class Pod(models.Model):
 
     class Meta:
         db_table = 'pod'
-        index_together = ['nip', 'anyo_academico']
+        indexes = [
+            models.Index(fields=['nip', 'anyo_academico'], name='pod_nip_anyo_academico_idx')
+        ]
         verbose_name = 'registro del Plan de Ordenación Docente'
         verbose_name_plural = 'registros del Plan de Ordenación Docente'
 
