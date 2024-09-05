@@ -339,7 +339,15 @@ class Migration(migrations.Migration):
                 ),
                 ('tipo_docencia', models.IntegerField()),
             ],
-            options={'db_table': 'pod', 'index_together': {('nip', 'anyo_academico')}},
+            # options={'db_table': 'pod', 'index_together': {('nip', 'anyo_academico')}},
+            options={
+                'db_table': 'pod',
+                'indexes': [
+                    models.Index(
+                        fields=['nip', 'anyo_academico'], name='pod_nip_anyo_academico_idx'
+                    )
+                ],
+            },
         ),
         migrations.AddField(
             model_name='curso',
