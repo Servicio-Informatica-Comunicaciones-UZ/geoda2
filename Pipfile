@@ -18,7 +18,7 @@ ruff = "*"
 
 [packages]
 crispy-bootstrap5 = "*"
-django = "~=5.0"  # Remember to re-generate `requirements.txt`: `pipenv requirements`
+django = "~=5.1"  # Remember to re-generate `requirements.txt`: `pipenv requirements`
 django-annoying = "*"
 django-crispy-forms = "*"
 django-filter = "*"
