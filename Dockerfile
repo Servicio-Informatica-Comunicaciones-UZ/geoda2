@@ -5,8 +5,8 @@ LABEL maintainer="Enrique Matías Sánchez <quique@unizar.es>"
 # Set environment variables
 # Don't write .pyc files
 # All output to stdout will be flushed immediately
-ENV PYTHONDONTWRITEBYTECODE 1 \
-  PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1 \
+  PYTHONUNBUFFERED=1
 
 # Install packages needed to run our application (not build deps)
 #   libmagic1 -- determine the type of data in a file
