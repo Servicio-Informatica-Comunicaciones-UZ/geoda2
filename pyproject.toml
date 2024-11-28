@@ -1,3 +1,27 @@
+[project]
+name = "Geoda2"
+version = "2024.11.28"
+description = "Gestión de la Enseñanza Online"
+requires-python = ">=3.11"
+dependencies = [
+    "crispy-bootstrap5",
+    "django~=5.1",
+    "django-annoying",
+    "django-crispy-forms",
+    "django-filter",
+    "django-ninja",
+    "django-tables2",
+    "django-templated-email",
+    "mysqlclient",
+    "python3-saml",
+    "python-dateutil",
+    "python-magic",
+    "requests",
+    "social-auth-app-django",
+    "social-auth-core[saml]",
+    "zeep",
+]
+
 [tool.black]
 skip-string-normalization = true
 line-length = 99
@@ -75,3 +99,24 @@ select = [
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+
+
+[tool.uv]
+dev-dependencies = [
+    "black",
+    "django-debug-toolbar",
+    "django-fastdev",
+    "django-upgrade",
+    "djhtml",
+    "flake8",
+    "isort",
+    "pre-commit",
+    "pylint",
+    "pyupgrade",
+    "ruff",
+]
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple"
+
+[tool.uv.sources]

@@ -3,6 +3,8 @@ Gestión de la Enseñanza Online
 
 Aplicación para crear cursos en Moodle 3, desarrollada en Python 3 y Django 3.
 
+Hay una réplica pública del repositorio en <https://github.com/Servicio-Informatica-Comunicaciones-UZ/geoda2>.
+
 Descripción
 -----------
 
@@ -184,75 +186,52 @@ Instalación sobre hierro
     sudo apt-get install python3 python3-dev
     ```
 
-2. **Pip 3**, instalador de paquetes Python3:
+2. **[uv](https://github.com/astral-sh/uv)**, gestor de paquetes y entornos virtuales de Python.
 
-    Se puede usar el script [`get-pip`](https://pip.pypa.io/en/stable/installing/) ó
+   ```sh
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   ```
 
-    ```bash
-    sudo apt-get install -y python3-pip
-    ```
-
-3. **PipEnv** para virtualizar los paquetes Python y facilitar el trabajo:
-
-    Se puede instalar con `sudo -H pip3 install pipenv` ó
-
-    ```bash
-    sudo apt install software-properties-common python-software-properties
-    sudo add-apt-repository ppa:pypa/ppa
-    sudo apt update
-    sudo apt install pipenv
-    ```
-
-4. Paquetes `libxmlsec1-dev` y `pkg-config`
-5. **Servidor de bases de datos** aceptado por Django (vg PostgreSQL o MariaDB).
+3. Paquetes `libxmlsec1-dev` y `pkg-config`
+4. **Servidor de bases de datos** aceptado por Django (vg PostgreSQL o MariaDB).
 
     Para MariaDB/MySQL instalar el paquete `libmariadb-dev` o `libmysqlclient-dev`.
-    Ejecutar `ln -s libmariadb.so.3 /usr/lib/x86_64-linux-gnu/libmariadbclient.so.18` si es necesario.
-
-    La configuración deberá incluir, si es necesario:
-
-    ```ini
-    # innodb_file_per_table = On  # Default on MariaDB >= 5.5
-    # innodb_file_format = Barracuda  # Deprecated in MariaDB 10.2
-    # innodb_large_prefix  # Deprecated on MariaDB 10.2, Removed in MariaDB 10.3.1
-    # innodb_default_row_format = dynamic  # Default on MariaDB >= 10.2.2
-    ```
 
 ### Instalación
 
 ```bash
-git clone https://gitlab.unizar.es/add/geoda2.git
+git clone https://github.com/Servicio-Informatica-Comunicaciones-UZ/geoda2.git
 cd geoda2
-pipenv [--python 3.7] install [--dev]
+uv sync
 ```
 
 ### Configuración inicial
 
-1. Configurar las bases de datos.
-2. Configurar los datos para el correo, la URL del sitio, y las direcciones de los
+1. Copiar o renombrar los ficheros `env/common.env-sample` y `env/geoda2.env-sample`.
+2. Configurar las bases de datos.
+3. Configurar los datos para el correo, la URL del sitio, y las direcciones de los
    _Web services_ de Moodle y Gestión de Identidades.
-3. Configurar los datos para el _Single Sign On_ (SAML).
-4. Ejecutar
+4. Configurar los datos para el _Single Sign On_ (SAML).
+5. Ejecutar
 
     ```bash
-    pipenv shell
-    set -a; . env/common.env; . env/geoda2.env; set +a
-    ./manage.py migrate
-    ./manage.py createsuperuser
+    uv run --env-file env/common.env --env-file env/geoda2.env ./manage.py migrate
+    uv run --env-file env/common.env --env-file env/geoda2.env ./manage.py createsuperuser
     ```
 
-5. Insertar el año académico actual en la tabla `calendario`.
+6. Insertar el año académico actual en la tabla `calendario`.
 
     `INSERT INTO calendario(anyo, slug) VALUES (2019, 'actual');`
-6. Añadir usuarios al grupo `Gestores` (incluyendo el superusuario).
+7. Añadir usuarios al grupo `Gestores` (incluyendo el superusuario).
 
-7. Activar a los usuarios gestores el atributo `is_staff` para que puedan acceder
+8. Activar a los usuarios gestores el atributo `is_staff` para que puedan acceder
    a la interfaz de administración.
 
 ### Servidor web para desarrollo
 
 ```bash
-pipenv shell
-set -a; . env/common.env; . env/geoda2.env; set +a
-./manage.py runserver [<IP>:[:<puerto>]]
+uv run --env-file env/common.env --env-file env/geoda2.env ./manage.py runserver [<IP>:[:<puerto>]]
 ```
+
+Para generar el fichero `requirements.txt`:  
+`uv export --format requirements-txt --no-dev > requirements.txt`
