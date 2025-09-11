@@ -27,7 +27,12 @@ class Command(BaseCommand):
                 LEFT JOIN profesor_curso pc ON c.id = pc.curso_id AND ac.id=pc.profesor_id
                 WHERE c.anyo_academico = p.anyo_academico AND c.asignatura_id IS NOT NULL
                    AND (profesor_id IS NULL OR fecha_baja < NOW())
-                ORDER BY c.id, ac.username
+                ORDER BY c.id,
+                CASE
+                    WHEN ac.id = c.solicitante_id THEN 0
+                    ELSE 1
+       	        END,
+                ac.username
                 '''
             )
             rows = cursor.fetchall()
