@@ -192,15 +192,23 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
                 ),
             )
 
+        # Matricular profesores: primero el solicitante, luego los demás del POD
         profesores = asignatura.get_profesores()
-        profesores.append(usuario)
-        profesores = set(profesores)
+        profesores.sort(key=lambda x: (x.id != usuario.id, x.username))
         for profesor in profesores:
-            try:
-                curso.anyadir_profesor(profesor)
-            except Exception as ex:
-                messages.error(request, f'ERROR: {ex}')
-                return redirect('curso_detail', curso.id)
+            if profesor != usuario:
+                try:
+                    curso.anyadir_profesor(profesor)
+                except Exception as ex:
+                    messages.error(request, f'ERROR: {ex}')
+                    return redirect('curso_detail', curso.id)
+        
+        # Matricular al solicitante en primer lugar
+        try:
+            curso.anyadir_profesor(usuario)
+        except Exception as ex:
+            messages.error(request, f'ERROR: {ex}')
+            return redirect('curso_detail', curso.id)
 
         messages.success(request, _('Curso creado correctamente en Moodle.'))
 
@@ -274,7 +282,7 @@ class CalendarioUpdate(
 
     # Tras cambiar el año hay que mover en Moodle
     # las categorías «Varios» (5047) y «Escuela de Doctorado» (5021),
-    # así como la de cursos no reglados bianuales que toque.
+    # así como la de cursos no reglados bienales que toque.
 
     # NOTA: La Escuela de Doctorado tiene dos categorías:
     #
@@ -293,9 +301,9 @@ class CalendarioUpdate(
     #   ORDER BY anyo_academico DESC LIMIT 1;  -- Obtener el `id` de la nueva supercategoría
     # UPDATE categoria SET anyo_academico=<anyo>, supercategoria_id=<id> WHERE id_nk=5047;
     # UPDATE categoria SET anyo_academico=<anyo>, supercategoria_id=<id> WHERE id_nk=5021;
-    # y la de cursos no reglados bianuales que toque:
-    # SELECT * FROM categoria WHERE nombre LIKE 'Bianuales%'
-    #   ORDER BY anyo_academico DESC LIMIT 1,1; -- Obtener el id_nk de la penúltima bianual
+    # y la de cursos no reglados bienales que toque:
+    # SELECT * FROM categoria WHERE nombre LIKE 'Bienales%'
+    #   ORDER BY anyo_academico DESC LIMIT 1,1; -- Obtener el id_nk de la penúltima bienal
     # SELECT * FROM categoria WHERE nombre = 'No reglada' AND anyo_academico = <anyo>; -- id
     # UPDATE categoria SET anyo_academico=<anyo>, supercategoria_id=<id> WHERE id_nk=<id_nk>;
 
@@ -308,7 +316,7 @@ class CalendarioUpdate(
             _(
                 'Mover las categorías «Varios» y «Escuela de Doctorado» del año anterior '
                 'a la del año actual, tanto en GEO como en Moodle.<br>'
-                'Así como la de cursos no reglados bianuales que toque.'
+                'Así como la de cursos no reglados bienales que toque.'
             )
         )
         + '</li>\n<li>'
@@ -336,8 +344,8 @@ class CalendarioUpdate(
         # Crear las subcategorías de los estudios no reglados
         for nombre in Categoria.NO_REGLADAS:
             self._crear_categoria(anyo, nombre, cat_nr.id)
-        # Crear nueva categoría de cursos no reglados bianuales
-        self._crear_categoria(anyo, f'Bianuales {anyo}-{anyo+2}', cat_nr.id)
+        # Crear nueva categoría de cursos no reglados bienales
+        self._crear_categoria(anyo, f'Bienales {anyo}-{anyo+2}', cat_nr.id)
 
         return super().form_valid(form)
 
