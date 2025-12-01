@@ -129,11 +129,11 @@ class Categoria(models.Model):
         'Asignaturas optativas transversales',
         'Biblioteca',
         'CIFICE',
-        'CIRCE',
+        # 'CIRCE',
         'Coordinación',
         'CULM',
-        'Curso P.A.S.',
-        'EPJ',
+        'Curso P.T.G.A.S.',
+        # 'EPJ',
         # La Escuela de Doctorado tiene una categoría normal, con 1 curso por cada PD,
         # y esta categoría NR para actividades de formación transversal y específica.
         'Escuela de Doctorado',
@@ -142,7 +142,7 @@ class Categoria(models.Model):
         'POUZ',
         'Proyectos de innovacion',
         'Trabajos finales y prácticas externas',
-        'UEZ',
+        'Universidad de la Experiencia',
         'Universa',
     )
 

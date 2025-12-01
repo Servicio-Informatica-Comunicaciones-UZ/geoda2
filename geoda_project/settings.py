@@ -30,8 +30,8 @@ DEBUG = os.environ.get('DEBUG', False) == 'True'
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get(
-    'DJANGO_SECRET_KEY', 'o+^%z1pkglqpsxjhdaj_u)9pfpybx0l7ko$x!d=j+y0x8qn*c)'
-)
+    'DJANGO_SECRET_KEY', 'I9tV89Y7rnetRS8x24QFCGRauqmKoc+m+84JAkO/XWI=')
+
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = [h for h in os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')]
 
@@ -60,7 +60,7 @@ DATABASES = {
         'USER': os.environ.get('DB_USER'),  # Database user
         'PASSWORD': os.environ.get('DB_PASSWORD'),  # Database password
         'HOST': os.environ.get('DB_HOST'),  # Set to empty string for localhost.
-        'PORT': '',  # Set to empty string for default.
+        'PORT': os.environ.get('DB_PORT'),  # Set to empty string for default.
         # Additional database options
         'OPTIONS': {'charset': os.environ.get('DB_CHARSET', 'utf8mb4')},
     }
