@@ -59,3 +59,14 @@ def get_attr_verbose_name(obj, attr):
 def has_group(user, group_name):
     """Comprueba si el usuario pertenece al grupo indicado."""
     return user.groups.filter(name=group_name).exists()
+
+
+@register.simple_tag
+def last_git_change():
+    """Devuelve la fecha del último cambio en git desde variable de entorno.
+    
+    Formato esperado: DD/MM/YYYY
+    Variable de entorno: LAST_GIT_CHANGE
+    """
+    import os
+    return os.environ.get('LAST_GIT_CHANGE', 'N/A')
