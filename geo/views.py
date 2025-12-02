@@ -1036,18 +1036,26 @@ class MatriculaAutomaticaAnyadirView(LoginRequiredMixin, ChecksMixin, View):
         formulario = MatriculaAutomaticaForm(data=request.POST)
         if formulario.is_valid():
             data = formulario.cleaned_data
-            # Los gestores pueden matricular a todo un plan o centro,
-            # pero el PDI debe elegir una asignatura.
-            if not self.request.user.has_perm('geo.anyadir_alumnos') and not data['asignatura_nk']:
-                messages.error(request, _('No ha seleccionado ninguna asignatura.'))
-                return redirect('curso_detail', curso_id)
+            is_gestor = self.request.user.groups.filter(name='Gestores').exists()
 
-            # No se puede matricular a todos los estudiantes de la Universidad.
-            if not data['asignatura_nk'] and not data['centro'] and not data['plan']:
-                messages.error(
-                    request, _('No ha seleccionado ninguna asignatura, centro ni plan.')
-                )
-                return redirect('curso_detail', curso_id)
+            # Para usuarios NO gestores: obligatorio asignatura, centro y plan
+            if not is_gestor:
+                if not data['asignatura_nk']:
+                    messages.error(request, _('No ha seleccionado ninguna asignatura.'))
+                    return redirect('curso_detail', curso_id)
+                if not data['centro']:
+                    messages.error(request, _('No ha seleccionado ningún centro.'))
+                    return redirect('curso_detail', curso_id)
+                if not data['plan']:
+                    messages.error(request, _('No ha seleccionado ningún plan.'))
+                    return redirect('curso_detail', curso_id)
+            else:
+                # Para gestores: al menos uno de los tres debe estar seleccionado
+                if not data['asignatura_nk'] and not data['centro'] and not data['plan']:
+                    messages.error(
+                        request, _('Debe seleccionar al menos una asignatura, centro o plan.')
+                    )
+                    return redirect('curso_detail', curso_id)
 
             # Introducir un grupo de asignatura no tiene sentido sin una asignatura, centro y plan.
             if data['cod_grupo_asignatura'] and not (
