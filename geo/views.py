@@ -193,8 +193,16 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
             )
 
         # Matricular profesores: primero el solicitante, luego los demás del POD
+        # Matricular al solicitante PRIMERO
+        try:
+            curso.anyadir_profesor(usuario)
+        except Exception as ex:
+            messages.error(request, f'ERROR: {ex}')
+            return redirect('curso_detail', curso.id)
+
+        # Matricular otros profesores DESPUÉS
         profesores = asignatura.get_profesores()
-        profesores.sort(key=lambda x: (x.id != usuario.id, x.username))
+        profesores.sort(key=lambda x: x.username)
         for profesor in profesores:
             if profesor != usuario:
                 try:
@@ -202,13 +210,6 @@ class ASCrearCursoView(LoginRequiredMixin, ChecksMixin, View):
                 except Exception as ex:
                     messages.error(request, f'ERROR: {ex}')
                     return redirect('curso_detail', curso.id)
-        
-        # Matricular al solicitante en primer lugar
-        try:
-            curso.anyadir_profesor(usuario)
-        except Exception as ex:
-            messages.error(request, f'ERROR: {ex}')
-            return redirect('curso_detail', curso.id)
 
         messages.success(request, _('Curso creado correctamente en Moodle.'))
 
