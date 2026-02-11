@@ -66,6 +66,8 @@ def get_identidad(strategy, response, user, *args, **kwargs):
         colectivos.append('ADS')
     if any(cod_adscritos in cods_vinculaciones for cod_adscritos in (25, 61)):
         colectivos.append('INV')  # Investigadores sin contrato pero con docencia
+    if 'EST' in colectivos and 95 in cods_vinculaciones:
+        colectivos.append('CJE')  # Consejo de la Juventud de España
     user.colectivos = json.dumps(list(set(colectivos)))
 
     # user.save()

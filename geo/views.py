@@ -84,7 +84,7 @@ class ChecksMixin(UserPassesTestMixin):
 
         return any(
             col_autorizado in colectivos_del_usuario
-            for col_autorizado in ['PAS', 'INV', 'ADS', 'PDI']
+            for col_autorizado in ['PAS', 'INV', 'ADS', 'PDI', 'CJE']
         )
 
     def es_profesor_del_curso(self, curso_id):
