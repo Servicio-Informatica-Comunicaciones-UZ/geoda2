@@ -9,6 +9,7 @@ from .views import (  # ForanoResolverView,; MatricularPlanView,
     CursoDeleteView,
     CursoDetailView,
     CursoMatricularNipsView,
+    CursoMatricularProfesoresMasivoView,
     CursoRematricularView,
     CursosPendientesView,
     CursosTodosView,
@@ -60,6 +61,11 @@ urlpatterns = [
     path('curso/', MisCursosView.as_view(), name='mis_cursos'),
     path(
         'curso/matricular-nips/', CursoMatricularNipsView.as_view(), name='curso_matricular_nips'
+    ),
+    path(
+        'curso/matricular-profesores/',
+        CursoMatricularProfesoresMasivoView.as_view(),
+        name='curso_matricular_profesores_masivo',
     ),
     path('curso/rematricular/', CursoRematricularView.as_view(), name='curso_rematricular'),
     path('curso/solicitar/', SolicitarCursoNoRegladoView.as_view(), name='curso_solicitar'),

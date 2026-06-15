@@ -440,6 +440,7 @@ class CursoDetailView(LoginRequiredMixin, DetailView):
                 'ma_form': MatriculaAutomaticaForm,
                 # 'mp_form': mp_form,
                 'pc_form': pc_form,
+                'es_profesor_del_curso': es_profesor_del_curso,
                 'puede_matricular_profesores': es_profesor_del_curso
                 or self.request.user.has_perm('geo.anyadir_profesorcurso'),
                 'puede_matricular_alumnos': es_profesor_del_curso
@@ -512,6 +513,108 @@ class CursoMatricularNipsView(LoginRequiredMixin, ChecksMixin, View):
         return self.es_profesor_del_curso(
             self.request.POST.get('curso_id')
         ) or self.request.user.has_perm('geo.anyadir_alumnos')
+
+
+class CursoMatricularProfesoresMasivoView(LoginRequiredMixin, ChecksMixin, View):
+    """Matricula de forma masiva a profesores en un curso a partir de un fichero CSV/texto."""
+
+    def post(self, request, *args, **kwargs):  # noqa: lint.ignore=C901
+        curso_id = request.POST.get('curso_id')
+        curso = get_object_or_404(Curso, pk=curso_id)
+        fichero = request.FILES.get('file')
+
+        if not fichero:
+            messages.error(request, _('Debe enviar un fichero de texto con los NIPs.'))
+            return redirect('curso_detail', curso_id)
+
+        ext = splitext(fichero.name)[1].lower()
+        if ext not in ('.csv', '.tsv', '.txt'):
+            messages.error(request, _('La extensión del fichero debería ser .txt o .csv .'))
+            return redirect('curso_detail', curso_id)
+
+        filetype = magic.from_buffer(fichero.read(2048), mime=True)
+        fichero.seek(0)
+        if not (filetype.startswith('text/') or filetype == 'application/csv'):
+            messages.error(request, _('El fichero no parece ser un documento de texto plano.'))
+            return redirect('curso_detail', curso_id)
+
+        try:
+            nips = fichero.read(10 * 1024).decode('utf-8').splitlines()  # Max 10 KiB
+        except UnicodeDecodeError as ex:
+            messages.error(
+                self.request,
+                mark_safe(
+                    _(
+                        'Error al leer el fichero. '
+                        'Posiblemente contenga algún carácter extraño.<br>\n'
+                        'Revise el fichero para corregirlo, o bien vuelva a generarlo.<br>\n'
+                        'ERROR: %(ex)s.'
+                    )
+                    % {'ex': ex}
+                ),
+            )
+            return redirect('curso_detail', curso_id)
+
+        nips = [nip.strip() for nip in nips if nip.strip()]
+
+        User = get_user_model()
+        num_matriculados = 0
+        errores = []
+
+        for nip in nips:
+            try:
+                profesor = get_object_or_None(User, username=nip)
+
+                if not profesor:
+                    profesor = User.crear_usuario(request, nip)
+                else:
+                    profesor.actualizar(request)
+
+                if not profesor.is_active:
+                    errores.append(f"{nip}: {_('El usuario no está activo en Gestión de Identidades.')}")
+                    continue
+
+                if not profesor.email:
+                    errores.append(f"{nip}: {_('El usuario no tiene dirección de correo electrónico.')}")
+                    continue
+
+                if profesor in curso.profesores_activos:
+                    continue
+
+                curso.anyadir_profesor(profesor)
+                num_matriculados += 1
+
+            except Exception as ex:
+                errores.append(f"{nip}: {str(ex)}")
+
+        if errores:
+            messages.warning(
+                request,
+                mark_safe(
+                    _('No se pudieron matricular los siguientes NIPs: ')
+                    + '<br>' + '<br>'.join(errores)
+                ),
+            )
+
+        if num_matriculados > 0:
+            messages.success(
+                request,
+                _('Se ha matriculado en el curso a %(num)s profesores.') % {'num': num_matriculados},
+            )
+        elif not errores:
+            messages.info(
+                request,
+                _('No se ha matriculado a ningún profesor nuevo (todos ya formaban parte del curso).'),
+            )
+
+        return redirect('curso_detail', curso_id)
+
+    def test_func(self):
+        curso_id = self.request.POST.get('curso_id')
+        user = self.request.user
+        return user.has_perm('geo.anyadir_profesores_masivo') and (
+            self.es_profesor_del_curso(curso_id) or user.is_superuser
+        )
 
 
 class CursoRematricularView(LoginRequiredMixin, ChecksMixin, View):

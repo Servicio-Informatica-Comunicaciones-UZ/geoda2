@@ -318,6 +318,57 @@
 
         {% endif %}
 
+        {% if curso.estado == curso.Estado.CREADO.value and perms.geo.anyadir_profesores_masivo %}
+            {% if es_profesor_del_curso or user.is_superuser %}
+                <br /><br />
+                <h2>{% trans "Matricular profesores en masa" %}</h2>
+                <hr />
+
+                <div class="alert alert-info alert-dismissible fade show">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ _('Cerrar') }}"></button>
+
+                    <span class="fas fa-info-circle"></span>
+                    <p>
+                        {% blocktranslate %}
+                            Desde aquí puede matricular profesores masivamente subiendo un fichero de texto (.txt o .csv) con los NIPs de los profesores (un NIP por línea).
+                            Los profesores que ya estuvieran matriculados en el curso, seguirán matriculados.<br />
+                            Si algún profesor no está registrado o activo, se intentará dar de alta a través de Gestión de Identidades automáticamente.
+                        {% endblocktranslate %}
+                    </p>
+                </div>
+                <br />
+
+                <form action="{% url 'curso_matricular_profesores_masivo' %}" enctype="multipart/form-data" id="enviar-fichero-profesores" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" id="curso_id_profesores" name="curso_id" value="{{ curso.id }}">
+
+                    <div class="mb-2">
+                        <div class="mb-3">
+                            <label for="id_file_profesores" class="form-label">{% trans 'Fichero NIPs Profesores' %}</label>
+                            <input class="form-control" type="file" id="id_file_profesores" name="file" required accept=".csv,.tsv,.txt">
+
+                            <script type="text/javascript" id="script-id_file_profesores">
+                                const max_upload_size_prof = 10 * 1024;  // 10 KiB
+
+                                document.getElementById("id_file_profesores").onchange = function (e) {
+                                    if (this.files[0].size > max_upload_size_prof) {
+                                        alert("El fichero es demasiado grande (máx: 10 KiB).");
+                                        this.value = "";
+                                    }
+                                }
+                            </script>
+                        </div>
+                    </div>
+
+                    <div class="btn-group" role="group" aria-label="Botones">
+                        <button class="btn btn-warning" title="{% trans 'Subir el fichero de profesores' %}" type="submit">
+                            <span aria-hidden="true" class="fas fa-file-csv"></span> {% trans 'Enviar fichero' %}
+                        </button>
+                    </div>
+                </form>
+            {% endif %}
+        {% endif %}
+
         {% if curso.estado == curso.Estado.CREADO.value and perms.geo.curso_historial %}
             <br /><br />
             <h2>{% trans "Historial de profesores del curso" %}</h2>
